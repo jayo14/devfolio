@@ -1,4 +1,3 @@
-import React from "react";
 import Hero from "./components/Hero.jsx";
 import Tools from "./components/Tools.jsx";
 import Services from "./components/Services.jsx";

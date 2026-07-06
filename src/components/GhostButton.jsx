@@ -1,28 +1,25 @@
-import React from "react";
 import { motion } from "framer-motion";
-import { HiArrowUpRight } from "react-icons/hi2";
+import { ArrowUpRight } from "lucide-react";
 
-const GhostButton = ({ href = "#contact", children, className = "" }) => {
+export function GhostButton({ children, className = "", href = "#" }) {
   return (
     <motion.a
       href={href}
       whileHover="hover"
-      initial="rest"
-      animate="rest"
-      className={`group relative inline-flex items-center gap-3 overflow-hidden rounded-lg border border-white/70 px-6 py-3 text-sm font-medium text-white transition-colors duration-300 hover:text-black ${className}`}
+      className={`group relative inline-flex items-center gap-2 overflow-hidden border border-white/20 px-6 py-3 font-mono text-sm uppercase tracking-widest hover:border-accent ${className}`}
     >
-      <span className="relative z-10">{children}</span>
-      <HiArrowUpRight className="relative z-10 text-lg" aria-hidden="true" />
+      <span className="relative z-10 transition-colors duration-300 group-hover:text-black">
+        {children}
+      </span>
+      <ArrowUpRight className="relative z-10 h-4 w-4 transition-colors duration-300 group-hover:text-black" />
       <motion.span
+        variants={{ hover: { scaleX: 1 } }}
+        initial={{ scaleX: 0 }}
+        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
         className="absolute inset-0 origin-left bg-accent"
-        variants={{
-          rest: { scaleX: 0 },
-          hover: { scaleX: 1 },
-        }}
-        transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
       />
     </motion.a>
   );
-};
+}
 
 export default GhostButton;

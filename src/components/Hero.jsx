@@ -1,4 +1,4 @@
-import React from "react";
+import { Suspense } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import Navbar from "./Navbar.jsx";
 import SplineScene from "./SplineScene.jsx";
@@ -164,11 +164,9 @@ const Hero = () => {
           >
             <div className="relative h-full w-full border border-white/10 bg-[#050505]">
               <CornerMarks />
-              <React.Suspense
-                fallback={<div className="h-full w-full bg-black" />}
-              >
+              <Suspense fallback={<div className="h-full w-full bg-black" />}>
                 <SplineScene />
-              </React.Suspense>
+              </Suspense>
             </div>
           </motion.div>
         </div>

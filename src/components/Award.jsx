@@ -1,43 +1,95 @@
-import React from "react";
+import { useMemo } from "react";
+import useEmblaCarousel from "embla-carousel-react";
+import Autoplay from "embla-carousel-autoplay";
 import { motion } from "framer-motion";
+import SectionHeader from "./SectionHeader.jsx";
 
 const awards = [
-  { label: "Awwwards", value: "Site of the Day", year: "2025" },
-  { label: "FWA", value: "Honorable Mention", year: "2025" },
-  { label: "CSSDA", value: "Best UI", year: "2024" },
+  {
+    title: "Best Web Developer Award",
+    tags: ["Web Development", "Frontend", "Innovation"],
+    year: "2022 - Present",
+  },
+  {
+    title: "Hackathon Champion",
+    tags: ["Web Development", "Frontend", "Innovation"],
+    year: "2022 - Present",
+  },
+  {
+    title: "Outstanding Contribution to Open Source",
+    tags: ["Web Development", "Frontend", "Innovation"],
+    year: "2022 - Present",
+  },
+  {
+    title: "Best Web Developer Award",
+    tags: ["Web Development", "Frontend", "Innovation"],
+    year: "2022 - Present",
+  },
+  {
+    title: "Hackathon Champion",
+    tags: ["Web Development", "Frontend", "Innovation"],
+    year: "2022 - Present",
+  },
+  {
+    title: "Outstanding Contribution to Open Source",
+    tags: ["Web Development", "Frontend", "Innovation"],
+    year: "2022 - Present",
+  },
 ];
 
 const Award = () => {
+  const autoplay = useMemo(
+    () => Autoplay({ delay: 4000, stopOnInteraction: false }),
+    []
+  );
+
+  const [emblaRef] = useEmblaCarousel(
+    { loop: true, align: "start", dragFree: false },
+    [autoplay]
+  );
+
   return (
-    <section id="award" className="bg-black px-6 py-40 text-white lg:px-20">
+    <section id="award" className="overflow-hidden bg-black px-6 py-32 text-white lg:px-20">
       <div className="mx-auto max-w-[1440px]">
-        <div className="flex justify-end">
-          <p className="font-inconsolata text-sm text-white/60">// Award</p>
-        </div>
+        <SectionHeader tag="// Awards" title="Recognition &" highlight="Milestones" />
 
-        <h2 className="mt-8 text-[40px] font-semibold leading-[0.95] tracking-[-2px] md:text-[64px]">
-          Recognition with <span className="text-accent">impact</span>
-        </h2>
+        <div ref={emblaRef} className="overflow-hidden">
+          <div className="flex gap-6">
+            {awards.map((award, index) => (
+              <motion.article
+                key={`${award.title}-${index}`}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-100px" }}
+                transition={{ duration: 0.5, delay: index * 0.05 }}
+                className="min-w-0 flex-[0_0_88%] border border-white/10 p-12 transition-colors hover:border-accent md:flex-[0_0_48%] lg:flex-[0_0_48%]"
+              >
+                <div className="mb-12 flex items-start justify-between gap-6">
+                  <span className="text-[clamp(5rem,10vw,7.5rem)] font-bold leading-none text-white/10">
+                    {String((index % 3) + 1).padStart(2, "0")}
+                  </span>
+                  <span className="mt-4 font-inconsolata text-sm text-white/60">
+                    {award.year}
+                  </span>
+                </div>
 
-        <div className="mt-14 grid gap-6 lg:grid-cols-3">
-          {awards.map((award, index) => (
-            <motion.div
-              key={award.label}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="border border-white/10 bg-[#0a0a0a] p-8"
-            >
-              <p className="font-inconsolata text-xs uppercase tracking-[0.14em] text-white/50">
-                {award.label}
-              </p>
-              <p className="mt-4 text-3xl font-semibold">{award.value}</p>
-              <p className="mt-8 font-inconsolata text-sm text-white/60">
-                {award.year}
-              </p>
-            </motion.div>
-          ))}
+                <h3 className="mb-6 text-[clamp(2rem,4vw,3rem)] font-semibold leading-[1.02] tracking-[-0.03em]">
+                  {award.title}
+                </h3>
+
+                <div className="flex flex-wrap gap-2">
+                  {award.tags.map((tag) => (
+                    <span
+                      key={tag}
+                      className="rounded-full border border-white/10 bg-white/5 px-3 py-1 font-inconsolata text-xs text-white/80"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
+              </motion.article>
+            ))}
+          </div>
         </div>
       </div>
     </section>

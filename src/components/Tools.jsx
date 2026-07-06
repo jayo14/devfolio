@@ -1,4 +1,3 @@
-import React from "react";
 import { motion } from "framer-motion";
 import {
   SiFigma,
@@ -15,6 +14,7 @@ import {
   SiVite,
 } from "react-icons/si";
 import GhostButton from "./GhostButton.jsx";
+import SectionHeader from "./SectionHeader.jsx";
 
 const tools = [
   { name: "HTML5", Icon: SiHtml5 },
@@ -44,13 +44,7 @@ const Tools = () => {
     >
       <div className="mx-auto max-w-[1440px]">
         <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-          <div className="max-w-3xl">
-            <p className="font-inconsolata text-sm text-white/60">// Tools</p>
-            <h2 className="mt-3 text-[40px] font-semibold leading-[0.96] tracking-[-2px] md:text-[56px] lg:text-[64px]">
-              <span className="text-accent">Key</span> Dev Tools
-            </h2>
-          </div>
-
+          <SectionHeader tag="// Tools" title="Key" highlight="Dev Tools" />
           <GhostButton href="#contact" className="shrink-0">
             NixtNocode
           </GhostButton>

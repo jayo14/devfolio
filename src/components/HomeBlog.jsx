@@ -1,55 +1,73 @@
-import React from "react";
 import { motion } from "framer-motion";
-import GhostButton from "./GhostButton.jsx";
+import { HiArrowUpRight, HiCalendarDays } from "react-icons/hi2";
+import SectionHeader from "./SectionHeader.jsx";
 
 const posts = [
   {
-    title: "Designing for a motion-first product narrative",
-    date: "Jul 02, 2026",
+    title: "UI/UX for Developers: The Power of Simplicity",
+    category: "Insurance",
+    date: "May 12, 2024",
+    image: "https://images.unsplash.com/photo-1498050108023-c5249f4df085?auto=format&fit=crop&w=1200&q=80",
   },
   {
-    title: "How to balance brutalism and usability",
-    date: "Jun 18, 2026",
+    title: "Hubfolio agency revolutionizes work with the power of AI-Driven",
+    category: "Insurance",
+    date: "Apr 28, 2024",
+    image: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80",
   },
   {
-    title: "A practical stack for fast portfolio builds",
-    date: "May 11, 2026",
+    title: "Why Performance Matters More Than Ever in 2024",
+    category: "Performance",
+    date: "Apr 10, 2024",
+    image: "https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1200&q=80",
   },
 ];
 
 const HomeBlog = () => {
   return (
-    <section id="blog" className="bg-black px-6 py-40 text-white lg:px-20">
+    <section id="blog" className="bg-black px-6 py-32 text-white lg:px-20">
       <div className="mx-auto max-w-[1440px]">
-        <div className="flex items-end justify-between gap-8">
-          <div>
-            <p className="font-inconsolata text-sm text-white/60">// Home Blog</p>
-            <h2 className="mt-3 text-[40px] font-semibold tracking-[-2px] md:text-[64px]">
-              Notes on <span className="text-accent">craft</span>
-            </h2>
-          </div>
+        <SectionHeader tag="// Blog" title="Latest" highlight="Articles" />
 
-          <GhostButton href="#contact">Read More</GhostButton>
-        </div>
-
-        <div className="mt-14 grid gap-6 lg:grid-cols-3">
+        <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {posts.map((post, index) => (
             <motion.article
               key={post.title}
+              whileHover={{ y: -6 }}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-100px" }}
+              viewport={{ once: true }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="border border-white/10 bg-[#0a0a0a] p-8 transition-colors hover:border-accent"
+              className="group border border-white/10 transition-colors hover:border-accent"
             >
-              <p className="font-inconsolata text-xs uppercase tracking-[0.14em] text-white/50">
-                {post.date}
-              </p>
-              <h3 className="mt-4 text-3xl font-semibold leading-[1.1]">{post.title}</h3>
-              <p className="mt-6 max-w-md font-inconsolata text-base leading-7 text-white/60">
-                Short editorial thoughts on process, interface structure, and shipping
-                digital products with clarity.
-              </p>
+              <div className="aspect-[4/3] overflow-hidden bg-white/5">
+                <img
+                  src={post.image}
+                  alt=""
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                  loading="lazy"
+                />
+              </div>
+
+              <div className="p-8">
+                <div className="mb-4 flex items-center gap-4 font-inconsolata text-xs text-white/60">
+                  <span className="text-accent">{post.category}</span>
+                  <span>•</span>
+                  <span className="inline-flex items-center gap-2">
+                    <HiCalendarDays className="h-4 w-4" aria-hidden="true" />
+                    {post.date}
+                  </span>
+                </div>
+
+                <h3 className="text-2xl font-semibold leading-snug transition-colors group-hover:text-accent">
+                  {post.title}
+                </h3>
+
+                <div className="mt-6 inline-flex items-center gap-2 font-inconsolata text-sm text-white/80">
+                  Read More
+                  <HiArrowUpRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
+                </div>
+              </div>
             </motion.article>
           ))}
         </div>

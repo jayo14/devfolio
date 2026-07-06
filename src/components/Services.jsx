@@ -1,5 +1,6 @@
-import React, { useRef } from "react";
+import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import SectionHeader from "./SectionHeader.jsx";
 
 const services = [
   {
@@ -47,7 +48,7 @@ const Services = () => {
     <section
       id="work"
       ref={sectionRef}
-      className="relative overflow-hidden bg-black py-40 px-6 text-white lg:px-20"
+      className="relative overflow-hidden bg-black px-6 py-40 text-white lg:px-20"
     >
       <motion.div
         aria-hidden="true"
@@ -65,34 +66,39 @@ const Services = () => {
       <div className="absolute inset-0 bg-black/50" aria-hidden="true" />
 
       <div className="relative z-10 mx-auto max-w-[1440px]">
-        <div className="flex justify-end">
-          <p className="font-inconsolata text-sm text-white/60">// Services</p>
-        </div>
-
-        <h2 className="mt-8 text-[52px] font-semibold leading-[0.95] tracking-[-2px] md:text-[68px] lg:text-[80px]">
-          <span className="block text-white">Web Development</span>
-          <span className="block text-accent">Expertise</span>
-        </h2>
+        <SectionHeader tag="// Services" title="Web Development" highlight="Expertise" />
 
         <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
+          initial="hidden"
+          whileInView="show"
           viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-          className="mt-20 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+          variants={{
+            hidden: {},
+            show: {
+              transition: {
+                staggerChildren: 0.1,
+              },
+            },
+          }}
+          className="mt-20 grid grid-cols-1 gap-6 md:grid-cols-2"
         >
           {services.map((service, index) => (
             <motion.article
               key={service.title}
+              variants={{
+                hidden: { opacity: 0, y: 30 },
+                show: { opacity: 1, y: 0 },
+              }}
+              transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
               whileHover={{ y: -4 }}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-80px" }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              className="group border border-white/10 bg-black/30 p-10 backdrop-blur-sm transition-colors duration-300 hover:border-accent"
+              className={`group border border-white/10 bg-black/30 p-10 backdrop-blur-[2px] transition-colors duration-300 hover:border-accent hover:bg-black/45 ${
+                index === services.length - 1 ? "md:col-span-2" : ""
+              }`}
             >
               <div className="flex items-center gap-4">
-                <h3 className="text-3xl font-semibold">{service.title}</h3>
+                <h3 className="text-3xl font-semibold tracking-[-0.03em]">
+                  {service.title}
+                </h3>
                 <span className="font-inconsolata text-sm text-white/40">
                   {service.tag}
                 </span>

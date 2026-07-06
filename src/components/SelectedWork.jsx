@@ -1,55 +1,63 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { motion } from "framer-motion";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi2";
 import GhostButton from "./GhostButton.jsx";
+import PlusCorner from "./PlusCorner.jsx";
 
 const projects = [
   {
     title: "Newz Magazine Site",
     tags: ["#Magazine", "#Editorial"],
-    accent: "from-white/20 via-white/5 to-transparent",
-    mark: "N",
+    glyph: "N",
+    summary:
+      "An editorial system with sharp typography, layered cards, and a fast reading experience tuned for long-form content.",
+    tone: "from-white/18 via-white/5 to-transparent",
+    glyphClass: "text-white/85 drop-shadow-[0_0_30px_rgba(255,255,255,0.18)]",
   },
   {
     title: "Roller-Coat",
     tags: ["#Branding", "#Logo"],
-    accent: "from-[#ff5722]/30 via-[#ff5722]/10 to-transparent",
-    mark: "R",
+    glyph: "R",
+    summary:
+      "A brand slide built around a warm orange monogram with enough contrast to read like a hero mark at any size.",
+    tone: "from-[#ff5722]/35 via-[#ff5722]/10 to-transparent",
+    glyphClass:
+      "text-[#ff5722] drop-shadow-[0_0_42px_rgba(255,87,34,0.72)]",
   },
   {
     title: "Fintech App",
     tags: ["#Fintech", "#Mobile"],
-    accent: "from-cyan-400/20 via-white/5 to-transparent",
-    mark: "F",
+    glyph: "F",
+    summary:
+      "A finance product layout that balances trust, speed, and clarity with a dense but controlled interface system.",
+    tone: "from-cyan-400/25 via-white/5 to-transparent",
+    glyphClass: "text-cyan-100 drop-shadow-[0_0_30px_rgba(103,232,249,0.2)]",
   },
   {
     title: "Eco Store",
     tags: ["#Ecommerce", "#Shopify"],
-    accent: "from-emerald-400/20 via-white/5 to-transparent",
-    mark: "E",
+    glyph: "E",
+    summary:
+      "A commerce presentation with sustainable cues, soft depth, and a stronger focus on product confidence.",
+    tone: "from-emerald-400/25 via-white/5 to-transparent",
+    glyphClass: "text-emerald-100 drop-shadow-[0_0_30px_rgba(110,231,183,0.2)]",
   },
 ];
 
-const PlusCorner = ({ className = "" }) => (
-  <div className={`absolute h-4 w-4 ${className}`}>
-    <div
-      className="absolute left-1/2 top-1/2 h-px w-3 bg-white/40"
-      style={{ transform: "translate(-50%, -50%)" }}
-    />
-    <div
-      className="absolute left-1/2 top-1/2 h-3 w-px bg-white/40"
-      style={{ transform: "translate(-50%, -50%)" }}
-    />
-  </div>
-);
-
 const SelectedWork = () => {
   const autoplay = useMemo(
-    () => Autoplay({ delay: 5000, stopOnInteraction: false }),
+    () =>
+      Autoplay({
+        delay: 5000,
+        stopOnInteraction: false,
+        stopOnMouseEnter: true,
+        stopOnFocusIn: true,
+      }),
     []
   );
+
   const [emblaRef, emblaApi] = useEmblaCarousel(
     { loop: true, align: "start" },
     [autoplay]
@@ -60,6 +68,7 @@ const SelectedWork = () => {
     if (!emblaApi) return;
 
     const onSelect = () => setSelectedIndex(emblaApi.selectedScrollSnap());
+
     onSelect();
     emblaApi.on("select", onSelect);
     emblaApi.on("reInit", onSelect);
@@ -73,14 +82,16 @@ const SelectedWork = () => {
   return (
     <section
       id="selected-work"
+      role="region"
       aria-roledescription="carousel"
-      className="bg-black py-40 px-6 text-white lg:px-20"
+      aria-label="Selected work showcase"
+      className="bg-black px-6 py-40 text-white lg:px-20"
     >
       <div className="mx-auto max-w-[1440px]">
         <div className="mb-20 flex items-end justify-between gap-8">
           <div>
             <p className="font-inconsolata text-sm text-white/60">// Selected Work</p>
-            <h2 className="mt-3 text-[40px] font-semibold tracking-[-2px] md:text-[64px] lg:text-[80px]">
+            <h2 className="mt-3 text-[clamp(3.5rem,7vw,5rem)] font-semibold tracking-[-2px]">
               <span className="text-accent">Featured</span> Projects
             </h2>
           </div>
@@ -105,11 +116,11 @@ const SelectedWork = () => {
           </div>
         </div>
 
-        <div className="relative border border-white/10 p-8">
-          <PlusCorner className="left-2 top-2" />
-          <PlusCorner className="right-2 top-2" />
-          <PlusCorner className="bottom-2 left-2" />
-          <PlusCorner className="bottom-2 right-2" />
+        <div className="relative border border-white/10 bg-white/[0.02] p-4 sm:p-8">
+          <PlusCorner key={`corner-tl-${selectedIndex}`} className="left-2 top-2" />
+          <PlusCorner key={`corner-tr-${selectedIndex}`} className="right-2 top-2" />
+          <PlusCorner key={`corner-bl-${selectedIndex}`} className="bottom-2 left-2" />
+          <PlusCorner key={`corner-br-${selectedIndex}`} className="bottom-2 right-2" />
 
           <div ref={emblaRef} className="overflow-hidden">
             <div className="flex">
@@ -118,28 +129,47 @@ const SelectedWork = () => {
 
                 return (
                   <div key={project.title} className="min-w-0 flex-[0_0_100%]">
-                    <div className="grid gap-8 lg:grid-cols-2 lg:items-center">
+                    <div className="grid gap-8 lg:grid-cols-[1.2fr_0.8fr] lg:items-center">
                       <motion.div
-                        animate={{ y: isActive ? -10 : 10, scale: isActive ? 1 : 0.98 }}
+                        animate={{
+                          y: isActive ? 0 : 10,
+                          scale: isActive ? 1 : 0.985,
+                        }}
                         transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
-                        className="relative aspect-[4/3] overflow-hidden border border-white/10 bg-[#090909]"
+                        className="relative aspect-[16/10] overflow-hidden border border-white/10 bg-[#090909]"
                       >
-                        <div className={`absolute inset-0 bg-gradient-to-br ${project.accent}`} />
-                        <div className="absolute inset-0 opacity-[0.18] [background-image:radial-gradient(circle_at_top_left,_rgba(255,255,255,0.45),_transparent_24%),radial-gradient(circle_at_bottom_right,_rgba(255,255,255,0.18),_transparent_18%)]" />
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="text-[180px] font-semibold leading-none tracking-[-0.08em] text-white/90">
-                            {project.mark}
+                        <div
+                          className={`absolute inset-0 bg-gradient-to-br ${project.tone}`}
+                        />
+                        <div className="absolute inset-0 opacity-[0.18] [background-image:radial-gradient(circle_at_top_left,_rgba(255,255,255,0.45),_transparent_24%),radial-gradient(circle_at_bottom_right,_rgba(255,255,255,0.16),_transparent_18%),linear-gradient(135deg,_rgba(255,255,255,0.06)_0,_transparent_20%,_transparent_80%,_rgba(255,255,255,0.05)_100%)]" />
+                        <div className="absolute inset-0 bg-[linear-gradient(to_bottom,rgba(0,0,0,0.1),rgba(0,0,0,0.65))]" />
+
+                        <div className="absolute left-6 top-6 z-10">
+                          <p className="font-inconsolata text-xs uppercase tracking-[0.18em] text-white/50">
+                            Project {String(index + 1).padStart(2, "0")}
+                          </p>
+                        </div>
+
+                        <div className="absolute inset-0 z-10 flex items-center justify-center">
+                          <div
+                            className={`text-[clamp(8rem,18vw,14rem)] font-semibold leading-none tracking-[-0.1em] ${project.glyphClass}`}
+                          >
+                            {project.glyph}
                           </div>
                         </div>
-                        <div className="absolute left-6 top-6">
-                          <p className="font-inconsolata text-xs uppercase tracking-[0.14em] text-white/50">
-                            Project
+
+                        <div className="absolute bottom-6 right-6 z-10 text-right">
+                          <p className="font-inconsolata text-xs uppercase tracking-[0.18em] text-white/50">
+                            {project.tags[0]}
                           </p>
                         </div>
                       </motion.div>
 
                       <div className="max-w-xl">
-                        <h3 className="text-4xl font-semibold tracking-[-0.03em] md:text-5xl">
+                        <p className="font-inconsolata text-sm text-white/50">
+                          // Case Study
+                        </p>
+                        <h3 className="mt-4 text-[clamp(2.75rem,4vw,4.75rem)] font-semibold leading-[0.95] tracking-[-0.04em]">
                           {project.title}
                         </h3>
 
@@ -155,8 +185,7 @@ const SelectedWork = () => {
                         </div>
 
                         <p className="mt-8 max-w-md font-inconsolata text-base leading-7 text-white/60">
-                          A bold showcase slide built as a brutalist carousel frame with
-                          layered depth, hover metadata, and motion-led transitions.
+                          {project.summary}
                         </p>
 
                         <div className="mt-8">
