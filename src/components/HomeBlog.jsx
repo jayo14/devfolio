@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { HiArrowUpRight, HiCalendarDays } from "react-icons/hi2";
-import SectionHeader from "./SectionHeader.jsx";
+import PlusCorner from "./PlusCorner.jsx";
+import { Container } from "./Container.jsx";
 
 const posts = [
   {
@@ -25,9 +26,12 @@ const posts = [
 
 const HomeBlog = () => {
   return (
-    <section id="blog" className="bg-black px-6 py-32 text-white lg:px-20">
-      <div className="mx-auto max-w-[1440px]">
-        <SectionHeader tag="// Blog" title="Latest" highlight="Articles" />
+    <section id="blog" className="mt-[324px] bg-black py-32 text-white">
+      <Container>
+        <p className="font-inconsolata text-base text-white">// Blog</p>
+        <h2 className="mt-3 text-[64px] font-medium capitalize leading-[76.8px] tracking-[-1.92px]">
+          Our <span className="text-accent">blogs</span>
+        </h2>
 
         <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
           {posts.map((post, index) => (
@@ -40,18 +44,43 @@ const HomeBlog = () => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="group border border-white/10 transition-colors hover:border-accent"
             >
-              <div className="aspect-[4/3] overflow-hidden bg-white/5">
-                <img
-                  src={post.image}
-                  alt=""
-                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-                  loading="lazy"
-                />
-              </div>
+              <motion.div
+                initial={{ opacity: 0, y: 32, rotate: 225 }}
+                whileInView={{ opacity: 1, y: 0, rotate: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: 0.2, ease: [0.4, 0, 0.2, 1] }}
+                className="relative"
+              >
+                {[0, 1, 2, 3].map((cornerIndex) => (
+                  <PlusCorner
+                    key={`${post.title}-corner-${cornerIndex}`}
+                    corner={
+                      cornerIndex === 0
+                        ? "top-left"
+                        : cornerIndex === 1
+                          ? "top-right"
+                          : cornerIndex === 2
+                            ? "bottom-right"
+                            : "bottom-left"
+                    }
+                    animated
+                    delay={0.15 + cornerIndex * 0.08 + index * 0.05}
+                  />
+                ))}
+
+                <div className="aspect-[4/3] overflow-hidden bg-white/5">
+                  <img
+                    src={post.image}
+                    alt=""
+                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                    loading="lazy"
+                  />
+                </div>
+              </motion.div>
 
               <div className="p-8">
                 <div className="mb-4 flex items-center gap-4 font-inconsolata text-xs text-white/60">
-                  <span className="text-accent">{post.category}</span>
+                  <span>{post.category}</span>
                   <span>•</span>
                   <span className="inline-flex items-center gap-2">
                     <HiCalendarDays className="h-4 w-4" aria-hidden="true" />
@@ -59,7 +88,7 @@ const HomeBlog = () => {
                   </span>
                 </div>
 
-                <h3 className="text-2xl font-semibold leading-snug transition-colors group-hover:text-accent">
+                <h3 className="text-2xl font-semibold leading-snug transition-colors group-hover:text-[rgb(161,170,170)]">
                   {post.title}
                 </h3>
 
@@ -71,7 +100,7 @@ const HomeBlog = () => {
             </motion.article>
           ))}
         </div>
-      </div>
+      </Container>
     </section>
   );
 };

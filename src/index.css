@@ -1,12 +1,26 @@
 @import "tailwindcss";
 
+@theme {
+  --color-accent: #ff4f22;
+  --color-bg: #000000;
+  --color-nav-bg: #151515;
+  --color-card-bg: #080808;
+  --color-line: #262626;
+  --color-line-2: #2e2c2b;
+  --color-social-bg: #151515;
+  --color-social-hover: #494949;
+  --color-muted: rgba(255, 255, 255, 0.6);
+  --color-muted-2: rgb(128, 128, 128);
+  --color-muted-3: rgb(161, 170, 170);
+}
+
 :root {
   color-scheme: dark;
   --bg: #000000;
   --text: #ffffff;
   --text-muted: rgba(255, 255, 255, 0.6);
-  --accent: #ff5722;
-  --accent-2: #ff4500;
+  --accent: #ff4f22;
+  --accent-2: #ff4f22;
   --border: rgba(255, 255, 255, 0.1);
   --surface: #0a0a0a;
   --surface-elev: #141414;

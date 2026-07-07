@@ -1,176 +1,125 @@
 import { Suspense } from "react";
-import { motion, useScroll, useTransform } from "framer-motion";
+import { useRef } from "react";
+import {
+  motion,
+  useMotionValue,
+  useScroll,
+  useSpring,
+  useTransform,
+} from "framer-motion";
 import Navbar from "./Navbar.jsx";
 import SplineScene from "./SplineScene.jsx";
 import GhostButton from "./GhostButton.jsx";
-
-const revealVariants = {
-  hidden: { opacity: 0, y: 30 },
-  show: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: [0.4, 0, 0.2, 1],
-    },
-  },
-};
-
-const lineVariants = {
-  hidden: { opacity: 0, y: 30 },
-  show: (delay = 0) => ({
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      delay,
-      ease: [0.4, 0, 0.2, 1],
-    },
-  }),
-};
-
-const statsVariants = {
-  hidden: { opacity: 0, x: 40 },
-  show: {
-    opacity: 1,
-    x: 0,
-    transition: {
-      duration: 0.6,
-      ease: [0.4, 0, 0.2, 1],
-    },
-  },
-};
-
-const CornerMarks = () => (
-  <>
-    <span className="absolute left-4 top-4 h-3 w-3 border-l border-t border-white/40" />
-    <span className="absolute right-4 top-4 h-3 w-3 border-r border-t border-white/40" />
-    <span className="absolute left-4 bottom-4 h-3 w-3 border-b border-l border-white/40" />
-    <span className="absolute right-4 bottom-4 h-3 w-3 border-b border-r border-white/40" />
-  </>
-);
+import { Container } from "./Container.jsx";
+import { CounterCard } from "./CounterCard.jsx";
 
 const Hero = () => {
+  const sectionRef = useRef(null);
   const { scrollY } = useScroll();
-  const yText = useTransform(scrollY, [0, 800], [0, 200]);
-  const y3d = useTransform(scrollY, [0, 800], [0, -120]);
+  const y3d = useTransform(scrollY, [0, 1000], [0, -150]);
+  const opacity3d = useTransform(scrollY, [0, 800], [1, 0]);
   const scrollBarScale = useTransform(scrollY, [0, 600], [0, 1]);
+  const rotateX = useSpring(useMotionValue(0), {
+    stiffness: 140,
+    damping: 18,
+    mass: 0.8,
+  });
+  const rotateY = useSpring(useMotionValue(0), {
+    stiffness: 140,
+    damping: 18,
+    mass: 0.8,
+  });
+
+  const handlePointerMove = (event) => {
+    const bounds = sectionRef.current?.getBoundingClientRect();
+    if (!bounds) return;
+
+    const x = (event.clientX - bounds.left) / bounds.width;
+    const y = (event.clientY - bounds.top) / bounds.height;
+
+    rotateY.set((x - 0.5) * 18);
+    rotateX.set((0.5 - y) * 14);
+  };
+
+  const handlePointerLeave = () => {
+    rotateX.set(0);
+    rotateY.set(0);
+  };
 
   return (
-    <section id="home" className="relative min-h-screen overflow-hidden bg-black text-white">
+    <section
+      id="home"
+      ref={sectionRef}
+      onPointerMove={handlePointerMove}
+      onPointerLeave={handlePointerLeave}
+      className="relative overflow-hidden bg-black pt-[185px] pb-[200px] text-white"
+    >
       <Navbar />
 
       <motion.div
         aria-hidden="true"
         style={{ scaleX: scrollBarScale }}
-        className="fixed left-0 top-[69px] z-50 h-px w-full origin-left bg-accent"
+        className="fixed left-0 top-[77px] z-50 h-px w-full origin-left bg-accent"
       />
 
-      <motion.div
-        style={{ y: yText }}
-        className="relative z-10 mx-auto max-w-[1440px] px-6 pb-[120px] pt-[185px] lg:px-20 lg:pb-[200px]"
-      >
-        <div className="relative grid grid-cols-1 gap-16 lg:grid-cols-12">
-          <motion.div
-            initial="hidden"
-            animate="show"
-            variants={{
-              hidden: {},
-              show: {
-                transition: {
-                  staggerChildren: 0.1,
-                },
-              },
-            }}
-            className="relative z-10 lg:col-span-7"
-          >
-            <motion.p
-              variants={revealVariants}
-              className="font-inconsolata text-sm text-white/60"
-            >
-              // Hello, World!
-            </motion.p>
+      <Container className="relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-[970.5px_323.5px]">
+          <div className="relative min-h-[860px] overflow-visible">
+            <div className="relative z-10">
+              <p className="mb-6 font-inconsolata text-base text-white">
+                // Hello, World!
+              </p>
 
-            <motion.h1 className="mt-6 text-[72px] font-medium leading-[0.96] tracking-[-2px] md:text-[96px] lg:text-[120px] lg:tracking-[-4.8px]">
-              <motion.span custom={0.1} variants={lineVariants} className="block text-white">
-                John
-              </motion.span>
-              <motion.span custom={0.2} variants={lineVariants} className="block text-accent">
-                Lennon
-              </motion.span>
-            </motion.h1>
+              <h1 className="font-sans text-[120px] font-medium leading-[120px] tracking-[-4.8px] text-white">
+                John <span className="text-accent">Lennon</span>
+              </h1>
 
-            <motion.p
-              custom={0.3}
-              variants={lineVariants}
-              className="mt-6 text-2xl font-medium text-white"
-            >
-              Fullstack Developer
-            </motion.p>
-
-            <div className="mt-8">
-              <GhostButton href="#contact">NixtNocode</GhostButton>
+              <p className="mt-4 font-sans text-[40px] font-normal text-[rgba(255,255,255,0.6)]">
+                &quot; Fullstack Developer &quot;
+              </p>
             </div>
 
-            <motion.p
-              custom={0.5}
-              variants={lineVariants}
-              className="mt-8 max-w-[440px] font-inconsolata text-base leading-7 text-white/60"
+            <div className="mt-12 flex items-start gap-12">
+              <GhostButton href="/about-us">NixtNocode</GhostButton>
+              <p className="max-w-[324px] font-inconsolata text-base text-[rgba(255,255,255,0.6)]">
+                We&apos;re a digital products design and development agency that
+                passionate with the digital experiences.
+              </p>
+            </div>
+
+            <motion.div
+              aria-hidden="true"
+              className="pointer-events-none absolute left-[396px] top-[401px] z-0 h-[630px] w-[647px]"
+              style={{
+                y: y3d,
+                opacity: opacity3d,
+                rotateX,
+                rotateY,
+                perspective: 1200,
+                transformStyle: "preserve-3d",
+              }}
             >
-              We're a digital products design and development agency that
-              passionate with the digital experiences.
-            </motion.p>
-          </motion.div>
-
-          <motion.div
-            initial="hidden"
-            animate="show"
-            variants={{
-              hidden: {},
-              show: {
-                transition: {
-                  staggerChildren: 0.08,
-                  delayChildren: 0.6,
-                },
-              },
-            }}
-            className="relative z-10 flex flex-col items-end gap-10 pt-14 text-right lg:col-span-5"
-          >
-            <motion.div variants={statsVariants} className="max-w-[300px]">
-              <p className="font-inconsolata text-xs uppercase tracking-[0.12em] text-white/60">
-                Clients satisfied and repeating
-              </p>
-              <p className="mt-2 text-[72px] font-bold leading-none tracking-[-0.04em] md:text-[86px] lg:text-[96px]">
-                95%
-              </p>
-            </motion.div>
-
-            <motion.div variants={statsVariants} className="max-w-[300px]">
-              <p className="font-inconsolata text-xs uppercase tracking-[0.12em] text-white/60">
-                Projects completed in 24 countries
-              </p>
-              <p className="mt-2 text-[72px] font-bold leading-none tracking-[-0.04em] md:text-[86px] lg:text-[96px]">
-                86+
-              </p>
-            </motion.div>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 1.2, delay: 0.4 }}
-            style={{ y: y3d }}
-            className="pointer-events-auto absolute left-1/2 top-[300px] z-0 h-[630px] w-[min(656px,calc(100vw-2rem))] -translate-x-1/2 lg:top-[240px] lg:w-[656px]"
-          >
-            <div className="relative h-full w-full border border-white/10 bg-[#050505]">
-              <CornerMarks />
               <Suspense fallback={<div className="h-full w-full bg-black" />}>
                 <SplineScene />
               </Suspense>
-            </div>
-          </motion.div>
+            </motion.div>
+          </div>
+
+          <div className="flex flex-col items-start">
+            <CounterCard
+              label="Clients satisfied and repeating"
+              targetNumber="95"
+              hasBottomBorder={false}
+            />
+            <CounterCard
+              label="projects completed in 24 countries"
+              targetNumber="86"
+              suffix="+"
+              hasBottomBorder
+            />
+          </div>
         </div>
-      </motion.div>
+      </Container>
     </section>
   );
 };

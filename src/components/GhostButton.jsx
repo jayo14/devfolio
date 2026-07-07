@@ -1,22 +1,35 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
 
-export function GhostButton({ children, className = "", href = "#" }) {
+export function GhostButton({ children, href = "#", className = "" }) {
+  const [hovered, setHovered] = useState(false);
+
   return (
     <motion.a
       href={href}
-      whileHover="hover"
-      className={`group relative inline-flex items-center gap-2 overflow-hidden border border-white/20 px-6 py-3 font-mono text-sm uppercase tracking-widest hover:border-accent ${className}`}
+      onHoverStart={() => setHovered(true)}
+      onHoverEnd={() => setHovered(false)}
+      whileTap={{ scale: 0.97 }}
+      className={`relative inline-flex h-[58px] w-[324px] items-center gap-3 overflow-hidden border border-line px-8 font-sans text-base text-white ${className}`}
     >
-      <span className="relative z-10 transition-colors duration-300 group-hover:text-black">
-        {children}
-      </span>
-      <ArrowUpRight className="relative z-10 h-4 w-4 transition-colors duration-300 group-hover:text-black" />
+      <span className="relative z-10 transition-colors duration-300">{children}</span>
+
       <motion.span
-        variants={{ hover: { scaleX: 1 } }}
-        initial={{ scaleX: 0 }}
+        className="relative z-10"
+        animate={{ opacity: hovered ? 0 : 1 }}
         transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-        className="absolute inset-0 origin-left bg-accent"
+      >
+        <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
+      </motion.span>
+
+      <motion.span
+        aria-hidden="true"
+        className="absolute inset-2 z-0 origin-left bg-accent"
+        initial={false}
+        animate={{ scaleX: hovered ? 1 : 0, scaleY: hovered ? 1 : 0 }}
+        transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+        style={{ transformOrigin: "left center" }}
       />
     </motion.a>
   );

@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi2";
 import GhostButton from "./GhostButton.jsx";
 import PlusCorner from "./PlusCorner.jsx";
+import { Container } from "./Container.jsx";
 
 const projects = [
   {
@@ -16,15 +17,15 @@ const projects = [
     tone: "from-white/18 via-white/5 to-transparent",
     glyphClass: "text-white/85 drop-shadow-[0_0_30px_rgba(255,255,255,0.18)]",
   },
-  {
-    title: "Roller-Coat",
+    {
+      title: "Roller-Coat",
     tags: ["#Branding", "#Logo"],
     glyph: "R",
     summary:
       "A brand slide built around a warm orange monogram with enough contrast to read like a hero mark at any size.",
-    tone: "from-[#ff5722]/35 via-[#ff5722]/10 to-transparent",
+    tone: "from-[#ff4f22]/35 via-[#ff4f22]/10 to-transparent",
     glyphClass:
-      "text-[#ff5722] drop-shadow-[0_0_42px_rgba(255,87,34,0.72)]",
+      "text-white/85 drop-shadow-[0_0_42px_rgba(255,255,255,0.18)]",
   },
   {
     title: "Fintech App",
@@ -85,14 +86,14 @@ const SelectedWork = () => {
       role="region"
       aria-roledescription="carousel"
       aria-label="Selected work showcase"
-      className="bg-black px-6 py-40 text-white lg:px-20"
+      className="mt-[324px] bg-black py-40 text-white"
     >
-      <div className="mx-auto max-w-[1440px]">
+      <Container>
         <div className="mb-20 flex items-end justify-between gap-8">
           <div>
             <p className="font-inconsolata text-sm text-white/60">// Selected Work</p>
             <h2 className="mt-3 text-[clamp(3.5rem,7vw,5rem)] font-semibold tracking-[-2px]">
-              <span className="text-accent">Featured</span> Projects
+              Featured Projects
             </h2>
           </div>
 
@@ -117,10 +118,10 @@ const SelectedWork = () => {
         </div>
 
         <div className="relative border border-white/10 bg-white/[0.02] p-4 sm:p-8">
-          <PlusCorner key={`corner-tl-${selectedIndex}`} className="left-2 top-2" />
-          <PlusCorner key={`corner-tr-${selectedIndex}`} className="right-2 top-2" />
-          <PlusCorner key={`corner-bl-${selectedIndex}`} className="bottom-2 left-2" />
-          <PlusCorner key={`corner-br-${selectedIndex}`} className="bottom-2 right-2" />
+          <PlusCorner key={`corner-tl-${selectedIndex}`} corner="top-left" className="left-2 top-2" />
+          <PlusCorner key={`corner-tr-${selectedIndex}`} corner="top-right" className="right-2 top-2" />
+          <PlusCorner key={`corner-bl-${selectedIndex}`} corner="bottom-left" className="bottom-2 left-2" />
+          <PlusCorner key={`corner-br-${selectedIndex}`} corner="bottom-right" className="bottom-2 right-2" />
 
           <div ref={emblaRef} className="overflow-hidden">
             <div className="flex">
@@ -199,7 +200,7 @@ const SelectedWork = () => {
             </div>
           </div>
         </div>
-      </div>
+      </Container>
     </section>
   );
 };

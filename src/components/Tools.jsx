@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { motion } from "framer-motion";
 import {
   SiFigma,
@@ -14,65 +15,72 @@ import {
   SiVite,
 } from "react-icons/si";
 import GhostButton from "./GhostButton.jsx";
-import SectionHeader from "./SectionHeader.jsx";
+import { Container } from "./Container.jsx";
 
 const tools = [
-  { name: "HTML5", Icon: SiHtml5 },
-  { name: "GitHub", Icon: SiGithub },
-  { name: "JavaScript", Icon: SiJavascript },
-  { name: "React", Icon: SiReact },
-  { name: "TypeScript", Icon: SiTypescript },
-  { name: "Next.js", Icon: SiNextdotjs },
-  { name: "Tailwind", Icon: SiTailwindcss },
-  { name: "Node.js", Icon: SiNodedotjs },
-  { name: "Figma", Icon: SiFigma },
-  { name: "Vite", Icon: SiVite },
-  { name: "GSAP", Icon: SiGreensock },
-  { name: "Three.js", Icon: SiThreedotjs },
+  SiHtml5,
+  SiGithub,
+  SiJavascript,
+  SiReact,
+  SiTypescript,
+  SiNextdotjs,
+  SiTailwindcss,
+  SiNodedotjs,
+  SiFigma,
+  SiVite,
+  SiGreensock,
+  SiThreedotjs,
 ];
+
+function ToolboxCell({ Icon }) {
+  const [hovered, setHovered] = useState(false);
+
+  return (
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="relative flex h-[160px] w-[161.5px] items-center justify-center border-r border-b border-line bg-card-bg"
+      style={{
+        backgroundColor: hovered ? "#000000" : "#080808",
+        borderTop: hovered ? "1px solid white" : "1px solid transparent",
+        borderLeft: hovered ? "1px solid white" : "1px solid transparent",
+      }}
+    >
+      <Icon
+        className={`h-10 w-10 transition-colors duration-300 ${
+          hovered ? "text-accent" : "text-white"
+        }`}
+        aria-hidden="true"
+      />
+    </div>
+  );
+}
 
 const Tools = () => {
   return (
-    <section
-      id="about"
-      className="relative overflow-hidden bg-black py-32 px-6 text-white lg:px-20"
-      style={{
-        backgroundImage:
-          "linear-gradient(to right, rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.04) 1px, transparent 1px)",
-        backgroundSize: "40px 40px",
-      }}
-    >
-      <div className="mx-auto max-w-[1440px]">
-        <div className="flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
-          <SectionHeader tag="// Tools" title="Key" highlight="Dev Tools" />
-          <GhostButton href="#contact" className="shrink-0">
-            NixtNocode
-          </GhostButton>
-        </div>
+    <section id="about" className="mt-0 bg-black text-white">
+      <Container>
+        <div className="grid grid-cols-1 lg:grid-cols-[646px_646px]">
+          <div className="flex flex-col justify-between py-12">
+            <div>
+              <p className="mb-3 font-inconsolata text-base text-white">// Tools</p>
+              <h2 className="font-sans text-[64px] font-medium capitalize leading-[76.8px] tracking-[-1.92px] text-white">
+                <span className="text-accent">Key</span> Dev Tools
+              </h2>
+            </div>
 
-        <motion.div
-          initial={{ opacity: 0, y: 40 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true, margin: "-100px" }}
-          transition={{ duration: 0.6 }}
-          className="mt-20"
-        >
-          <div className="grid grid-cols-2 gap-px bg-white/10 md:grid-cols-3 lg:grid-cols-6">
-            {tools.map(({ name, Icon }) => (
-              <motion.div
-                key={name}
-                whileHover={{ scale: 1.15 }}
-                transition={{ duration: 0.3 }}
-                className="flex aspect-square items-center justify-center bg-black"
-                aria-label={name}
-                title={name}
-              >
-                <Icon className="h-12 w-12 text-white" aria-hidden="true" />
-              </motion.div>
-            ))}
+            <GhostButton href="/work">NixtNocode</GhostButton>
           </div>
-        </motion.div>
-      </div>
+
+          <div className="border-t border-line lg:w-[646px]">
+            <div className="grid grid-cols-4 grid-rows-3">
+              {tools.map((Icon, index) => (
+                <ToolboxCell key={index} Icon={Icon} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </Container>
     </section>
   );
 };
