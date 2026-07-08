@@ -1,102 +1,200 @@
-import { useMemo } from "react";
-import useEmblaCarousel from "embla-carousel-react";
-import Autoplay from "embla-carousel-autoplay";
+import { useState } from "react";
 import { motion } from "framer-motion";
-import SectionFrame from "./SectionFrame.jsx";
+import { EASE, DUR } from "../lib/easing.js";
 import { Container } from "./Container.jsx";
 
 const awards = [
   {
     title: "Best Web Developer Award",
     tags: ["Web Development", "Frontend", "Innovation"],
+    number: "01",
     year: "2022 - Present",
   },
   {
     title: "Hackathon Champion",
     tags: ["Web Development", "Frontend", "Innovation"],
+    number: "02",
     year: "2022 - Present",
   },
   {
     title: "Outstanding Contribution to Open Source",
     tags: ["Web Development", "Frontend", "Innovation"],
+    number: "03",
     year: "2022 - Present",
   },
   {
     title: "Best Web Developer Award",
     tags: ["Web Development", "Frontend", "Innovation"],
-    year: "2022 - Present",
-  },
-  {
-    title: "Hackathon Champion",
-    tags: ["Web Development", "Frontend", "Innovation"],
-    year: "2022 - Present",
-  },
-  {
-    title: "Outstanding Contribution to Open Source",
-    tags: ["Web Development", "Frontend", "Innovation"],
+    number: "04",
     year: "2022 - Present",
   },
 ];
 
-const Award = () => {
-  const autoplay = useMemo(
-    () => Autoplay({ delay: 4000, stopOnInteraction: false }),
-    []
-  );
-
-  const [emblaRef] = useEmblaCarousel(
-    { loop: true, align: "start", dragFree: false },
-    [autoplay]
-  );
+function AwardCard({ title, tags, number, year, isLast }) {
+  const [hovered, setHovered] = useState(false);
 
   return (
-    <section id="award" className="mt-[324px] overflow-hidden bg-black py-32 text-white">
-      <Container>
-        <SectionFrame>
-          <p className="font-inconsolata text-base text-white">// Awards</p>
-          <h2 className="mt-3 text-[64px] font-medium capitalize leading-[76.8px] tracking-[-1.92px]">
-            Awards and <span className="text-accent">honors</span>
-          </h2>
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="relative border-t border-line"
+      style={{
+        height: 141,
+        borderBottom: isLast ? "1px solid #262626" : "none",
+      }}
+    >
+      {/* Animated top border overlay — scaleX 0 → 1 from left on hover */}
+      <motion.div
+        className="absolute top-0 left-0 right-0 h-px"
+        style={{
+          background: "#262626",
+          transformOrigin: "left center",
+          zIndex: 1,
+        }}
+        animate={{ scaleX: hovered ? 1 : 0 }}
+        initial={{ scaleX: 0 }}
+        transition={{ duration: DUR.hoverBorder, ease: EASE }}
+      />
 
-          <div ref={emblaRef} className="overflow-hidden">
-            <div className="flex gap-6">
-              {awards.map((award, index) => (
-                <motion.article
-                  key={`${award.title}-${index}`}
-                  initial={{ opacity: 0, y: 30 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, margin: "-100px" }}
-                  transition={{ duration: 0.5, delay: index * 0.05 }}
-                  className="min-w-0 flex-[0_0_88%] border border-white/10 p-12 transition-colors hover:border-accent md:flex-[0_0_48%] lg:flex-[0_0_48%]"
+      {/*
+        3-column grid:
+          Col 1 — 105px  : award logo (scale 0→1 on hover)
+          Col 2 — 683px  : title + tag dots
+          Col 3 — 210px  : number + year (right-aligned)
+      */}
+      <div
+        className="grid h-full items-center"
+        style={{ gridTemplateColumns: "105px 1fr 210px" }}
+      >
+        {/* ── Col 1: Logo (scale in on hover) ── */}
+        <div className="flex items-center justify-center">
+          <motion.img
+            src="/img/award-logo.jpg"
+            alt=""
+            className="object-contain"
+            style={{ width: 64, height: 64 }}
+            animate={{ scale: hovered ? 1 : 0 }}
+            initial={{ scale: 0 }}
+            transition={{ duration: DUR.hoverBorder, ease: EASE }}
+          />
+        </div>
+
+        {/* ── Col 2: Title + dot-separated tags ── */}
+        <div>
+          <h3
+            className="capitalize font-medium"
+            style={{
+              fontFamily: "Poppins, sans-serif",
+              fontSize: 40,
+              lineHeight: "48px",
+              letterSpacing: "-1.2px",
+              color: hovered ? "#FFFFFF" : "rgb(128, 128, 128)",
+              transition: "color 0.3s ease",
+            }}
+          >
+            {title}
+          </h3>
+
+          <div className="flex items-center gap-3 mt-2">
+            {tags.map((tag, i) => (
+              <span key={tag} className="flex items-center gap-3">
+                <span
+                  style={{
+                    fontFamily: "Inconsolata, monospace",
+                    fontSize: 14,
+                    color: "rgba(255,255,255,0.6)",
+                  }}
                 >
-                  <div className="mb-12 flex items-start justify-between gap-6">
-                    <span className="text-[clamp(5rem,10vw,7.5rem)] font-bold leading-none text-white/10">
-                      {String((index % 3) + 1).padStart(2, "0")}
-                    </span>
-                    <span className="mt-4 font-inconsolata text-sm text-white/60">
-                      {award.year}
-                    </span>
-                  </div>
-
-                  <h3 className="mb-6 text-[clamp(2rem,4vw,3rem)] font-semibold leading-[1.02] tracking-[-0.03em]">
-                    {award.title}
-                  </h3>
-
-                  <div className="flex flex-wrap gap-2">
-                    {award.tags.map((tag) => (
-                      <span
-                        key={tag}
-                        className="rounded-full border border-white/10 bg-white/5 px-3 py-1 font-inconsolata text-xs text-white/80"
-                      >
-                        {tag}
-                      </span>
-                    ))}
-                  </div>
-                </motion.article>
-              ))}
-            </div>
+                  {tag}
+                </span>
+                {i < tags.length - 1 && (
+                  <span
+                    className="rounded-full"
+                    style={{
+                      width: 4,
+                      height: 4,
+                      background: "rgba(255,255,255,0.6)",
+                      display: "inline-block",
+                      flexShrink: 0,
+                    }}
+                  />
+                )}
+              </span>
+            ))}
           </div>
-        </SectionFrame>
+        </div>
+
+        {/* ── Col 3: Large number + year (right-aligned) ── */}
+        <div className="text-right pr-0">
+          <div
+            className="font-medium"
+            style={{
+              fontFamily: "Poppins, sans-serif",
+              fontSize: 80,
+              lineHeight: "80px",
+              letterSpacing: "-2.4px",
+              color: hovered ? "#FFFFFF" : "rgb(128, 128, 128)",
+              transition: "color 0.3s ease",
+            }}
+          >
+            {number}
+          </div>
+          <p
+            className="mt-2"
+            style={{
+              fontFamily: "Inconsolata, monospace",
+              fontSize: 14,
+              color: "rgba(255,255,255,0.6)",
+            }}
+          >
+            {year}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+const Award = () => {
+  return (
+    <section id="award" className="mt-[324px] bg-black text-white">
+      <Container>
+        {/* Section title — LEFT-aligned */}
+        <div className="mb-12">
+          <p
+            style={{
+              fontFamily: "Inconsolata, monospace",
+              fontSize: 16,
+              color: "#ffffff",
+              marginBottom: 12,
+            }}
+          >
+            // Awards
+          </p>
+          <h2
+            className="font-medium capitalize"
+            style={{
+              fontFamily: "Poppins, sans-serif",
+              fontSize: 64,
+              lineHeight: "76.8px",
+              letterSpacing: "-1.92px",
+              color: "#ffffff",
+            }}
+          >
+            Awards and <span style={{ color: "#FF4F22" }}>honors</span>
+          </h2>
+        </div>
+
+        {/* Vertical list — no gap, each card 141px tall */}
+        <div>
+          {awards.map((award, i) => (
+            <AwardCard
+              key={`${award.title}-${i}`}
+              {...award}
+              isLast={i === awards.length - 1}
+            />
+          ))}
+        </div>
       </Container>
     </section>
   );

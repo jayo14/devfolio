@@ -1,11 +1,6 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { motion } from "framer-motion";
-import { ArrowUpRight } from "lucide-react";
-import { FaGithub, FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
-import { SiHashnode } from "react-icons/si";
-import SectionFrame from "./SectionFrame.jsx";
 import PlusCorner from "./PlusCorner.jsx";
 import { Container } from "./Container.jsx";
 
@@ -14,28 +9,87 @@ const schema = z.object({
   lastName: z.string().min(1, "Last name is required"),
   email: z.string().email("Enter a valid email"),
   phone: z.string().min(6, "Enter a valid phone number"),
-  message: z.string().min(10, "Message must be at least 10 characters").max(500, "Message must be 500 characters or less"),
+  message: z.string().min(10, "Message must be at least 10 characters").max(500, "500 characters max"),
 });
 
-const socials = [
-  { label: "GitHub", href: "https://github.com/jayo14/", Icon: FaGithub },
-  { label: "LinkedIn", href: "https://linkedin.com/in/john-samuel-cgx", Icon: FaLinkedinIn },
-  { label: "Twitter", href: "https://x.com/JohnASamue24013", Icon: FaXTwitter },
-  { label: "Hashnode", href: "https://hashnode.com/@codegallantx", Icon: SiHashnode },
-];
+/**
+ * FormField — bottom-border-only input/textarea
+ *
+ *  label      : visible label text
+ *  required   : shows accent asterisk
+ *  placeholder
+ *  type       : input type (default "text")
+ *  textarea   : renders <textarea rows={5} />
+ *  error      : validation error string
+ *  register   : react-hook-form register ref
+ */
+function FormField({ label, required, placeholder, type = "text", textarea = false, error, register }) {
+  const baseStyle = {
+    width: "100%",
+    marginTop: 8,
+    background: "transparent",
+    borderTop: "none",
+    borderLeft: "none",
+    borderRight: "none",
+    borderBottom: "1px solid rgb(102, 102, 102)",
+    outline: "none",
+    paddingTop: 12,
+    paddingBottom: 12,
+    fontFamily: "Inconsolata, monospace",
+    fontSize: textarea ? 16 : 18,
+    color: "#ffffff",
+    transition: "border-color 0.2s ease",
+    resize: "none",
+  };
 
-function Field({ label, error, children }) {
   return (
     <label className="block">
-      <span className="font-inconsolata text-xs uppercase tracking-[0.18em] text-white/60">
+      <span
+        style={{
+          fontFamily: "Poppins, sans-serif",
+          fontSize: 14,
+          color: "#ffffff",
+        }}
+      >
         {label}
+        {required && (
+          <span style={{ color: "#FF4F22", marginLeft: 2 }}>*</span>
+        )}
       </span>
-      <div className="mt-3">{children}</div>
-      {error ? (
-        <span className="mt-2 block font-inconsolata text-xs text-white">
+
+      {textarea ? (
+        <textarea
+          {...register}
+          placeholder={placeholder}
+          rows={5}
+          style={baseStyle}
+          onFocus={(e) => (e.currentTarget.style.borderBottomColor = "#FF4F22")}
+          onBlur={(e) => (e.currentTarget.style.borderBottomColor = "rgb(102, 102, 102)")}
+        />
+      ) : (
+        <input
+          {...register}
+          type={type}
+          placeholder={placeholder}
+          style={baseStyle}
+          onFocus={(e) => (e.currentTarget.style.borderBottomColor = "#FF4F22")}
+          onBlur={(e) => (e.currentTarget.style.borderBottomColor = "rgb(102, 102, 102)")}
+        />
+      )}
+
+      {error && (
+        <span
+          style={{
+            display: "block",
+            marginTop: 4,
+            fontFamily: "Inconsolata, monospace",
+            fontSize: 12,
+            color: "#FF4F22",
+          }}
+        >
           {error}
         </span>
-      ) : null}
+      )}
     </label>
   );
 }
@@ -63,132 +117,133 @@ const Contact = () => {
   return (
     <section id="contact" className="mt-[324px] bg-black pt-[324px] text-white">
       <Container>
-        <SectionFrame className="grid gap-20 lg:grid-cols-2">
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6 }}
+        {/* ── Centered title block with TOP border ── */}
+        <div
+          className="text-center"
+          style={{
+            borderTop: "1px solid #262626",
+            paddingTop: 48,
+            paddingBottom: 48,
+          }}
+        >
+          <p
+            style={{
+              fontFamily: "Inconsolata, monospace",
+              fontSize: 16,
+              color: "#ffffff",
+              marginBottom: 12,
+            }}
           >
-            <p className="font-inconsolata text-base text-white">// Contact</p>
-            <h2 className="mt-3 text-[64px] font-medium leading-[76.8px] tracking-[-1.92px]">
-              Success is a team play, right? <span className="text-accent">Let&apos;s work</span> together!
-            </h2>
-            <p className="mt-8 max-w-md font-inconsolata text-white/60">
-              Let&apos;s discuss your next project. I&apos;m currently available for
-              freelance work or full-time positions.
-            </p>
+            // Contact
+          </p>
+          <h2
+            className="font-medium"
+            style={{
+              fontFamily: "Poppins, sans-serif",
+              fontSize: 40,
+              lineHeight: "48px",
+              letterSpacing: "-1.2px",
+              color: "#ffffff",
+            }}
+          >
+            Success is a team play, right?{" "}
+            <span style={{ color: "#FF4F22" }}>Let&apos;s work</span>{" "}
+            together!
+          </h2>
+        </div>
 
-            <div className="mt-12 space-y-4 font-inconsolata text-white/80">
-              <a className="block transition-colors hover:text-[rgb(161,170,170)]" href="mailto:LGC.studio@gmail.com">
-                LGC.studio@gmail.com
-              </a>
-              <a className="block transition-colors hover:text-[rgb(161,170,170)]" href="tel:+34123456789">
-                +34 123456789
-              </a>
-            </div>
+        {/* ── Contact card: border frame + 4 PlusCorners ── */}
+        <div className="relative border border-line">
+          <PlusCorner corner="top-left" color="white" />
+          <PlusCorner corner="top-right" color="white" />
+          <PlusCorner corner="bottom-right" color="white" />
+          <PlusCorner corner="bottom-left" color="white" />
 
-            <div className="mt-12 flex gap-4">
-              {socials.map(({ label, href, Icon }) => (
-                <a
-                  key={label}
-                  href={href}
-                  target="_blank"
-                  rel="noreferrer"
-                  aria-label={label}
-                  className="flex h-12 w-12 items-center justify-center border border-white/20 text-white transition-colors hover:border-accent hover:bg-accent hover:text-black"
-                >
-                  <Icon className="h-5 w-5" aria-hidden="true" />
-                </a>
-              ))}
-            </div>
-          </motion.div>
-
-          <motion.form
+          {/* Form — max-w-520px, centered, p-12 */}
+          <form
             onSubmit={handleSubmit(onSubmit)}
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.6, delay: 0.1 }}
-            className="relative space-y-8"
+            style={{ maxWidth: 520, margin: "0 auto", padding: 48 }}
           >
-            {[0, 1, 2, 3].map((cornerIndex) => (
-              <PlusCorner
-                key={`contact-corner-${cornerIndex}`}
-                corner={
-                  cornerIndex === 0
-                    ? "top-left"
-                    : cornerIndex === 1
-                      ? "top-right"
-                      : cornerIndex === 2
-                        ? "bottom-right"
-                        : "bottom-left"
-                }
-                animated
-                delay={0.12 + cornerIndex * 0.08}
+            <div
+              className="grid gap-6"
+              style={{ gridTemplateColumns: "1fr 1fr", marginBottom: 32 }}
+            >
+              <FormField
+                label="First Name"
+                required
+                placeholder="Your first name"
+                register={register("firstName")}
+                error={errors.firstName?.message}
               />
-            ))}
-
-            <div className="grid gap-6 md:grid-cols-2">
-              <Field label="Your first name" error={errors.firstName?.message}>
-                <input
-                  {...register("firstName")}
-                  placeholder="John"
-                  className="w-full border-b border-white/20 bg-transparent py-3 font-inconsolata text-white outline-none transition-colors placeholder:text-white/30 focus:border-accent"
-                />
-              </Field>
-
-              <Field label="Your last name" error={errors.lastName?.message}>
-                <input
-                  {...register("lastName")}
-                  placeholder="Doe"
-                  className="w-full border-b border-white/20 bg-transparent py-3 font-inconsolata text-white outline-none transition-colors placeholder:text-white/30 focus:border-accent"
-                />
-              </Field>
+              <FormField
+                label="Last Name"
+                required
+                placeholder="Your last name"
+                register={register("lastName")}
+                error={errors.lastName?.message}
+              />
             </div>
 
-            <Field label="Your email address" error={errors.email?.message}>
-              <input
+            <div style={{ marginBottom: 32 }}>
+              <FormField
+                label="Email"
+                required
+                placeholder="Your email address"
                 type="email"
-                {...register("email")}
-                placeholder="john@example.com"
-                className="w-full border-b border-white/20 bg-transparent py-3 font-inconsolata text-white outline-none transition-colors placeholder:text-white/30 focus:border-accent"
+                register={register("email")}
+                error={errors.email?.message}
               />
-            </Field>
+            </div>
 
-            <Field label="Phone" error={errors.phone?.message}>
-              <input
-                type="tel"
-                {...register("phone")}
+            <div style={{ marginBottom: 32 }}>
+              <FormField
+                label="Phone"
+                required
                 placeholder="+1 234 5678"
-                className="w-full border-b border-white/20 bg-transparent py-3 font-inconsolata text-white outline-none transition-colors placeholder:text-white/30 focus:border-accent"
+                type="tel"
+                register={register("phone")}
+                error={errors.phone?.message}
               />
-            </Field>
+            </div>
 
-            <Field label="Write your message here..." error={errors.message?.message}>
-              <textarea
-                {...register("message")}
-                rows={5}
+            <div style={{ marginBottom: 32 }}>
+              <FormField
+                label="Message"
                 placeholder="Write your message here..."
-                className="w-full border-b border-white/20 bg-transparent py-3 font-inconsolata text-white outline-none transition-colors placeholder:text-white/30 focus:border-accent"
+                textarea
+                register={register("message")}
+                error={errors.message?.message}
               />
-            </Field>
+            </div>
 
+            {/* Submit button — full width, 48px tall, accent border at rest → solid accent fill on hover */}
             <button
               type="submit"
-              className="group relative inline-flex h-[58px] w-[324px] items-center gap-3 overflow-hidden border border-line px-8 font-sans text-base text-white"
+              style={{
+                width: "100%",
+                height: 48,
+                background: "transparent",
+                color: "#ffffff",
+                fontFamily: "Poppins, sans-serif",
+                fontSize: 16,
+                fontWeight: 400,
+                border: "1px solid #FF4F22",
+                cursor: "pointer",
+                transition: "background-color 0.3s ease, color 0.3s ease",
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.background = "#FF4F22";
+                e.currentTarget.style.color = "#000000";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.background = "transparent";
+                e.currentTarget.style.color = "#ffffff";
+              }}
             >
-              <span className="relative z-10 transition-colors duration-300">
-                Submit
-              </span>
-              <ArrowUpRight
-                className="relative z-10 h-4 w-4 transition-opacity duration-300 group-hover:opacity-0"
-                aria-hidden="true"
-              />
-              <span className="absolute inset-2 origin-left scale-0 bg-accent transition-transform duration-300 group-hover:scale-100" />
+              Submit
             </button>
-          </motion.form>
-        </SectionFrame>
+          </form>
+        </div>
       </Container>
     </section>
   );

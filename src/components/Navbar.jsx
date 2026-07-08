@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { Container } from "./Container.jsx";
+import { EASE, DUR } from "../lib/easing.js";
 
 const links = [
   { label: "Home", href: "#home" },
@@ -23,7 +24,7 @@ export function Navbar() {
       animate={{
         backgroundColor: scrolled ? "rgb(21, 21, 21)" : "rgba(0, 0, 0, 0)",
       }}
-      transition={{ duration: 0.3 }}
+      transition={{ duration: DUR.hover, ease: EASE }}
       className="fixed inset-x-0 top-0 z-[1000] h-[77px]"
     >
       <Container className="flex h-full items-center justify-between">

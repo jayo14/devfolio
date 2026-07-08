@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
+import { EASE, DUR } from "../lib/easing.js";
 import PlusCorner from "./PlusCorner.jsx";
 import { Container } from "./Container.jsx";
 
@@ -120,7 +121,7 @@ function ServiceCard({ title, titleAccent, tag, subTags, desc }) {
         <motion.div
           initial={false}
           animate={{ opacity: hovered ? 1 : 0 }}
-          transition={{ duration: 0.3 }}
+          transition={{ duration: DUR.hover, ease: EASE }}
           className="mt-auto"
         >
           <p className="font-inconsolata text-base text-muted">{desc}</p>

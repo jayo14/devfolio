@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowUpRight } from "lucide-react";
+import { EASE, DUR } from "../lib/easing.js";
 
 export function GhostButton({ children, href = "#", className = "" }) {
   const [hovered, setHovered] = useState(false);
@@ -18,7 +19,7 @@ export function GhostButton({ children, href = "#", className = "" }) {
       <motion.span
         className="relative z-10"
         animate={{ opacity: hovered ? 0 : 1 }}
-        transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+        transition={{ duration: DUR.hover, ease: EASE }}
       >
         <ArrowUpRight className="h-4 w-4" aria-hidden="true" />
       </motion.span>
@@ -28,7 +29,7 @@ export function GhostButton({ children, href = "#", className = "" }) {
         className="absolute inset-2 z-0 origin-left bg-accent"
         initial={false}
         animate={{ scaleX: hovered ? 1 : 0, scaleY: hovered ? 1 : 0 }}
-        transition={{ duration: 0.4, ease: [0.4, 0, 0.2, 1] }}
+        transition={{ duration: DUR.hoverBorder, ease: EASE }}
         style={{ transformOrigin: "left center" }}
       />
     </motion.a>

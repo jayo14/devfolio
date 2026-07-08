@@ -1,5 +1,6 @@
 import { motion } from "framer-motion";
 import PlusCorner from "./PlusCorner.jsx";
+import { EASE, DUR } from "../lib/easing.js";
 
 const lineVariants = {
   hidden: { scaleX: 0, scaleY: 0 },
@@ -7,9 +8,9 @@ const lineVariants = {
     scaleX: 1,
     scaleY: 1,
     transition: {
-      duration: 0.6,
+      duration: DUR.border,
       delay: i * 0.15,
-      ease: [0.4, 0, 0.2, 1],
+      ease: EASE,
     },
   }),
 };

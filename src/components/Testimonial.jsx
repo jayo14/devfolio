@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
-import SectionHeader from "./SectionHeader.jsx";
-import SectionFrame from "./SectionFrame.jsx";
+import { EASE, EASE_IN_OUT, DUR } from "../lib/easing.js";
 import PlusCorner from "./PlusCorner.jsx";
 import { Container } from "./Container.jsx";
 
@@ -25,7 +24,7 @@ const testimonials = [
     role: "Product Lead",
     avatar: "https://i.pravatar.cc/120?img=5",
     quote:
-      "Hubfolio studio ability to create a high quality UI is stands out. It's something we placed a premium on. A studio with passionate, professional, fun and full creativity. Recommend!",
+      "Their ability to create high quality UI stands out — passionate, professional, and full of creativity. Highly recommend!",
   },
   {
     name: "Daniel Okafor",
@@ -50,6 +49,52 @@ const testimonials = [
   },
 ];
 
+/** 8×8px L-shaped corner marks — accent color, -1px offset from each corner */
+function LCorners({ visible }) {
+  return (
+    <motion.div
+      animate={{ opacity: visible ? 1 : 0 }}
+      transition={{ duration: DUR.hover }}
+      className="absolute inset-0 pointer-events-none"
+      aria-hidden="true"
+    >
+      {/* Top-left */}
+      <div className="absolute top-[-1px] left-[-1px] w-2 h-2 border-t border-l border-accent" />
+      {/* Top-right */}
+      <div className="absolute top-[-1px] right-[-1px] w-2 h-2 border-t border-r border-accent" />
+      {/* Bottom-right */}
+      <div className="absolute bottom-[-1px] right-[-1px] w-2 h-2 border-b border-r border-accent" />
+      {/* Bottom-left */}
+      <div className="absolute bottom-[-1px] left-[-1px] w-2 h-2 border-b border-l border-accent" />
+    </motion.div>
+  );
+}
+
+function TestimonialThumb({ avatar, name, isActive, onClick }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-label={`Select testimonial from ${name}`}
+      className="relative block"
+      style={{
+        width: 108,
+        height: 108,
+        opacity: isActive ? 1 : 0.5,
+        transition: "opacity 0.3s ease",
+      }}
+    >
+      <img
+        src={avatar}
+        alt={name}
+        className="w-full h-full object-cover"
+        loading="lazy"
+      />
+      <LCorners visible={isActive} />
+    </button>
+  );
+}
+
 const Testimonial = () => {
   const [active, setActive] = useState(0);
 
@@ -57,7 +102,6 @@ const Testimonial = () => {
     const timer = window.setInterval(() => {
       setActive((current) => (current + 1) % testimonials.length);
     }, 6000);
-
     return () => window.clearInterval(timer);
   }, []);
 
@@ -69,129 +113,109 @@ const Testimonial = () => {
       className="mt-[324px] bg-black pt-[324px] pb-[80px] text-white"
     >
       <Container>
-        <SectionFrame>
-          <SectionHeader
-            tag="// Testimonial"
-            title="Client Feedback"
-            highlight="Matters"
-            align="center"
-          />
-
-          <motion.div
-            initial={{ opacity: 0, y: 32 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-            className="relative mx-auto max-w-4xl px-6 py-12 text-center"
+        {/* Center-aligned section title */}
+        <div className="text-center mb-16">
+          <p className="font-inconsolata text-base text-white mb-3">
+            // Testimonial
+          </p>
+          <h2
+            className="text-[64px] font-medium capitalize text-white"
+            style={{ lineHeight: "76.8px", letterSpacing: "-1.92px" }}
           >
-            {[0, 1, 2, 3].map((cornerIndex) => (
-              <PlusCorner
-                key={`testimonial-corner-${cornerIndex}`}
-                corner={
-                  cornerIndex === 0
-                    ? "top-left"
-                    : cornerIndex === 1
-                      ? "top-right"
-                      : cornerIndex === 2
-                        ? "bottom-right"
-                        : "bottom-left"
-                }
-                color="accent"
-                animated
-                delay={0.12 + cornerIndex * 0.08}
+            Client feedback{" "}
+            <span className="text-accent">matters</span>
+          </h2>
+        </div>
+
+        {/* Avatar row — 6 thumbs × 108px, gap-0, total 648px */}
+        <div className="flex justify-center mb-12">
+          <div
+            className="grid grid-cols-6"
+            style={{ width: 648, gap: 0 }}
+          >
+            {testimonials.map((t, i) => (
+              <TestimonialThumb
+                key={t.name}
+                avatar={t.avatar}
+                name={t.name}
+                isActive={i === active}
+                onClick={() => setActive(i)}
               />
             ))}
+          </div>
+        </div>
 
-            <div className="mb-16 flex flex-wrap justify-center gap-4 sm:gap-6">
-              {testimonials.map((testimonial, index) => {
-                const isActive = index === active;
+        {/* Active testimonial card — 1294px wide, accent PlusCorner marks */}
+        <div
+          className="relative mx-auto border border-line"
+          style={{ width: "min(1294px, 100%)" }}
+        >
+          {/* 4 PlusCorner marks in ACCENT color */}
+          <PlusCorner corner="top-left" color="accent" />
+          <PlusCorner corner="top-right" color="accent" />
+          <PlusCorner corner="bottom-right" color="accent" />
+          <PlusCorner corner="bottom-left" color="accent" />
 
-                return (
-                  <motion.button
-                    key={testimonial.name}
-                    type="button"
-                    onClick={() => setActive(index)}
-                    animate={{
-                      scale: isActive ? 1.2 : 1,
-                      opacity: isActive ? 1 : 0.4,
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={active}
+              initial={{ opacity: 0, x: 30 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -30 }}
+              transition={{ duration: DUR.slide, ease: EASE_IN_OUT }}
+              className="px-12 py-16"
+            >
+              <div className="grid grid-cols-2 gap-12 items-center">
+                {/* LEFT — quote text */}
+                <div>
+                  <p
+                    className="text-white"
+                    style={{
+                      fontFamily: "Poppins, sans-serif",
+                      fontSize: 24,
+                      fontWeight: 400,
+                      lineHeight: "33.6px",
                     }}
-                    transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
-                    className={`relative h-16 w-16 overflow-hidden rounded-full border border-white/10 bg-white/5 transition-all duration-300 ${
-                      isActive
-                        ? "ring-2 ring-accent ring-offset-4 ring-offset-black"
-                        : "hover:opacity-80"
-                    }`}
-                    aria-label={`Select testimonial from ${testimonial.name}`}
                   >
-                    {isActive ? (
-                      <>
-                        {[0, 1, 2, 3].map((cornerIndex) => (
-                          <PlusCorner
-                            key={`${testimonial.name}-corner-${cornerIndex}`}
-                            corner={
-                              cornerIndex === 0
-                                ? "top-left"
-                                : cornerIndex === 1
-                                  ? "top-right"
-                                  : cornerIndex === 2
-                                    ? "bottom-right"
-                                    : "bottom-left"
-                            }
-                            color="accent"
-                            animated
-                            delay={0.08 + cornerIndex * 0.06}
-                          />
-                        ))}
-                      </>
-                    ) : null}
-                    <img
-                      src={testimonial.avatar}
-                      alt={testimonial.name}
-                      className="h-full w-full object-cover"
-                      loading="lazy"
-                    />
-                  </motion.button>
-                );
-              })}
-            </div>
-
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={active}
-                initial={{ opacity: 0, y: 24 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -24 }}
-                transition={{ duration: 0.5, ease: [0.4, 0, 0.2, 1] }}
-                className="mx-auto max-w-4xl text-center"
-              >
-                <div className="mb-8 text-[4rem] leading-none text-accent/90">
-                  &ldquo;
+                    &ldquo;{activeTestimonial.quote}&rdquo;
+                  </p>
                 </div>
 
-                <p className="text-[clamp(1.6rem,3vw,2.75rem)] font-medium leading-[1.45] tracking-[-0.03em] text-white">
-                  {activeTestimonial.quote}
-                </p>
-
-                <div className="mt-10 flex items-center justify-center gap-4">
+                {/* RIGHT — avatar + name + role */}
+                <div className="flex items-center gap-6">
                   <img
                     src={activeTestimonial.avatar}
                     alt=""
-                    className="h-12 w-12 rounded-full object-cover"
+                    className="w-20 h-20 rounded-full object-cover flex-shrink-0"
                     loading="lazy"
                   />
-                  <div className="text-left">
-                    <p className="text-lg font-semibold text-white">
+                  <div>
+                    <div
+                      className="text-white"
+                      style={{
+                        fontFamily: "Poppins, sans-serif",
+                        fontSize: 24,
+                        fontWeight: 500,
+                      }}
+                    >
                       {activeTestimonial.name}
-                    </p>
-                    <p className="font-inconsolata text-sm text-white/60">
+                    </div>
+                    <p
+                      className="mt-1"
+                      style={{
+                        fontFamily: "Inconsolata, monospace",
+                        fontSize: 16,
+                        color: "rgba(255,255,255,0.6)",
+                      }}
+                    >
                       {activeTestimonial.role}
                     </p>
                   </div>
                 </div>
-              </motion.div>
-            </AnimatePresence>
-          </motion.div>
-        </SectionFrame>
+              </div>
+            </motion.div>
+          </AnimatePresence>
+        </div>
       </Container>
     </section>
   );

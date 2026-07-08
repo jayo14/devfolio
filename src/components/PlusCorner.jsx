@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { EASE, DUR } from "../lib/easing.js";
 
 export function PlusCorner({
   className = "",
@@ -33,7 +34,7 @@ export function PlusCorner({
       viewport={animated ? { once: true } : undefined}
       transition={
         animated
-          ? { duration: 0.5, delay, ease: [0.4, 0, 0.2, 1] }
+          ? { duration: DUR.reveal, delay, ease: EASE }
           : undefined
       }
       aria-hidden="true"

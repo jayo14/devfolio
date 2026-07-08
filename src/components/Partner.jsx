@@ -1,114 +1,170 @@
-import { useEffect, useRef, useState } from "react";
-import { animate, motion, useInView } from "framer-motion";
-import { SiBehance, SiUpwork } from "react-icons/si";
-import SectionFrame from "./SectionFrame.jsx";
+import { useState } from "react";
+import { motion } from "framer-motion";
+import { EASE, DUR } from "../lib/easing.js";
 import { Container } from "./Container.jsx";
 
-const stats = [
+/**
+ * Inline SVG logos — two versions each:
+ *   "normal"  = white fill/stroke
+ *   "hover"   = accent orange (#FF4F22) fill/stroke
+ *
+ * Each SVG is sized to fit within a 160×62 viewport.
+ */
+
+const GoodfirmsLogo = ({ color }) => (
+  <svg viewBox="0 0 160 44" fill="none" xmlns="http://www.w3.org/2000/svg" width="160" height="44">
+    <text
+      x="0" y="32"
+      fontFamily="'Poppins', sans-serif"
+      fontSize="28"
+      fontWeight="600"
+      fill={color}
+      letterSpacing="-0.5"
+    >
+      GoodFirms
+    </text>
+  </svg>
+);
+
+const ClutchLogo = ({ color }) => (
+  <svg viewBox="0 0 160 44" fill="none" xmlns="http://www.w3.org/2000/svg" width="160" height="44">
+    <text
+      x="0" y="32"
+      fontFamily="'Poppins', sans-serif"
+      fontSize="32"
+      fontWeight="700"
+      fill={color}
+      letterSpacing="-0.5"
+    >
+      Clutch
+    </text>
+  </svg>
+);
+
+const UpworkLogo = ({ color }) => (
+  <svg viewBox="0 0 160 44" fill="none" xmlns="http://www.w3.org/2000/svg" width="160" height="44">
+    <text
+      x="0" y="32"
+      fontFamily="'Poppins', sans-serif"
+      fontSize="30"
+      fontWeight="700"
+      fill={color}
+      letterSpacing="-0.5"
+    >
+      Upwork
+    </text>
+  </svg>
+);
+
+const BehanceLogo = ({ color }) => (
+  <svg viewBox="0 0 160 44" fill="none" xmlns="http://www.w3.org/2000/svg" width="160" height="44">
+    <text
+      x="0" y="32"
+      fontFamily="'Poppins', sans-serif"
+      fontSize="30"
+      fontWeight="700"
+      fill={color}
+      letterSpacing="-0.5"
+    >
+      Behance
+    </text>
+  </svg>
+);
+
+const partners = [
   {
-    icon: ({ className = "" }) => (
-      <div
-        className={`flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/5 font-semibold text-white/50 ${className}`}
-      >
-        G
-      </div>
-    ),
-    value: 4.8,
-    suffix: "/5",
-    label: "Star Rating",
-    source: "on Goodfirms",
+    LogoNormal: (props) => <GoodfirmsLogo color="#ffffff" {...props} />,
+    LogoHover:  (props) => <GoodfirmsLogo color="#FF4F22" {...props} />,
+    text: "4.8/5 Star Rating on Goodfirms",
   },
   {
-    icon: ({ className = "" }) => (
-      <div
-        className={`flex h-12 w-12 items-center justify-center rounded-full border border-white/10 bg-white/5 font-semibold text-white/50 ${className}`}
-      >
-        C
-      </div>
-    ),
-    value: 50,
-    prefix: "Top ",
-    suffix: " Global",
-    label: "Companies",
-    source: "on Clutch",
+    LogoNormal: (props) => <ClutchLogo color="#ffffff" {...props} />,
+    LogoHover:  (props) => <ClutchLogo color="#FF4F22" {...props} />,
+    text: "Top 50 Global Companies on Clutch",
   },
   {
-    icon: SiUpwork,
-    value: 95,
-    suffix: "%",
-    label: "Job Success",
-    source: "on Upwork",
+    LogoNormal: (props) => <UpworkLogo color="#ffffff" {...props} />,
+    LogoHover:  (props) => <UpworkLogo color="#FF4F22" {...props} />,
+    text: "95% Job Success on Upwork",
   },
   {
-    icon: SiBehance,
-    value: 20,
-    prefix: "Top ",
-    suffix: " Global Team",
-    label: "",
-    source: "on Behance",
+    LogoNormal: (props) => <BehanceLogo color="#ffffff" {...props} />,
+    LogoHover:  (props) => <BehanceLogo color="#FF4F22" {...props} />,
+    text: "Top 20 Global Team on Behance",
   },
 ];
 
-function CountUp({ to, decimals = 0 }) {
-  const ref = useRef(null);
-  const inView = useInView(ref, { once: true, margin: "-20% 0px" });
-  const [value, setValue] = useState(0);
-
-  useEffect(() => {
-    if (!inView) return;
-
-    const controls = animate(0, to, {
-      duration: 1.5,
-      ease: "easeOut",
-      onUpdate: (latest) => setValue(latest),
-    });
-
-    return () => controls.stop();
-  }, [inView, to]);
+/** Single partner card — vertical image-swap hover + 0.8→1.0 opacity */
+function PartnerCard({ LogoNormal, LogoHover, text }) {
+  const [hovered, setHovered] = useState(false);
 
   return (
-    <span ref={ref}>
-      {value.toFixed(decimals)}
-    </span>
+    <div
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="relative border-r border-b border-line flex flex-col items-center justify-center p-12 cursor-default"
+      style={{
+        width: 323,
+        height: 324,
+        opacity: hovered ? 1 : 0.8,
+        transition: "opacity 0.3s ease",
+      }}
+    >
+      {/* Logo wrap — 160×62px, overflow hidden, two logos stacked vertically */}
+      <div
+        className="relative overflow-hidden mb-8"
+        style={{ width: 160, height: 62 }}
+        aria-hidden="true"
+      >
+        {/* Normal (white) logo — sits at y:0, slides to y:-62 on hover */}
+        <motion.div
+          className="absolute left-0 top-0 w-full"
+          style={{ height: 62 }}
+          animate={{ y: hovered ? -62 : 0 }}
+          transition={{ duration: DUR.hoverBorder, ease: EASE }}
+        >
+          <LogoNormal />
+        </motion.div>
+
+        {/* Hover (orange) logo — sits at y:62, slides to y:0 on hover */}
+        <motion.div
+          className="absolute left-0 w-full"
+          style={{ top: 62, height: 62 }}
+          animate={{ y: hovered ? -62 : 0 }}
+          transition={{ duration: DUR.hoverBorder, ease: EASE }}
+        >
+          <LogoHover />
+        </motion.div>
+      </div>
+
+      {/* Info text — 16px Inconsolata 400, muted-2 gray (rgb(128,128,128)) */}
+      <p
+        className="text-center"
+        style={{
+          fontFamily: "Inconsolata, monospace",
+          fontSize: 16,
+          fontWeight: 400,
+          color: "rgb(128, 128, 128)",
+          lineHeight: "1.5",
+        }}
+      >
+        {text}
+      </p>
+    </div>
   );
 }
 
 const Partner = () => {
   return (
-    <section id="partner" className="mt-[80px] bg-black py-32 text-white">
+    <section id="partner" className="mt-[80px] bg-black text-white">
       <Container>
-        <SectionFrame>
-          <p className="font-inconsolata text-base text-white">// Partner</p>
-          <h2 className="mt-3 text-[64px] font-medium capitalize leading-[76.8px] tracking-[-1.92px]">
-            Partner with +150 brands
-          </h2>
-
-          <div className="grid grid-cols-1 gap-px border border-white/10 bg-white/10 md:grid-cols-2">
-            {stats.map((stat, index) => (
-              <motion.div
-                key={stat.source}
-                initial={{ opacity: 0, y: 30 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, margin: "-100px" }}
-                transition={{ duration: 0.5, delay: index * 0.1 }}
-                whileHover={{ y: -4 }}
-                className="bg-black p-12 transition-colors duration-300 hover:bg-[#0a0a0a]"
-              >
-                <div className="flex h-full flex-col gap-6">
-                  <stat.icon className="text-white/40" />
-                  <p className="text-[clamp(2.25rem,4vw,3.5rem)] font-semibold leading-none tracking-[-0.04em]">
-                    {stat.prefix ?? ""}
-                    <CountUp to={stat.value} decimals={stat.value % 1 ? 1 : 0} />
-                    {stat.suffix ?? ""} {stat.label}
-                  </p>
-                  <p className="font-inconsolata text-sm text-white/60">
-                    {stat.source}
-                  </p>
-                </div>
-              </motion.div>
-            ))}
-          </div>
-        </SectionFrame>
+        {/* 4-col grid; border-t + border-l on parent creates the outer top/left lines.
+            Each card adds border-r + border-b to complete the inner grid lines. */}
+        <div className="grid grid-cols-4 border-t border-l border-line">
+          {partners.map((p, i) => (
+            <PartnerCard key={i} {...p} />
+          ))}
+        </div>
       </Container>
     </section>
   );

@@ -39,7 +39,7 @@ function ToolboxCell({ Icon }) {
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="relative flex h-[160px] w-[161.5px] items-center justify-center border-r border-b border-line bg-card-bg"
+      className="relative flex h-[160px] w-[162px] items-center justify-center border-r border-b border-line bg-card-bg"
       style={{
         backgroundColor: hovered ? "#000000" : "#080808",
         borderTop: hovered ? "1px solid white" : "1px solid transparent",
@@ -60,7 +60,7 @@ const Tools = () => {
   return (
     <section id="about" className="mt-0 bg-black text-white">
       <Container>
-        <div className="grid grid-cols-1 lg:grid-cols-[646px_646px]">
+        <div className="grid grid-cols-[646px_646px]">
           <div className="flex flex-col justify-between py-12">
             <div>
               <p className="mb-3 font-inconsolata text-base text-white">// Tools</p>
@@ -72,7 +72,7 @@ const Tools = () => {
             <GhostButton href="/work">NixtNocode</GhostButton>
           </div>
 
-          <div className="border-t border-line lg:w-[646px]">
+          <div className="border-t border-line">
             <div className="grid grid-cols-4 grid-rows-3">
               {tools.map((Icon, index) => (
                 <ToolboxCell key={index} Icon={Icon} />

@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { EASE_OUT_EXPO, DUR } from "../lib/easing.js";
 
 function SlotDigit({ target, delay = 0 }) {
   return (
@@ -8,7 +9,7 @@ function SlotDigit({ target, delay = 0 }) {
         initial={{ y: 0 }}
         whileInView={{ y: -target * 100 }}
         viewport={{ once: true }}
-        transition={{ duration: 1.5, delay, ease: [0.16, 1, 0.3, 1] }}
+        transition={{ duration: DUR.digit, delay, ease: EASE_OUT_EXPO }}
       >
         {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9].map((n) => (
           <div

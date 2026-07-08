@@ -6,6 +6,7 @@ import { HiChevronLeft, HiChevronRight } from "react-icons/hi2";
 import GhostButton from "./GhostButton.jsx";
 import PlusCorner from "./PlusCorner.jsx";
 import { Container } from "./Container.jsx";
+import { EASE, DUR } from "../lib/easing.js";
 
 const projects = [
   {
@@ -136,7 +137,7 @@ const SelectedWork = () => {
                           y: isActive ? 0 : 10,
                           scale: isActive ? 1 : 0.985,
                         }}
-                        transition={{ duration: 0.6, ease: [0.4, 0, 0.2, 1] }}
+                        transition={{ duration: DUR.border, ease: EASE }}
                         className="relative aspect-[16/10] overflow-hidden border border-white/10 bg-[#090909]"
                       >
                         <div
