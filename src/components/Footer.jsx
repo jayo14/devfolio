@@ -182,7 +182,7 @@ const Footer = () => {
           left={
             <img
               src="https://cdn.prod.website-files.com/67fcb048fa0321997d843f04/67fccc9a6e55c70afefa2493_6e96c74c8ba674e1e9598f4789f9d7ee_logo-footer-2x.png"
-              alt="DevMastery"
+              alt="CodeGallantX"
               style={{ height: 42, width: "auto" }}
             />
           }
@@ -229,8 +229,8 @@ const Footer = () => {
                 margin: 0,
               }}
             >
-              John{" "}
-              <span style={{ color: "#FF4F22" }}>Lennon</span>
+              Samuel{" "}
+              <span style={{ color: "#FF4F22" }}>John</span>
             </h2>
           }
           right={
@@ -280,34 +280,6 @@ const Footer = () => {
             marginTop: 8,
           }}
         >
-          <p
-            style={{
-              fontFamily: "Poppins, sans-serif",
-              fontSize: 16,
-              color: "#ffffff",
-              margin: 0,
-            }}
-          >
-            © 2025 Copyright — DevMastery | Designed by &quot;UIXFlow&quot; |{" "}
-            <a
-              href="#"
-              style={{ color: "inherit", transition: "color 0.2s" }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "#FF4F22")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "#ffffff")}
-            >
-              License
-            </a>{" "}
-            | Powered by{" "}
-            <a
-              href="#"
-              style={{ color: "inherit", transition: "color 0.2s" }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "#FF4F22")}
-              onMouseLeave={(e) => (e.currentTarget.style.color = "#ffffff")}
-            >
-              Webflow
-            </a>
-          </p>
-
           <a
             href="#root"
             onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}

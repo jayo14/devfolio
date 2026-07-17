@@ -31,7 +31,7 @@ export function Navbar() {
         <a href="#home" className="block">
           <img
             src="https://cdn.prod.website-files.com/67fcb048fa0321997d843f04/67fcc14dad82dcc3c1e3c98f_fb7499b361b41cce0650881b6dc1f265_logo-2x.png"
-            alt="DevMastery"
+            alt="CodeGallantX"
             width={251}
             height={42}
             className="h-[42px] w-auto"

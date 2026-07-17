@@ -71,7 +71,7 @@ const Hero = () => {
               </p>
 
               <h1 className="font-sans text-[120px] font-medium leading-[120px] tracking-[-4.8px] text-white">
-                John <span className="text-accent">Lennon</span>
+                Samuel <span className="text-accent">John</span>
               </h1>
 
               <p className="mt-4 font-sans text-[40px] font-normal text-[rgba(255,255,255,0.6)]">
