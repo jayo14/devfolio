@@ -1,6 +1,4 @@
 import { useState } from "react";
-import { motion } from "framer-motion";
-import { EASE, DUR } from "../lib/easing.js";
 import { Container } from "./Container.jsx";
 
 const awards = [
@@ -37,55 +35,50 @@ function AwardCard({ title, tags, number, year, isLast }) {
     <div
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="relative border-t border-line"
+      className="relative h-[141px]"
       style={{
-        height: 141,
+        borderTop: "1px solid #262626",
         borderBottom: isLast ? "1px solid #262626" : "none",
       }}
     >
-      {/* Animated top border overlay — scaleX 0 → 1 from left on hover */}
-      <motion.div
-        className="absolute top-0 left-0 right-0 h-px"
+      {/* Animated top border line — scaleX 0 -> 1 on hover */}
+      <div
+        className="absolute top-0 left-0 right-0 h-px bg-line"
         style={{
-          background: "#262626",
           transformOrigin: "left center",
+          transform: `scaleX(${hovered ? 1 : 0})`,
+          transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
           zIndex: 1,
         }}
-        animate={{ scaleX: hovered ? 1 : 0 }}
-        initial={{ scaleX: 0 }}
-        transition={{ duration: DUR.hoverBorder, ease: EASE }}
       />
 
-      {/*
-        3-column grid:
-          Col 1 — 105px  : award logo (scale 0→1 on hover)
-          Col 2 — 683px  : title + tag dots
-          Col 3 — 210px  : number + year (right-aligned)
-      */}
+      {/* Grid: 105px / 683px / 210px */}
       <div
         className="grid h-full items-center"
-        style={{ gridTemplateColumns: "105px 1fr 210px" }}
+        style={{ gridTemplateColumns: "105px 683px 210px" }}
       >
-        {/* ── Col 1: Logo (scale in on hover) ── */}
+        {/* Col 1: Award logo — scale 0 -> 1 on hover */}
         <div className="flex items-center justify-center">
-          <motion.img
+          <img
             src="/img/award-logo.jpg"
             alt=""
             className="object-contain"
-            style={{ width: 64, height: 64 }}
-            animate={{ scale: hovered ? 1 : 0 }}
-            initial={{ scale: 0 }}
-            transition={{ duration: DUR.hoverBorder, ease: EASE }}
+            style={{
+              width: 64,
+              height: 64,
+              transform: `scale(${hovered ? 1 : 0})`,
+              transition: "transform 0.4s cubic-bezier(0.4, 0, 0.2, 1)",
+            }}
           />
         </div>
 
-        {/* ── Col 2: Title + dot-separated tags ── */}
+        {/* Col 2: Title + tags */}
         <div>
           <h3
             className="capitalize font-medium"
             style={{
               fontFamily: "Poppins, sans-serif",
-              fontSize: 40,
+              fontSize: "40px",
               lineHeight: "48px",
               letterSpacing: "-1.2px",
               color: hovered ? "#FFFFFF" : "rgb(128, 128, 128)",
@@ -95,42 +88,25 @@ function AwardCard({ title, tags, number, year, isLast }) {
             {title}
           </h3>
 
+          {/* Tags with DOT separators (not pills) */}
           <div className="flex items-center gap-3 mt-2">
-            {tags.map((tag, i) => (
-              <span key={tag} className="flex items-center gap-3">
-                <span
-                  style={{
-                    fontFamily: "Inconsolata, monospace",
-                    fontSize: 14,
-                    color: "rgba(255,255,255,0.6)",
-                  }}
-                >
-                  {tag}
-                </span>
+            {tags.map((t, i) => (
+              <span key={t} className="flex items-center gap-3">
+                <span className="font-mono text-sm text-muted">{t}</span>
                 {i < tags.length - 1 && (
-                  <span
-                    className="rounded-full"
-                    style={{
-                      width: 4,
-                      height: 4,
-                      background: "rgba(255,255,255,0.6)",
-                      display: "inline-block",
-                      flexShrink: 0,
-                    }}
-                  />
+                  <span className="w-1 h-1 rounded-full bg-muted" />
                 )}
               </span>
             ))}
           </div>
         </div>
 
-        {/* ── Col 3: Large number + year (right-aligned) ── */}
-        <div className="text-right pr-0">
+        {/* Col 3: Number + year */}
+        <div className="text-right">
           <div
-            className="font-medium"
+            className="font-sans font-medium"
             style={{
-              fontFamily: "Poppins, sans-serif",
-              fontSize: 80,
+              fontSize: "80px",
               lineHeight: "80px",
               letterSpacing: "-2.4px",
               color: hovered ? "#FFFFFF" : "rgb(128, 128, 128)",
@@ -139,16 +115,7 @@ function AwardCard({ title, tags, number, year, isLast }) {
           >
             {number}
           </div>
-          <p
-            className="mt-2"
-            style={{
-              fontFamily: "Inconsolata, monospace",
-              fontSize: 14,
-              color: "rgba(255,255,255,0.6)",
-            }}
-          >
-            {year}
-          </p>
+          <p className="font-mono text-sm text-muted mt-2">{year}</p>
         </div>
       </div>
     </div>
