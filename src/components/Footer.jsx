@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { FaGithub, FaDribbble, FaInstagram, FaXTwitter } from "react-icons/fa6";
+import { FaDev, FaGithub, FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
 import { EASE, DUR } from "../lib/easing.js";
 import SectionFrame from "./SectionFrame.jsx";
 import { Container } from "./Container.jsx";
+import BrandLogo from "./BrandLogo.jsx";
 
 /* ─────────────────────────────────────────────
    FOOTER LINK COLUMN
@@ -130,17 +131,17 @@ function SocialCell({ filled, link = null }) {
 const socialGrid = [
   // Row 1
   { filled: false },
-  { filled: true,  link: null },
+  { filled: true, link: { icon: FaXTwitter, href: "https://x.com/JohnASamue24013", label: "X / Twitter" } },
   { filled: false },
-  { filled: true,  link: { icon: FaGithub,   href: "https://github.com/jayo14/",          label: "GitHub" } },
+  { filled: true, link: { icon: FaLinkedinIn, href: "https://linkedin.com/in/john-samuel-cgx", label: "LinkedIn" } },
   // Row 2
-  { filled: true,  link: { icon: FaXTwitter, href: "https://x.com/JohnASamue24013",       label: "Twitter" } },
+  { filled: true, link: { icon: FaGithub, href: "https://github.com/jayo14/", label: "GitHub" } },
   { filled: false },
-  { filled: true,  link: { icon: FaDribbble, href: "https://dribbble.com/",               label: "Dribbble" } },
+  { filled: true, link: { icon: FaDev, href: "http://dev.to/codegallantx", label: "dev.to" } },
   { filled: false },
   // Row 3
   { filled: false },
-  { filled: true,  link: { icon: FaInstagram, href: "https://www.instagram.com/",         label: "Instagram" } },
+  { filled: true, link: null },
   { filled: false },
   { filled: false },
 ];
@@ -180,20 +181,16 @@ const Footer = () => {
         <FooterRow
           rowHeight={204}
           left={
-            <img
-              src="https://cdn.prod.website-files.com/67fcb048fa0321997d843f04/67fccc9a6e55c70afefa2493_6e96c74c8ba674e1e9598f4789f9d7ee_logo-footer-2x.png"
-              alt="CodeGallantX"
-              style={{ height: 42, width: "auto" }}
-            />
+            <BrandLogo />
           }
           right={
             <FooterLinkCol
               title="MORE"
               links={[
-                { label: "ABOUT",   href: "#" },
-                { label: "WORK",    href: "#" },
-                { label: "BLOG",    href: "#blog" },
-                { label: "CONTACT", href: "#contact" },
+                { label: "ABOUT",   href: "/about-us" },
+                { label: "WORK",    href: "/work" },
+                { label: "BLOG",    href: "/blog" },
+                { label: "CONTACT", href: "/contact" },
               ]}
             />
           }
@@ -229,8 +226,8 @@ const Footer = () => {
                 margin: 0,
               }}
             >
-              Samuel{" "}
-              <span style={{ color: "#FF4F22" }}>John</span>
+              John{" "}
+              <span style={{ color: "#FF4F22" }}>Samuel</span>
             </h2>
           }
           right={
@@ -269,32 +266,9 @@ const Footer = () => {
         />
 
         {/* ── COPYRIGHT BAR ── */}
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "space-between",
-            alignItems: "center",
-            borderTop: "1px solid #262626",
-            paddingTop: 24,
-            paddingBottom: 24,
-            marginTop: 8,
-          }}
-        >
-          <a
-            href="#root"
-            onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-            style={{
-              fontFamily: "Inconsolata, monospace",
-              fontSize: 20,
-              color: "#ffffff",
-              textDecoration: "none",
-              transition: "color 0.2s ease",
-            }}
-            onMouseEnter={(e) => (e.currentTarget.style.color = "#FF4F22")}
-            onMouseLeave={(e) => (e.currentTarget.style.color = "#ffffff")}
-          >
-            BACK TO TOP
-          </a>
+        <div className="footer-copyright">
+          <p>© 2026 CodeGallantX Inspired by UIXFlow</p>
+          <a href="#root" onClick={(event) => { event.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}>BACK TO TOP</a>
         </div>
 
       </Container>

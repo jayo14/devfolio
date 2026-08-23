@@ -1,220 +1,83 @@
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { EASE, EASE_IN_OUT, DUR } from "../lib/easing.js";
+import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { HiChevronLeft, HiChevronRight } from "react-icons/hi2";
 import PlusCorner from "./PlusCorner.jsx";
 import { Container } from "./Container.jsx";
+import { originalAssets } from "../lib/siteData.js";
 
 const testimonials = [
-  {
-    name: "Emma Thompson",
-    role: "Marketing Director",
-    avatar: "https://i.pravatar.cc/120?img=1",
-    quote:
-      "Transformed our website with stunning visuals and smooth functionality, doubling user engagement.",
-  },
-  {
-    name: "Michael Chen",
-    role: "Chief Technology Officer",
-    avatar: "https://i.pravatar.cc/120?img=12",
-    quote:
-      "Delivered a scalable backend with flawless execution, streamlining our operations significantly.",
-  },
-  {
-    name: "Sarah Williams",
-    role: "Product Lead",
-    avatar: "https://i.pravatar.cc/120?img=5",
-    quote:
-      "Their ability to create high quality UI stands out — passionate, professional, and full of creativity. Highly recommend!",
-  },
-  {
-    name: "Daniel Okafor",
-    role: "Founder, Northstar",
-    avatar: "https://i.pravatar.cc/120?img=32",
-    quote:
-      "The collaboration felt precise from kickoff to launch. Every interaction reinforced trust in the process and the final result.",
-  },
-  {
-    name: "Aisha Bello",
-    role: "Growth Lead",
-    avatar: "https://i.pravatar.cc/120?img=47",
-    quote:
-      "They brought polish and speed together. The final product looked premium and also moved the business metrics we cared about.",
-  },
-  {
-    name: "Owen Carter",
-    role: "Chief Executive Officer",
-    avatar: "https://i.pravatar.cc/120?img=59",
-    quote:
-      "The studio delivered with calm confidence, sharp communication, and a finish that made our brand feel meaningfully elevated.",
-  },
+  { name: "Emma Thompson", role: "Marketing Director", quote: "Emma Thompson, Marketing Director\n\"Transformed our website with stunning visuals and smooth functionality, doubling user engagement.\"", avatar: originalAssets.clientImages[0], thumbAvatar: originalAssets.clientImages[0] },
+  { name: "Michael Chen", role: "Chief Technology Officer", quote: "\"Delivered a scalable backend with flawless execution, streamlining our operations significantly.\"", avatar: originalAssets.clientImages[1], thumbAvatar: originalAssets.clientImages[1] },
+  { name: "Conor Bradley", role: "Senior Marketing, Spotify", quote: "“Hubfolio studio ability to create a high quality UI is stands out. It’s somethingwe placed a premium on. A studio with passionate, professional, fun and full creativity. Recommend!.”", avatar: originalAssets.clientImages[2], thumbAvatar: originalAssets.clientImages[2] },
+  { name: "Conor Bradley", role: "Senior Marketing, Spotify", quote: "\"Created a responsive site that tripled our traffic with outstanding professionalism.\"", avatar: originalAssets.clientImages[3], thumbAvatar: originalAssets.clientImages[3] },
+  { name: "David Nguyen", role: "Product Manager", quote: "\"Crafted a user-friendly app with exceptional code quality, exceeding all expectations.\"", avatar: originalAssets.clientImages[4], thumbAvatar: originalAssets.clientImages[4] },
+  { name: "James Carter", role: "Senior Marketing, Spotify", quote: "\"Developed a robust API that enhanced our system’s performance and reliability.\"", avatar: originalAssets.clientImages[2], thumbAvatar: originalAssets.clientImages[5] },
 ];
 
-/** 8×8px L-shaped corner marks — accent color, -1px offset from each corner */
-function LCorners({ visible }) {
+function TestimonialThumb({ testimonial, isActive, onClick, index }) {
   return (
-    <motion.div
-      animate={{ opacity: visible ? 1 : 0 }}
-      transition={{ duration: DUR.hover }}
-      className="absolute inset-0 pointer-events-none"
-      aria-hidden="true"
-    >
-      {/* Top-left */}
-      <div className="absolute top-[-1px] left-[-1px] w-2 h-2 border-t border-l border-accent" />
-      {/* Top-right */}
-      <div className="absolute top-[-1px] right-[-1px] w-2 h-2 border-t border-r border-accent" />
-      {/* Bottom-right */}
-      <div className="absolute bottom-[-1px] right-[-1px] w-2 h-2 border-b border-r border-accent" />
-      {/* Bottom-left */}
-      <div className="absolute bottom-[-1px] left-[-1px] w-2 h-2 border-b border-l border-accent" />
-    </motion.div>
-  );
-}
-
-function TestimonialThumb({ avatar, name, isActive, onClick }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      aria-label={`Select testimonial from ${name}`}
-      className="relative block"
-      style={{
-        width: 108,
-        height: 108,
-        opacity: isActive ? 1 : 0.5,
-        transition: "opacity 0.3s ease",
-      }}
-    >
-      <img
-        src={avatar}
-        alt={name}
-        className="w-full h-full object-cover"
-        loading="lazy"
-      />
-      <LCorners visible={isActive} />
+    <button type="button" className={`testimonial-thumb ${isActive ? "is-active" : ""}`} onClick={onClick} aria-label={`Select testimonial from ${testimonial.name}`}>
+      <span className="testimonial-thumb-image-wrap"><img src={testimonial.thumbAvatar} alt="" className="testimonial-thumb-image" loading="lazy" /></span>
+      {isActive && <div className="testimonial-thumb-active-bg" aria-hidden="true"><PlusCorner corner="top-left" color="accent" /><PlusCorner corner="top-right" color="accent" /><PlusCorner corner="bottom-right" color="accent" /><PlusCorner corner="bottom-left" color="accent" /></div>}
+      <span className="sr-only">Testimonial {index + 1}</span>
     </button>
   );
 }
 
 const Testimonial = () => {
   const [active, setActive] = useState(0);
+  const { scrollYProgress } = useScroll();
+
+  useMotionValueEvent(scrollYProgress, "change", (latest) => {
+    if (window.innerWidth <= 991) return;
+    const section = document.getElementById("testimonial");
+    if (!section) return;
+    const rect = section.getBoundingClientRect();
+    const viewportProgress = Math.min(1, Math.max(0, (window.innerHeight - rect.top) / Math.max(section.offsetHeight, 1)));
+    const next = Math.min(testimonials.length - 1, Math.floor(viewportProgress * testimonials.length));
+    if (latest > 0 && next !== active) setActive(next);
+  });
 
   useEffect(() => {
-    const timer = window.setInterval(() => {
-      setActive((current) => (current + 1) % testimonials.length);
-    }, 6000);
-    return () => window.clearInterval(timer);
+    const onKeyDown = (event) => {
+      if (event.key === "ArrowLeft") setActive((current) => (current - 1 + testimonials.length) % testimonials.length);
+      if (event.key === "ArrowRight") setActive((current) => (current + 1) % testimonials.length);
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
   }, []);
 
   const activeTestimonial = testimonials[active];
+  const selectPrevious = () => setActive((current) => Math.max(0, current - 1));
+  const selectNext = () => setActive((current) => Math.min(testimonials.length - 1, current + 1));
 
   return (
-    <section
-      id="testimonial"
-      className="mt-[324px] bg-black pt-[324px] pb-[80px] text-white"
-    >
+    <section id="testimonial" className="original-testimonial bg-black text-white">
       <Container>
-        {/* Center-aligned section title */}
-        <div className="text-center mb-16">
-          <p className="font-inconsolata text-base text-white mb-3">
-            // Testimonial
-          </p>
-          <h2
-            className="text-[64px] font-medium capitalize text-white"
-            style={{ lineHeight: "76.8px", letterSpacing: "-1.92px" }}
-          >
-            Client feedback{" "}
-            <span className="text-accent">matters</span>
-          </h2>
-        </div>
-
-        {/* Avatar row — 6 thumbs × 108px, gap-0, total 648px */}
-        <div className="flex justify-center mb-12">
-          <div
-            className="grid grid-cols-6"
-            style={{ width: 648, gap: 0 }}
-          >
-            {testimonials.map((t, i) => (
-              <TestimonialThumb
-                key={t.name}
-                avatar={t.avatar}
-                name={t.name}
-                isActive={i === active}
-                onClick={() => setActive(i)}
-              />
-            ))}
-          </div>
-        </div>
-
-        {/* Active testimonial card — 1294px wide, accent PlusCorner marks */}
-        <div
-          className="relative mx-auto border border-line"
-          style={{ width: "min(1294px, 100%)" }}
-        >
-          {/* 4 PlusCorner marks in ACCENT color */}
-          <PlusCorner corner="top-left" color="accent" />
-          <PlusCorner corner="top-right" color="accent" />
-          <PlusCorner corner="bottom-right" color="accent" />
-          <PlusCorner corner="bottom-left" color="accent" />
-
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={active}
-              initial={{ opacity: 0, x: 30 }}
-              animate={{ opacity: 1, x: 0 }}
-              exit={{ opacity: 0, x: -30 }}
-              transition={{ duration: DUR.slide, ease: EASE_IN_OUT }}
-              className="px-12 py-16"
-            >
-              <div className="grid grid-cols-2 gap-12 items-center">
-                {/* LEFT — quote text */}
-                <div>
-                  <p
-                    className="text-white"
-                    style={{
-                      fontFamily: "Poppins, sans-serif",
-                      fontSize: 24,
-                      fontWeight: 400,
-                      lineHeight: "33.6px",
-                    }}
-                  >
-                    &ldquo;{activeTestimonial.quote}&rdquo;
-                  </p>
-                </div>
-
-                {/* RIGHT — avatar + name + role */}
-                <div className="flex items-center gap-6">
-                  <img
-                    src={activeTestimonial.avatar}
-                    alt=""
-                    className="w-20 h-20 rounded-full object-cover flex-shrink-0"
-                    loading="lazy"
-                  />
-                  <div>
-                    <div
-                      className="text-white"
-                      style={{
-                        fontFamily: "Poppins, sans-serif",
-                        fontSize: 24,
-                        fontWeight: 500,
-                      }}
-                    >
-                      {activeTestimonial.name}
-                    </div>
-                    <p
-                      className="mt-1"
-                      style={{
-                        fontFamily: "Inconsolata, monospace",
-                        fontSize: 16,
-                        color: "rgba(255,255,255,0.6)",
-                      }}
-                    >
-                      {activeTestimonial.role}
-                    </p>
-                  </div>
+        <div className="section-heading centered"><p className="eyebrow">// Testimonial</p><h2>Client feedback <span>matters</span></h2></div>
+        <div className="testimonial-vh-wrap">
+          <div className="testimonial-sticky-wrap">
+            <div className="testimonial-content-wrap">
+              <div className="testimonial-thumbs-wrap">
+                <div className="testimonial-thumbs-grid">
+                  {testimonials.map((testimonial, index) => <TestimonialThumb key={`${testimonial.name}-${index}`} testimonial={testimonial} index={index} isActive={index === active} onClick={() => setActive(index)} />)}
                 </div>
               </div>
-            </motion.div>
-          </AnimatePresence>
+              <div className="testimonial-slider">
+                <div className="testimonial-stage">
+                  <AnimatePresence mode="wait">
+                    <motion.article key={active} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="testimonial-card">
+                      <PlusCorner corner="top-left" color="accent" /><PlusCorner corner="top-right" color="accent" /><PlusCorner corner="bottom-right" color="accent" /><PlusCorner corner="bottom-left" color="accent" />
+                      <p className="testimonial-quote">{activeTestimonial.quote.split("\n").map((line, index) => <span key={`${line}-${index}`}>{line}{index === 0 && active === 0 ? <br /> : null}</span>)}</p>
+                      <div className="testimonial-client"><img src={activeTestimonial.avatar} alt="" className="testimonial-client-image" /><div><p className="testimonial-client-name">{activeTestimonial.name}</p><p className="testimonial-client-role">{activeTestimonial.role}</p></div></div>
+                    </motion.article>
+                  </AnimatePresence>
+                  <button type="button" className="testimonial-arrow testimonial-arrow-left" aria-label="Previous testimonial" disabled={active === 0} onClick={selectPrevious}><HiChevronLeft aria-hidden="true" /></button>
+                  <button type="button" className="testimonial-arrow testimonial-arrow-right" aria-label="Next testimonial" disabled={active === testimonials.length - 1} onClick={selectNext}><HiChevronRight aria-hidden="true" /></button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </Container>
     </section>

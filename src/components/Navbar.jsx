@@ -1,57 +1,49 @@
 import { useState } from "react";
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { Menu, X } from "lucide-react";
 import { Container } from "./Container.jsx";
 import { EASE, DUR } from "../lib/easing.js";
-
-const links = [
-  { label: "Home", href: "#home" },
-  { label: "About Us", href: "#about" },
-  { label: "Our Work", href: "#work" },
-  { label: "Blog", href: "#blog" },
-  { label: "Contact", href: "#contact" },
-];
+import { siteRoutes } from "../lib/siteData.js";
+import BrandLogo from "./BrandLogo.jsx";
 
 export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const { scrollY } = useScroll();
 
-  useMotionValueEvent(scrollY, "change", (v) => {
-    setScrolled(v > 100);
-  });
+  useMotionValueEvent(scrollY, "change", (value) => setScrolled(value > 100));
 
   return (
     <motion.header
-      animate={{
-        backgroundColor: scrolled ? "rgb(21, 21, 21)" : "rgba(0, 0, 0, 0)",
-      }}
+      animate={{ backgroundColor: scrolled || menuOpen ? "rgb(0, 0, 0)" : "rgba(0, 0, 0, 0)" }}
       transition={{ duration: DUR.hover, ease: EASE }}
-      className="fixed inset-x-0 top-0 z-[1000] h-[77px]"
+      className="site-navbar fixed inset-x-0 top-0 z-[1000]"
     >
-      <Container className="flex h-full items-center justify-between">
-        <a href="#home" className="block">
-          <img
-            src="https://cdn.prod.website-files.com/67fcb048fa0321997d843f04/67fcc14dad82dcc3c1e3c98f_fb7499b361b41cce0650881b6dc1f265_logo-2x.png"
-            alt="CodeGallantX"
-            width={251}
-            height={42}
-            className="h-[42px] w-auto"
-          />
-        </a>
+      <Container>
+        <div className="flex min-h-[77px] items-center justify-between gap-8">
+          <a href="/" aria-label="CodeGallantX home" className="shrink-0"><BrandLogo /></a>
 
-        <nav aria-label="Primary">
-          <ul className="flex items-center gap-0">
-            {links.map((link) => (
-              <li key={link.label}>
-                <a
-                  href={link.href}
-                  className="px-6 py-2 text-base font-normal text-white transition-colors duration-200 hover:text-[rgb(161,170,170)]"
-                >
-                  {link.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
+          <button
+            type="button"
+            className="mobile-menu-button"
+            aria-expanded={menuOpen}
+            aria-controls="primary-navigation"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            {menuOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
+          </button>
+
+          <nav id="primary-navigation" aria-label="Primary" className={menuOpen ? "primary-navigation is-open" : "primary-navigation"}>
+            <ul>
+              {siteRoutes.map((route) => (
+                <li key={route.href}>
+                  <a href={route.href} onClick={() => setMenuOpen(false)}>{route.label}</a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
       </Container>
     </motion.header>
   );

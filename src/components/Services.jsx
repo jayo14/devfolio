@@ -3,13 +3,14 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import { EASE, DUR } from "../lib/easing.js";
 import PlusCorner from "./PlusCorner.jsx";
 import { Container } from "./Container.jsx";
+import { originalAssets } from "../lib/siteData.js";
 
 const services = [
   {
     title: "Web Dev",
     titleAccent: "Dev",
     tag: "#Developer",
-    subTags: ["UserExperience", "Design"],
+    subTags: ["React", "Next.js"],
     desc: "Fast, modern, and scalable websites.",
     col: 1,
     row: 1,
@@ -27,17 +28,17 @@ const services = [
     title: "API Sync",
     titleAccent: "Sync",
     tag: "#Developer",
-    subTags: ["RESTAPI", "Integration"],
+    subTags: ["REST API", "Database", "Integration"],
     desc: "Connect apps with third-party services.",
     col: 3,
     row: 2,
   },
   {
-    title: "E-Shop",
-    titleAccent: "Shop",
+    title: "Mobile Dev",
+    titleAccent: "Dev",
     tag: "#Developer",
-    subTags: ["Shopify", "WooCommerce"],
-    desc: "Build smooth online shopping experiences.",
+    subTags: ["ReactNative", "Expo", "Flutter"],
+    desc: "Build smooth cross-platform mobile experiences.",
     col: 4,
     row: 2,
   },
@@ -50,6 +51,15 @@ const services = [
     col: 2,
     row: 3,
   },
+  {
+    title: "AI & Agentic",
+    titleAccent: "AI",
+    tag: "#Developer",
+    subTags: ["Python", "LLM", "Agents"],
+    desc: "Build intelligent workflows and practical AI agents.",
+    col: 3,
+    row: 3,
+  },
 ];
 
 function ServiceCard({ title, titleAccent, tag, subTags, desc }) {
@@ -60,10 +70,10 @@ function ServiceCard({ title, titleAccent, tag, subTags, desc }) {
 
   return (
     <a
-      href="#"
+      href="/contact"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="group relative block h-[324px] w-[322px] border border-line p-8"
+      className="group relative block h-[324px] w-full border border-line p-8"
       style={{
         backgroundColor: hovered ? "#000000" : "#080808",
       }}
@@ -75,7 +85,7 @@ function ServiceCard({ title, titleAccent, tag, subTags, desc }) {
 
       <div className="flex h-full flex-col">
         <div className="flex items-start justify-between gap-4">
-          <h3 className="text-[40px] font-medium capitalize leading-[48px] tracking-[-1.2px]">
+          <h3 className="text-[48px] font-medium capitalize leading-[48px] tracking-[-1.92px]">
             <span
               className="transition-colors duration-300"
               style={{
@@ -111,7 +121,7 @@ function ServiceCard({ title, titleAccent, tag, subTags, desc }) {
           {subTags.map((item) => (
             <span
               key={item}
-              className="border border-line px-3 py-1 font-inconsolata text-xs text-white/70"
+              className="border border-line px-[14px] py-[10px] font-sans text-sm text-white/70"
             >
               {item}
             </span>
@@ -148,13 +158,10 @@ const Services = () => {
       >
         <div
           className="h-full w-full bg-cover bg-center"
-          style={{
-            backgroundImage:
-              "url('https://cdn.prod.website-files.com/67fcb048fa0321997d843f04/681041be80af3b5ad83190e6_e17493dd07376337091a4af886d66994_services-bg.webp')",
-          }}
+          style={{ backgroundImage: `url(${originalAssets.servicesBackground})` }}
         />
       </motion.div>
-      <div className="absolute inset-0 bg-black/50" aria-hidden="true" />
+      <div className="absolute inset-0 bg-black/20" aria-hidden="true" />
 
       <Container className="relative z-10 py-40">
         <div className="mb-12 text-right">
@@ -165,7 +172,7 @@ const Services = () => {
         </div>
 
         <div className="relative">
-          <div className="grid grid-cols-[322px_322px_322px_322px] grid-rows-[324px_324px_324px]">
+          <div className="services-grid">
             {Array.from({ length: 12 }).map((_, index) => {
               const col = (index % 4) + 1;
               const row = Math.floor(index / 4) + 1;
