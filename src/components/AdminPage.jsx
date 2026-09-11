@@ -3,7 +3,7 @@ import { Container } from "./Container.jsx";
 import Navbar from "./Navbar.jsx";
 import Footer from "./Footer.jsx";
 import { useAdminStore } from "../lib/adminStore.js";
-import { Pencil, Trash2, Plus, ExternalLink, X } from "lucide-react";
+import { Pencil, Trash2, Plus, ExternalLink, X, Lock, LogOut, User as UserIcon } from "lucide-react";
 
 /* ─── Platform badge colours ─────────────────────────────── */
 const platformColors = {
@@ -179,18 +179,109 @@ function BlogModal({ initial, onSave, onClose }) {
   );
 }
 
+/* ─── Login Form Component ───────────────────────────────── */
+function LoginForm() {
+  const { login, authLoading, authError, clearError } = useAdminStore();
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    if (!email.trim() || !password) return;
+    await login(email, password);
+  };
+
+  return (
+    <section className="admin-login-section">
+      <Container>
+        <div className="admin-login-card">
+          <div className="admin-login-header">
+            <div className="admin-login-icon">
+              <Lock size={28} />
+            </div>
+            <h2>Admin Portal</h2>
+            <p>Sign in with your email and password to manage portfolio projects and publications.</p>
+          </div>
+
+          {authError && (
+            <div className="admin-error-banner">
+              <span>{authError}</span>
+              <button type="button" onClick={clearError} className="admin-icon-btn">
+                <X size={14} />
+              </button>
+            </div>
+          )}
+
+          <form onSubmit={handleSubmit} className="admin-login-form">
+            <Field label="Email Address" required>
+              <Input
+                type="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                placeholder="admin@devfolio.com"
+                required
+                autoComplete="email"
+              />
+            </Field>
+
+            <Field label="Password" required>
+              <Input
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                placeholder="••••••••"
+                required
+                autoComplete="current-password"
+              />
+            </Field>
+
+            <button
+              type="submit"
+              disabled={authLoading}
+              className="admin-primary-btn admin-login-btn"
+            >
+              {authLoading ? "Authenticating…" : "Sign In to Dashboard"}
+            </button>
+          </form>
+        </div>
+      </Container>
+    </section>
+  );
+}
+
 /* ─── Main Admin Page ────────────────────────────────────── */
 export default function AdminPage() {
-  const { projects, addProject, updateProject, deleteProject, blogLinks, addBlogLink, updateBlogLink, deleteBlogLink, fetchProjects, fetchBlogLinks, loading, error, clearError } = useAdminStore();
+  const {
+    token,
+    user,
+    logout,
+    checkAuth,
+    projects,
+    addProject,
+    updateProject,
+    deleteProject,
+    blogLinks,
+    addBlogLink,
+    updateBlogLink,
+    deleteBlogLink,
+    fetchProjects,
+    fetchBlogLinks,
+    loading,
+    error,
+    clearError,
+  } = useAdminStore();
 
   const [projectModal, setProjectModal] = useState(null); // null | "new" | project obj
   const [blogModal, setBlogModal] = useState(null);
   const [tab, setTab] = useState("projects"); // "projects" | "blogs"
 
   useEffect(() => {
-    fetchProjects();
-    fetchBlogLinks();
-  }, [fetchProjects, fetchBlogLinks]);
+    if (token) {
+      checkAuth();
+      fetchProjects();
+      fetchBlogLinks();
+    }
+  }, [token, checkAuth, fetchProjects, fetchBlogLinks]);
 
   /* Project handlers */
   const handleProjectSave = async (data) => {
@@ -217,17 +308,50 @@ export default function AdminPage() {
     return new Date(d).toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" });
   };
 
+  if (!token) {
+    return (
+      <>
+        <Navbar />
+        <main>
+          <section className="inner-banner">
+            <Container>
+              <div className="section-heading">
+                <p className="eyebrow">// Authentication</p>
+                <h1>
+                  Admin <span>Access</span>
+                </h1>
+              </div>
+            </Container>
+          </section>
+          <LoginForm />
+          <Footer />
+        </main>
+      </>
+    );
+  }
+
   return (
     <>
       <Navbar />
       <main>
         <section className="inner-banner">
           <Container>
-            <div className="section-heading">
-              <p className="eyebrow">// Admin</p>
-              <h1>
-                Dashboard <span>Panel</span>
-              </h1>
+            <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+              <div className="section-heading mb-0">
+                <p className="eyebrow">// Admin</p>
+                <h1>
+                  Dashboard <span>Panel</span>
+                </h1>
+              </div>
+              <div className="admin-user-bar">
+                <div className="admin-user-info">
+                  <UserIcon size={16} />
+                  <span>{user?.email || "Admin"}</span>
+                </div>
+                <button type="button" onClick={logout} className="admin-logout-btn" title="Sign out">
+                  <LogOut size={14} /> Log Out
+                </button>
+              </div>
             </div>
           </Container>
         </section>
