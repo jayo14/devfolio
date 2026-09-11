@@ -14,6 +14,12 @@ const staticSlides = originalAssets.sliderImages.map((image) => ({
 
 const SelectedWork = () => {
   const projects = useAdminStore((s) => s.projects);
+  const fetchProjects = useAdminStore((s) => s.fetchProjects);
+
+  useEffect(() => {
+    if (projects.length === 0) fetchProjects();
+  }, [projects.length, fetchProjects]);
+
   const slides = useMemo(() => {
     const dynamic = projects
       .filter((p) => p.sliderImage)
