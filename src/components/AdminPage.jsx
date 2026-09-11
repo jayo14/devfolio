@@ -4,6 +4,8 @@ import Navbar from "./Navbar.jsx";
 import Footer from "./Footer.jsx";
 import { useAdminStore } from "../lib/adminStore.js";
 import { Pencil, Trash2, Plus, ExternalLink, X, Lock, LogOut, User as UserIcon } from "lucide-react";
+import MagicButton from "./MagicButton.jsx";
+import MagicWizard from "./MagicWizard.jsx";
 
 /* ─── Platform badge colours ─────────────────────────────── */
 const platformColors = {
@@ -274,6 +276,7 @@ export default function AdminPage() {
   const [projectModal, setProjectModal] = useState(null); // null | "new" | project obj
   const [blogModal, setBlogModal] = useState(null);
   const [tab, setTab] = useState("projects"); // "projects" | "blogs"
+  const [magicOpen, setMagicOpen] = useState(false);
 
   useEffect(() => {
     if (token) {
@@ -384,9 +387,12 @@ export default function AdminPage() {
               <div className="admin-panel">
                 <div className="admin-panel-header">
                   <h2>Your Projects</h2>
-                  <button type="button" className="admin-primary-btn" onClick={() => setProjectModal("new")}>
-                    <Plus size={16} /> Add Project
-                  </button>
+                  <div className="flex items-center gap-3">
+                    <button type="button" className="admin-primary-btn" onClick={() => setProjectModal("new")}>
+                      <Plus size={16} /> Add Project
+                    </button>
+                    <MagicButton onClick={() => setMagicOpen(true)} />
+                  </div>
                 </div>
 
                 {projects.length === 0 ? (
@@ -489,6 +495,15 @@ export default function AdminPage() {
       </main>
 
       {/* Modals */}
+      {magicOpen && (
+        <MagicWizard
+          isOpen={magicOpen}
+          onClose={() => setMagicOpen(false)}
+          onProjectCreated={() => {
+            fetchProjects();
+          }}
+        />
+      )}
       {projectModal && (
         <ProjectModal
           initial={typeof projectModal === "object" ? projectModal : null}
