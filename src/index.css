@@ -462,6 +462,54 @@ body.cursor-arrow-active .cursor-arrow-follower { opacity: 1; visibility: visibl
 .admin-textarea { min-height: 100px; resize: vertical; }
 select.admin-input { cursor: pointer; appearance: auto; }
 
+/* ─── Magic Wizard Styles ───────────────────────────────── */
+.magic-wizard-modal { max-width: 820px; }
+.magic-wizard-brand { display: flex; align-items: center; gap: 12px; }
+.magic-wizard-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; background: rgba(255, 79, 34, 0.15); border: 1px solid var(--accent); color: var(--accent); font-family: "Inconsolata", monospace; font-size: 13px; font-weight: 700; letter-spacing: 0.05em; }
+.magic-step-indicator { font-family: "Inconsolata", monospace; font-size: 12px; color: var(--gray-06); }
+
+.magic-phase-welcome { padding: 40px 32px; text-align: center; }
+.magic-welcome-icon { display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: 50%; border: 1px solid var(--accent); color: var(--accent); margin-bottom: 24px; background: rgba(255, 79, 34, 0.08); box-shadow: 0 0 30px rgba(255, 79, 34, 0.2); }
+.magic-phase-welcome h2 { font-size: 32px; font-weight: 500; margin: 0 0 16px; line-height: 1.25; }
+.magic-welcome-desc { font-family: "Inconsolata", monospace; font-size: 16px; color: #fffb; max-width: 620px; margin: 0 auto 32px; line-height: 1.6; }
+.magic-welcome-features { display: flex; flex-direction: column; gap: 12px; max-width: 500px; margin: 0 auto 32px; text-align: left; padding: 20px 24px; background: var(--gray-01); border: 1px solid var(--border); }
+.magic-feature-item { display: flex; align-items: center; gap: 10px; font-family: "Poppins", sans-serif; font-size: 14px; }
+
+.magic-phase-sources { padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+.magic-sources-intro h3 { margin: 0 0 6px; font-size: 24px; font-weight: 500; }
+.magic-sources-intro p { margin: 0; font-family: "Inconsolata", monospace; font-size: 14px; color: var(--gray-06); }
+.magic-form-group { display: flex; flex-direction: column; gap: 6px; }
+.magic-field-error { margin: 4px 0 0; font-family: "Inconsolata", monospace; font-size: 12px; color: #fc8181; }
+
+.magic-phase-pipeline { padding: 36px 32px; }
+.magic-pipeline-header { margin-bottom: 28px; }
+.magic-pulse-badge { display: inline-flex; align-items: center; gap: 8px; font-family: "Poppins", sans-serif; font-size: 18px; font-weight: 500; margin-bottom: 6px; }
+.magic-pipeline-header p { margin: 0; font-family: "Inconsolata", monospace; font-size: 14px; color: var(--gray-06); }
+
+.magic-step-list { display: flex; flex-direction: column; gap: 12px; }
+.magic-step-row { display: flex; align-items: flex-start; gap: 14px; padding: 14px 18px; background: var(--gray-01); border: 1px solid var(--border); transition: border-color .2s ease; }
+.magic-step-row.is-processing { border-color: var(--accent); background: rgba(255, 79, 34, 0.04); }
+.magic-step-row.is-completed { border-color: rgba(255, 255, 255, 0.15); }
+.magic-step-row.is-warning { border-color: #ecc94b; }
+.magic-step-row.is-failed { border-color: #f56565; }
+.magic-step-icon { width: 22px; height: 22px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px; }
+.magic-step-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--border); }
+.magic-step-details { display: flex; flex-direction: column; gap: 2px; }
+.magic-step-label { font-size: 14px; font-weight: 500; }
+.magic-step-msg { margin: 0; font-family: "Inconsolata", monospace; font-size: 12px; color: var(--gray-06); }
+
+.magic-phase-review { padding: 32px; display: flex; flex-direction: column; gap: 24px; }
+.magic-review-header h3 { margin: 0 0 6px; font-size: 24px; font-weight: 500; }
+.magic-review-header p { margin: 0; font-family: "Inconsolata", monospace; font-size: 14px; color: var(--gray-06); }
+.magic-card-preview-wrap { position: relative; padding: 24px; background: var(--gray-01); border: 1px solid var(--border); margin-bottom: 8px; }
+.magic-preview-badge { position: absolute; top: 12px; right: 12px; display: inline-flex; align-items: center; gap: 6px; padding: 3px 8px; background: #222; border: 1px solid var(--border); font-family: "Inconsolata", monospace; font-size: 11px; text-transform: uppercase; letter-spacing: .05em; color: var(--gray-06); }
+.magic-tech-tags { padding: 12px 0; }
+
+.magic-phase-completed { padding: 48px 32px; text-align: center; }
+.magic-success-icon { display: inline-flex; align-items: center; justify-content: center; width: 80px; height: 80px; border-radius: 50%; border: 1px solid #48bb78; color: #48bb78; margin-bottom: 24px; background: rgba(72, 187, 120, 0.1); }
+.magic-phase-completed h2 { font-size: 32px; font-weight: 500; margin: 0 0 12px; }
+.magic-phase-completed p { font-family: "Inconsolata", monospace; font-size: 16px; color: var(--gray-06); margin: 0; }
+
 @media (max-width: 767px) {
   .admin-form-grid { grid-template-columns: 1fr; }
   .admin-card-grid { grid-template-columns: 1fr; }
@@ -470,3 +518,4 @@ select.admin-input { cursor: pointer; appearance: auto; }
   .admin-table th:nth-child(n+3), .admin-table td:nth-child(n+3) { display: none; }
   .project-meta-bar { flex-direction: column; gap: 20px; align-items: flex-start; }
 }
+
