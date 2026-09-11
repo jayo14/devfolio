@@ -85,6 +85,16 @@ The admin API uses email + password authentication with JWT Bearer tokens:
 - `GET /api/auth/me` - Retrieve current authenticated user profile
 - `POST /api/auth/setup` - Initial admin registration if database has 0 users
 
+### Magic Automated Project Import
+- `POST /api/magic/projects` - Start asynchronous project generation pipeline (Requires Auth, Protected against SSRF)
+- `GET /api/magic/jobs/{job_id}` - Poll pipeline status, step progress, and synthesized review card (Requires Auth)
+- `POST /api/magic/jobs/{job_id}/publish` - Publish generated project directly into the portfolio database (Requires Auth)
+
+### Static Media Assets
+- `GET /static/magic/{job_id}/mockup.jpg` - Multi-device composite presentation cover
+- `GET /static/magic/{job_id}/desktop.png` - Captured desktop screenshot (1440x900)
+- `GET /static/magic/{job_id}/mobile.png` - Captured mobile screenshot (390x844)
+
 ### Health
 - `GET /health` - Service health status
 
@@ -102,4 +112,5 @@ The admin API uses email + password authentication with JWT Bearer tokens:
 - `POST /api/blogs/` - Create a blog link (Requires Auth)
 - `PUT /api/blogs/{id}` - Update a blog link (Requires Auth)
 - `DELETE /api/blogs/{id}` - Delete a blog link (Requires Auth)
+
 
