@@ -155,3 +155,77 @@ def test_blog_lifecycle():
     # 4. Delete blog with auth
     del_res = client.delete(f"/api/blogs/{blog_id}", headers=headers)
     assert del_res.status_code == 204
+
+
+def test_magic_endpoints_and_guards():
+    headers = get_auth_headers()
+
+    # 1. Unauthenticated request rejected
+    unauth_res = client.post(
+        "/api/magic/projects",
+        json={"websiteUrl": "https://example.com", "githubUrl": "https://github.com/test/repo"},
+    )
+    assert unauth_res.status_code == 401
+
+    # 2. SSRF prevention guard: localhost
+    ssrf_res = client.post(
+        "/api/magic/projects",
+        json={"websiteUrl": "http://localhost:8000", "githubUrl": "https://github.com/test/repo"},
+        headers=headers,
+    )
+    assert ssrf_res.status_code == 422
+    detail_lower = ssrf_res.json()["detail"].lower()
+    assert "private" in detail_lower or "internal" in detail_lower or "forbidden" in detail_lower
+
+    # 3. Invalid GitHub URL format
+    bad_gh_res = client.post(
+        "/api/magic/projects",
+        json={"websiteUrl": "https://example.com", "githubUrl": "https://gitlab.com/test/repo"},
+        headers=headers,
+    )
+    assert bad_gh_res.status_code == 422
+
+    # 4. Valid launch
+    valid_res = client.post(
+        "/api/magic/projects",
+        json={"websiteUrl": "https://example.com", "githubUrl": "https://github.com/test/devfolio"},
+        headers=headers,
+    )
+    assert valid_res.status_code == 202
+    job_id = valid_res.json()["jobId"]
+    assert job_id
+
+    # 5. Fetch job status
+    job_res = client.get(f"/api/magic/jobs/{job_id}", headers=headers)
+    assert job_res.status_code == 200
+    job_data = job_res.json()
+    assert job_data["id"] == job_id
+    assert len(job_data["steps"]) >= 5
+
+    # 6. Publish job into standard Project
+    pub_payload = {
+        "title": "Magic Generated Showcase",
+        "description": "An automated portfolio project import",
+        "imageUrl": "https://example.com/mockup.jpg",
+        "sliderImage": "https://example.com/mockup.jpg",
+        "client": "Test Client",
+        "field": "Web Development",
+        "role": "Creator",
+        "completedDate": "2026-03-10",
+        "liveUrl": "https://example.com",
+    }
+    pub_res = client.post(f"/api/magic/jobs/{job_id}/publish", json=pub_payload, headers=headers)
+    assert pub_res.status_code == 201
+    created_proj = pub_res.json()
+    assert created_proj["title"] == "Magic Generated Showcase"
+    assert created_proj["slug"] == "magic-generated-showcase"
+
+    # 7. Verify published project is accessible in public projects API
+    public_proj_res = client.get(f"/api/projects/slug/{created_proj['slug']}")
+    assert public_proj_res.status_code == 200
+    assert public_proj_res.json()["id"] == created_proj["id"]
+
+    # 8. Clean up
+    del_res = client.delete(f"/api/projects/{created_proj['id']}", headers=headers)
+    assert del_res.status_code == 204
+
