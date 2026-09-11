@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Container } from "./Container.jsx";
 import SelectedWork from "./SelectedWork.jsx";
 import Contact from "./Contact.jsx";
@@ -15,6 +16,11 @@ function formatDate(d) {
 
 export default function WorkPage() {
   const projects = useAdminStore((s) => s.projects);
+  const fetchProjects = useAdminStore((s) => s.fetchProjects);
+
+  useEffect(() => {
+    if (projects.length === 0) fetchProjects();
+  }, [projects.length, fetchProjects]);
 
   return (
     <main>

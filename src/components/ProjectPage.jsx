@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { Container } from "./Container.jsx";
 import Navbar from "./Navbar.jsx";
 import Contact from "./Contact.jsx";
@@ -7,6 +8,29 @@ import { originalAssets } from "../lib/siteData.js";
 
 export default function ProjectPage({ slug }) {
   const project = useAdminStore((s) => s.getProjectBySlug(slug));
+  const fetchProjects = useAdminStore((s) => s.fetchProjects);
+  const projects = useAdminStore((s) => s.projects);
+  const loading = useAdminStore((s) => s.loading);
+
+  useEffect(() => {
+    if (projects.length === 0) fetchProjects();
+  }, [projects.length, fetchProjects]);
+
+  if (loading && !project) {
+    return (
+      <>
+        <Navbar />
+        <main>
+          <section className="inner-banner">
+            <Container>
+              <div className="admin-loading" style={{ paddingTop: "200px" }}>Loading project…</div>
+            </Container>
+          </section>
+          <Footer />
+        </main>
+      </>
+    );
+  }
 
   if (!project) {
     return (
