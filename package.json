@@ -5,6 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "server": "cd server && .venv/bin/uvicorn main:app --reload --port 8000",
+    "seed": "cd server && .venv/bin/python app/seed.py",
     "build": "vite build",
     "lint": "eslint .",
     "preview": "vite preview"
