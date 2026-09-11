@@ -237,5 +237,67 @@ export const useAdminStore = create((set, get) => ({
     }
   },
 
-  clearError: () => set({ error: null, authError: null }),
+  // ── Magic State ───────────────────────────────────────────
+  currentMagicJob: null,
+  magicLoading: false,
+  magicError: null,
+
+  startMagicJob: async (websiteUrl, githubUrl) => {
+    set({ magicLoading: true, magicError: null });
+    try {
+      const data = await api(
+        "/api/magic/projects",
+        {
+          method: "POST",
+          body: JSON.stringify({ websiteUrl, githubUrl }),
+        },
+        get().token
+      );
+      set({ magicLoading: false });
+      return data.jobId;
+    } catch (err) {
+      if (err.status === 401) get().logout();
+      set({ magicError: err.message, magicLoading: false });
+      throw err;
+    }
+  },
+
+  fetchMagicJob: async (jobId) => {
+    try {
+      const job = await api(`/api/magic/jobs/${jobId}`, {}, get().token);
+      set({ currentMagicJob: job });
+      return job;
+    } catch (err) {
+      if (err.status === 401) get().logout();
+      set({ magicError: err.message });
+      throw err;
+    }
+  },
+
+  publishMagicJob: async (jobId, projectData) => {
+    set({ magicLoading: true, magicError: null });
+    try {
+      const createdProject = await api(
+        `/api/magic/jobs/${jobId}/publish`,
+        {
+          method: "POST",
+          body: JSON.stringify(projectData),
+        },
+        get().token
+      );
+      set((s) => ({
+        projects: [createdProject, ...s.projects],
+        magicLoading: false,
+      }));
+      return createdProject;
+    } catch (err) {
+      if (err.status === 401) get().logout();
+      set({ magicError: err.message, magicLoading: false });
+      throw err;
+    }
+  },
+
+  clearMagicJob: () => set({ currentMagicJob: null, magicError: null, magicLoading: false }),
+
+  clearError: () => set({ error: null, authError: null, magicError: null }),
 }));
