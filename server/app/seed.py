@@ -6,8 +6,13 @@ SERVER_DIR = Path(__file__).resolve().parent.parent
 if str(SERVER_DIR) not in sys.path:
     sys.path.insert(0, str(SERVER_DIR))
 
+import os
 from app.database import SessionLocal, engine, Base
-from app.models import Project, BlogLink, _generate_id, _slugify
+from app.models import Project, BlogLink, User, _generate_id, _slugify
+from app.auth import hash_password
+
+DEFAULT_ADMIN_EMAIL = os.getenv("ADMIN_EMAIL", "admin@devfolio.com")
+DEFAULT_ADMIN_PASSWORD = os.getenv("ADMIN_PASSWORD", "admin12345")
 
 INITIAL_PROJECTS = [
     {
@@ -114,6 +119,19 @@ def seed():
             print(f"Seeded {len(INITIAL_BLOGS)} blog links.")
         else:
             print(f"BlogLink table already contains {db.query(BlogLink).count()} entries.")
+
+        # Seed default admin user if none exists
+        if db.query(User).count() == 0:
+            admin_user = User(
+                id=_generate_id(),
+                email=DEFAULT_ADMIN_EMAIL.lower(),
+                hashed_password=hash_password(DEFAULT_ADMIN_PASSWORD),
+            )
+            db.add(admin_user)
+            db.commit()
+            print(f"Seeded default admin user: {DEFAULT_ADMIN_EMAIL} (password: {DEFAULT_ADMIN_PASSWORD})")
+        else:
+            print(f"Users table already contains {db.query(User).count()} entries.")
     finally:
         db.close()
 
