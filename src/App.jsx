@@ -15,6 +15,8 @@ import NotFound from "./components/NotFound.jsx";
 import BlogDetailPage from "./components/BlogDetailPage.jsx";
 import LicensePage from "./components/LicensePage.jsx";
 import CursorArrowEffect from "./components/CursorArrowEffect.jsx";
+import AdminPage from "./components/AdminPage.jsx";
+import ProjectPage from "./components/ProjectPage.jsx";
 
 function HomePage({ about = false }) {
   return <>
@@ -37,10 +39,13 @@ export default function App() {
   if (path === "/") content = <HomePage />;
   else if (path === "/about-us") content = <HomePage about />;
   else if (path === "/work") content = <><Navbar /><WorkPage /></>;
+  else if (path.startsWith("/work/")) content = <ProjectPage slug={path.replace("/work/", "")} />;
   else if (path === "/blog") content = <><Navbar /><BlogPage /></>;
   else if (path.startsWith("/blog/")) content = <><Navbar /><BlogDetailPage path={path} /></>;
   else if (path === "/contact") content = <><Navbar /><Contact standalone /></>;
   else if (path === "/ultility-pages/license") content = <><Navbar /><LicensePage /></>;
+  else if (path === "/admin") content = <AdminPage />;
   else content = <NotFound />;
   return <div className="min-h-screen bg-black text-white"><CursorArrowEffect />{content}</div>;
 }
+

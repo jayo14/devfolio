@@ -3,11 +3,19 @@ import SelectedWork from "./SelectedWork.jsx";
 import Contact from "./Contact.jsx";
 import Footer from "./Footer.jsx";
 import { originalAssets } from "../lib/siteData.js";
+import { useAdminStore } from "../lib/adminStore.js";
 
-const workCards = originalAssets.workImages.map((image, index) => ({ image, key: `myth-${index}` }));
+const staticCards = originalAssets.workImages.map((image, index) => ({ image, key: `myth-${index}` }));
 const mythFans = "https://stephaniebruce.co/?ref=lapaninja#myth-fans";
 
+function formatDate(d) {
+  if (!d) return "";
+  return new Date(d).toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+}
+
 export default function WorkPage() {
+  const projects = useAdminStore((s) => s.projects);
+
   return (
     <main>
       <section className="inner-banner">
@@ -17,7 +25,23 @@ export default function WorkPage() {
         <Container>
           <div className="section-heading"><p className="eyebrow">Selected work</p></div>
           <div className="work-card-list">
-            {workCards.map(({ image, key }) => (
+            {/* Dynamic projects from admin store */}
+            {projects.map((p) => (
+              <article className="work-card" key={p.id}>
+                <a href={`/work/${p.slug}`} className="work-card-image-wrap"><img src={p.imageUrl} alt={p.title} loading="lazy" /></a>
+                <div className="work-card-details">
+                  <a href={`/work/${p.slug}`}><h2>{p.title}</h2></a>
+                  <div className="work-meta-grid">
+                    {p.client && <p><span>Client</span>{p.client}</p>}
+                    {p.field && <p><span>Field</span>{p.field}</p>}
+                    {p.role && <p><span>Role</span>{p.role}</p>}
+                    {p.completedDate && <p><span>Completed</span>{formatDate(p.completedDate)}</p>}
+                  </div>
+                </div>
+              </article>
+            ))}
+            {/* Original static cards */}
+            {staticCards.map(({ image, key }) => (
               <article className="work-card" key={key}>
                 <a href={mythFans} target="_blank" rel="noreferrer" className="work-card-image-wrap"><img src={image} alt="MYTH FANS" loading="lazy" /></a>
                 <div className="work-card-details">

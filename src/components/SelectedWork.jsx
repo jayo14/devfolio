@@ -4,14 +4,23 @@ import Autoplay from "embla-carousel-autoplay";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi2";
 import { Container } from "./Container.jsx";
 import { originalAssets } from "../lib/siteData.js";
+import { useAdminStore } from "../lib/adminStore.js";
 
-const slides = originalAssets.sliderImages.map((image) => ({
+const staticSlides = originalAssets.sliderImages.map((image) => ({
   image,
   title: "Newz Magazine Site",
   href: "https://stephaniebruce.co/?ref=lapaninja#myth-fans",
 }));
 
 const SelectedWork = () => {
+  const projects = useAdminStore((s) => s.projects);
+  const slides = useMemo(() => {
+    const dynamic = projects
+      .filter((p) => p.sliderImage)
+      .map((p) => ({ image: p.sliderImage, title: p.title, href: `/work/${p.slug}` }));
+    return [...dynamic, ...staticSlides];
+  }, [projects]);
+
   const autoplay = useMemo(() => Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true }), []);
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [autoplay]);
   const [selectedIndex, setSelectedIndex] = useState(0);
@@ -37,15 +46,15 @@ const SelectedWork = () => {
               {slides.map((slide, index) => (
                 <div key={`${slide.image}-${index}`} className="min-w-0 flex-[0_0_100%]">
                   <div className="original-work-slide-top">
-                    <a data-cursor-arrow className="original-work-image-link" href={slide.href} target="_blank" rel="noreferrer">
+                    <a data-cursor-arrow className="original-work-image-link" href={slide.href} target={slide.href.startsWith("/") ? undefined : "_blank"} rel={slide.href.startsWith("/") ? undefined : "noreferrer"}>
                       <img src={slide.image} alt={slide.title} className="original-work-image" />
                     </a>
-                    <a className="original-work-arrow" href={slide.href} target="_blank" rel="noreferrer" aria-label={`Open ${slide.title}`}>
+                    <a className="original-work-arrow" href={slide.href} target={slide.href.startsWith("/") ? undefined : "_blank"} rel={slide.href.startsWith("/") ? undefined : "noreferrer"} aria-label={`Open ${slide.title}`}>
                       <img src={originalAssets.arrow} alt="" />
                     </a>
                   </div>
                   <div className="original-work-slide-bottom">
-                    <a className="original-work-title" href={slide.href} target="_blank" rel="noreferrer">{slide.title}</a>
+                    <a className="original-work-title" href={slide.href} target={slide.href.startsWith("/") ? undefined : "_blank"} rel={slide.href.startsWith("/") ? undefined : "noreferrer"}>{slide.title}</a>
                   </div>
                 </div>
               ))}
