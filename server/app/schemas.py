@@ -104,3 +104,30 @@ class BlogLinkOut(BaseModel):
             date=obj.date or "",
             createdAt=obj.created_at,
         )
+
+
+# ── Auth ─────────────────────────────────────────────────────
+
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
+
+
+class UserOut(BaseModel):
+    id: str
+    email: str
+    createdAt: datetime
+
+    model_config = {"from_attributes": True}
+
+    @classmethod
+    def from_orm_model(cls, obj):
+        return cls(id=obj.id, email=obj.email, createdAt=obj.created_at)
+
+
+class TokenResponse(BaseModel):
+    accessToken: str
+    tokenType: str = "bearer"
+    user: UserOut
+
