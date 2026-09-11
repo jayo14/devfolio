@@ -14,4 +14,5 @@ pnpm-debug.log*
 .DS_Store
 *.db
 server/.venv/
-server/__pycache__/
+server/__pycache__/server/static/magic/*
+!server/static/magic/.gitkeep
