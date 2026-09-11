@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Container } from "./Container.jsx";
 import Navbar from "./Navbar.jsx";
 import Footer from "./Footer.jsx";
@@ -181,28 +181,33 @@ function BlogModal({ initial, onSave, onClose }) {
 
 /* ─── Main Admin Page ────────────────────────────────────── */
 export default function AdminPage() {
-  const { projects, addProject, updateProject, deleteProject, blogLinks, addBlogLink, updateBlogLink, deleteBlogLink } = useAdminStore();
+  const { projects, addProject, updateProject, deleteProject, blogLinks, addBlogLink, updateBlogLink, deleteBlogLink, fetchProjects, fetchBlogLinks, loading, error, clearError } = useAdminStore();
 
   const [projectModal, setProjectModal] = useState(null); // null | "new" | project obj
   const [blogModal, setBlogModal] = useState(null);
   const [tab, setTab] = useState("projects"); // "projects" | "blogs"
 
+  useEffect(() => {
+    fetchProjects();
+    fetchBlogLinks();
+  }, [fetchProjects, fetchBlogLinks]);
+
   /* Project handlers */
-  const handleProjectSave = (data) => {
+  const handleProjectSave = async (data) => {
     if (typeof projectModal === "object" && projectModal?.id) {
-      updateProject(projectModal.id, data);
+      await updateProject(projectModal.id, data);
     } else {
-      addProject(data);
+      await addProject(data);
     }
     setProjectModal(null);
   };
 
   /* Blog handlers */
-  const handleBlogSave = (data) => {
+  const handleBlogSave = async (data) => {
     if (typeof blogModal === "object" && blogModal?.id) {
-      updateBlogLink(blogModal.id, data);
+      await updateBlogLink(blogModal.id, data);
     } else {
-      addBlogLink(data);
+      await addBlogLink(data);
     }
     setBlogModal(null);
   };
@@ -229,6 +234,17 @@ export default function AdminPage() {
 
         <section className="admin-section">
           <Container>
+            {/* Error banner */}
+            {error && (
+              <div className="admin-error-banner">
+                <span>{error}</span>
+                <button type="button" onClick={clearError} className="admin-icon-btn"><X size={16} /></button>
+              </div>
+            )}
+
+            {/* Loading indicator */}
+            {loading && <div className="admin-loading">Loading…</div>}
+
             {/* Tab bar */}
             <div className="admin-tabs">
               <button type="button" className={`admin-tab ${tab === "projects" ? "is-active" : ""}`} onClick={() => setTab("projects")}>
