@@ -52,3 +52,18 @@ class BlogLink(Base):
 
     def __repr__(self):
         return f"<BlogLink {self.title[:30]}>"
+
+
+class User(Base):
+    __tablename__ = "users"
+
+    id = Column(String(12), primary_key=True, default=_generate_id)
+    email = Column(String(255), unique=True, nullable=False, index=True)
+    hashed_password = Column(String(255), nullable=False)
+    created_at = Column(
+        DateTime, default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+
+    def __repr__(self):
+        return f"<User {self.email}>"
+
