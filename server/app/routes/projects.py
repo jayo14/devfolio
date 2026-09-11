@@ -2,8 +2,9 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.database import get_db
-from app.models import Project, _slugify, _generate_id
+from app.models import Project, User, _slugify, _generate_id
 from app.schemas import ProjectCreate, ProjectUpdate, ProjectOut
+from app.auth import get_current_user
 
 router = APIRouter(prefix="/api/projects", tags=["projects"])
 
@@ -31,7 +32,11 @@ def get_project_by_slug(slug: str, db: Session = Depends(get_db)):
 
 
 @router.post("/", response_model=ProjectOut, status_code=201)
-def create_project(data: ProjectCreate, db: Session = Depends(get_db)):
+def create_project(
+    data: ProjectCreate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     pid = _generate_id()
     slug = _slugify(data.title) or pid
     # Ensure slug uniqueness
@@ -62,7 +67,10 @@ def create_project(data: ProjectCreate, db: Session = Depends(get_db)):
 
 @router.put("/{project_id}", response_model=ProjectOut)
 def update_project(
-    project_id: str, data: ProjectUpdate, db: Session = Depends(get_db)
+    project_id: str,
+    data: ProjectUpdate,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     project = db.query(Project).filter(Project.id == project_id).first()
     if not project:
@@ -103,9 +111,14 @@ def update_project(
 
 
 @router.delete("/{project_id}", status_code=204)
-def delete_project(project_id: str, db: Session = Depends(get_db)):
+def delete_project(
+    project_id: str,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
     project = db.query(Project).filter(Project.id == project_id).first()
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
     db.delete(project)
     db.commit()
+
