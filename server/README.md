@@ -64,22 +64,42 @@ When you are ready to switch from SQLite to PostgreSQL:
    ```
 
 
+## Authentication
+
+The admin API uses email + password authentication with JWT Bearer tokens:
+
+- **Default Admin Account** (seeded via `npm run seed`):
+  - Email: `admin@devfolio.com`
+  - Password: `admin12345`
+- Configurable in `server/.env`:
+  ```env
+  JWT_SECRET_KEY=your-custom-secret-key
+  ADMIN_EMAIL=admin@devfolio.com
+  ADMIN_PASSWORD=your-secure-password
+  ```
+
 ## API Endpoints
+
+### Authentication
+- `POST /api/auth/login` - Authenticate with email + password, returns JWT access token
+- `GET /api/auth/me` - Retrieve current authenticated user profile
+- `POST /api/auth/setup` - Initial admin registration if database has 0 users
 
 ### Health
 - `GET /health` - Service health status
 
 ### Projects
-- `GET /api/projects/` - List all projects
-- `GET /api/projects/{id}` - Get project by ID
-- `GET /api/projects/slug/{slug}` - Get project by URL slug
-- `POST /api/projects/` - Create a new project
-- `PUT /api/projects/{id}` - Update an existing project
-- `DELETE /api/projects/{id}` - Delete a project
+- `GET /api/projects/` - List all projects (Public)
+- `GET /api/projects/{id}` - Get project by ID (Public)
+- `GET /api/projects/slug/{slug}` - Get project by URL slug (Public)
+- `POST /api/projects/` - Create a new project (Requires Auth)
+- `PUT /api/projects/{id}` - Update an existing project (Requires Auth)
+- `DELETE /api/projects/{id}` - Delete a project (Requires Auth)
 
 ### Blog Links
-- `GET /api/blogs/` - List all external blog links (Hashnode, Medium, Dev.to, etc.)
-- `GET /api/blogs/{id}` - Get blog link by ID
-- `POST /api/blogs/` - Create a blog link
-- `PUT /api/blogs/{id}` - Update a blog link
-- `DELETE /api/blogs/{id}` - Delete a blog link
+- `GET /api/blogs/` - List all external blog links (Public)
+- `GET /api/blogs/{id}` - Get blog link by ID (Public)
+- `POST /api/blogs/` - Create a blog link (Requires Auth)
+- `PUT /api/blogs/{id}` - Update a blog link (Requires Auth)
+- `DELETE /api/blogs/{id}` - Delete a blog link (Requires Auth)
+
