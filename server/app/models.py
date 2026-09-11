@@ -67,3 +67,36 @@ class User(Base):
     def __repr__(self):
         return f"<User {self.email}>"
 
+
+class MagicJob(Base):
+    __tablename__ = "magic_jobs"
+
+    id = Column(String(24), primary_key=True, default=lambda: uuid.uuid4().hex[:16])
+    website_url = Column(Text, nullable=False)
+    github_url = Column(Text, nullable=False)
+    status = Column(String(50), default="queued", index=True)
+    current_step = Column(String(100), default="queued")
+    steps_json = Column(Text, default="[]")
+    website_data_json = Column(Text, default="{}")
+    repo_data_json = Column(Text, default="{}")
+    ai_analysis_json = Column(Text, default="{}")
+    desktop_screenshot = Column(Text, default="")
+    mobile_screenshot = Column(Text, default="")
+    mockup_url = Column(Text, default="")
+    logo_url = Column(Text, default="")
+    created_project_id = Column(String(12), default="")
+    error_message = Column(Text, default="")
+    created_at = Column(
+        DateTime, default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+    updated_at = Column(
+        DateTime,
+        default=lambda: datetime.now(timezone.utc),
+        onupdate=lambda: datetime.now(timezone.utc),
+        nullable=False,
+    )
+
+    def __repr__(self):
+        return f"<MagicJob {self.id} ({self.status})>"
+
+
