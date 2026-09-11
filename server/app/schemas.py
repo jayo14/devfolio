@@ -131,3 +131,63 @@ class TokenResponse(BaseModel):
     tokenType: str = "bearer"
     user: UserOut
 
+
+# ── Magic Automated Project Import ───────────────────────────
+
+
+class MagicCreateRequest(BaseModel):
+    websiteUrl: str
+    githubUrl: str
+
+
+class MagicStep(BaseModel):
+    id: str
+    label: str
+    status: str  # pending | processing | completed | warning | failed
+    message: str = ""
+
+
+class MagicReviewData(BaseModel):
+    name: str = ""
+    description: str = ""
+    client: str = ""
+    field: str = ""
+    role: str = ""
+    completedDate: str = ""
+    liveUrl: str = ""
+    githubUrl: str = ""
+    technologies: list[str] = []
+    category: str = ""
+    theme: dict = {}
+    logoUrl: str = ""
+    mockupUrl: str = ""
+    desktopScreenshot: str = ""
+    mobileScreenshot: str = ""
+
+
+class MagicJobOut(BaseModel):
+    id: str
+    websiteUrl: str
+    githubUrl: str
+    status: str
+    currentStep: str
+    steps: list[MagicStep] = []
+    review: MagicReviewData | None = None
+    createdProjectId: str | None = None
+    errorMessage: str | None = None
+    createdAt: datetime
+    updatedAt: datetime
+
+
+class MagicPublishRequest(BaseModel):
+    title: str
+    description: str = ""
+    imageUrl: str = ""
+    sliderImage: str = ""
+    client: str = ""
+    field: str = ""
+    role: str = ""
+    completedDate: str = ""
+    liveUrl: str = ""
+
+
