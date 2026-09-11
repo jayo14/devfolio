@@ -1,11 +1,15 @@
 import os
+from pathlib import Path
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, declarative_base
 
 load_dotenv()
 
-DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./devfolio.db")
+SERVER_DIR = Path(__file__).resolve().parent.parent
+DEFAULT_DB_URL = f"sqlite:///{SERVER_DIR / 'devfolio.db'}"
+
+DATABASE_URL = os.getenv("DATABASE_URL", DEFAULT_DB_URL)
 
 # SQLite needs check_same_thread=False; other backends ignore it
 connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
