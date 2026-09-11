@@ -20,7 +20,7 @@ if str(SERVER_DIR) not in sys.path:
 load_dotenv(SERVER_DIR / ".env")
 
 from app.database import Base, DEFAULT_DB_URL
-from app.models import Project, BlogLink
+from app.models import Project, BlogLink, User
 
 
 def migrate_data(target_url: str):
@@ -79,6 +79,19 @@ def migrate_data(target_url: str):
                     created_at=b.created_at,
                 )
                 target_db.add(new_b)
+        # Transfer Users
+        users = source_db.query(User).all()
+        print(f"Transferring {len(users)} users...")
+        for u in users:
+            existing = target_db.query(User).filter(User.id == u.id).first()
+            if not existing:
+                new_u = User(
+                    id=u.id,
+                    email=u.email,
+                    hashed_password=u.hashed_password,
+                    created_at=u.created_at,
+                )
+                target_db.add(new_u)
         target_db.commit()
 
         print("Data migration from SQLite to PostgreSQL completed successfully!")
