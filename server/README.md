@@ -15,14 +15,21 @@ pip install -r requirements.txt
 
 ### 2. Configure Database
 
-By default, the server uses SQLite (`sqlite:///./devfolio.db`).
-To connect PostgreSQL, MySQL, or another database, update `.env`:
+By default, the server uses a local SQLite database (`devfolio.db`).
+Tables are automatically created on startup.
 
-```env
-DATABASE_URL=postgresql://user:password@localhost:5432/devfolio
+To populate initial sample projects and blog links for testing:
+```bash
+python app/seed.py
 ```
 
-### 3. Run Development Server
+### 3. Run Migrations (Alembic)
+
+```bash
+alembic upgrade head
+```
+
+### 4. Run Development Server
 
 ```bash
 uvicorn main:app --reload --port 8000
@@ -32,12 +39,30 @@ The API docs are available at:
 - Swagger UI: `http://localhost:8000/docs`
 - ReDoc: `http://localhost:8000/redoc`
 
-### 4. Run Tests
+### 5. Run Tests
 
 ```bash
-pip install pytest
 PYTHONPATH=. pytest tests/
 ```
+
+## Migrating to PostgreSQL
+
+When you are ready to switch from SQLite to PostgreSQL:
+
+1. Create your PostgreSQL database.
+2. Update `server/.env`:
+   ```env
+   DATABASE_URL=postgresql://user:password@localhost:5432/devfolio
+   ```
+3. Run Alembic migrations against PostgreSQL:
+   ```bash
+   alembic upgrade head
+   ```
+4. Transfer all existing records from your SQLite database to PostgreSQL:
+   ```bash
+   python app/migrate_to_postgres.py postgresql://user:password@localhost:5432/devfolio
+   ```
+
 
 ## API Endpoints
 
