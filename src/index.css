@@ -367,6 +367,22 @@ body.cursor-arrow-active .cursor-arrow-follower { opacity: 1; visibility: visibl
 .project-meta-item span { display: block; margin-bottom: 4px; font-family: "Inconsolata", monospace; font-size: 14px; color: var(--gray-06); text-transform: uppercase; }
 .project-meta-item strong { font-family: "Poppins", sans-serif; font-size: 16px; font-weight: 500; }
 
+/* ─── Project Strategic Pillars & Summary ──────────────────── */
+.project-summary-box { margin-top: 40px; padding: 24px 28px; border: 1px solid var(--border); border-left: 3px solid var(--accent); background: var(--gray-01); }
+.project-summary-tag { display: inline-flex; align-items: center; gap: 8px; margin-bottom: 8px; font-family: "Inconsolata", monospace; font-size: 13px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); }
+.project-summary-text { margin: 0; font-family: "Poppins", sans-serif; font-size: 18px; line-height: 1.6; color: var(--white); font-weight: 400; }
+
+.project-strategic-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px; margin-top: 48px; }
+@media (max-width: 768px) {
+  .project-strategic-grid { grid-template-columns: 1fr; }
+}
+.project-pillar-card { position: relative; padding: 28px; border: 1px solid var(--border); background: var(--gray-01); transition: border-color .2s ease; }
+.project-pillar-card:hover { border-color: rgba(255, 79, 34, 0.4); }
+.project-pillar-header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+.project-pillar-icon { display: inline-flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 6px; background: rgba(255, 79, 34, 0.1); color: var(--accent); }
+.project-pillar-header h3 { margin: 0; font-family: "Poppins", sans-serif; font-size: 18px; font-weight: 500; color: var(--white); }
+.project-pillar-card p { margin: 0; font-family: "Inconsolata", monospace; font-size: 15px; line-height: 1.6; color: #fff9; }
+
 /* ─── Admin Dashboard ─────────────────────────────────────── */
 .admin-banner { padding-top: 64px; padding-bottom: 40px; }
 .admin-section { padding-top: 0; padding-bottom: 120px; }
