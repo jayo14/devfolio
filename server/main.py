@@ -3,10 +3,11 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
-from app.database import engine, Base
+from app.database import engine, Base, run_auto_migrations
 from app.routes import projects, blogs, auth, magic
 
 Base.metadata.create_all(bind=engine)
+run_auto_migrations(engine)
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 STATIC_DIR.mkdir(parents=True, exist_ok=True)
