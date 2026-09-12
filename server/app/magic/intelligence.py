@@ -85,9 +85,42 @@ def synthesize_project_intelligence(website_data: dict, repo_data: dict) -> dict
     # 6. Completed Date
     completed_date = datetime.now().strftime("%Y-%m-%d")
 
+    # 7. Strategic Pillars (Summary, Problem, Who/Audience, Solution, Why Now)
+    summary = web_desc or repo_desc or f"{name} is an innovative solution built to streamline digital workflows and deliver high-performance user experiences."
+    if len(summary) > 220:
+        summary = summary[:217].rsplit(" ", 1)[0] + "..."
+
+    if "ai" in text_corpus or "agent" in text_corpus or "model" in text_corpus or "llm" in text_corpus:
+        problem = "Navigating complex workflows and synthesizing disparate data streams currently requires tedious manual effort, slowing down decision-making and operational throughput."
+        target_audience = "Fast-moving product teams, analysts, and knowledge workers seeking automated, intelligent tooling to eliminate repetitive cognitive labor."
+        solution = f"{name} leverages intelligent automation and a modular architecture to streamline complex tasks with instant, contextual execution."
+        why_now = "Rapid advances in open AI foundation models and developer tooling make intelligent agentic orchestration practical, reliable, and cost-effective today."
+    elif "fintech" in text_corpus or "crypto" in text_corpus or "finance" in text_corpus:
+        problem = "Fragmented financial systems and legacy interfaces lead to transaction latency, opacity, and excessive overhead for modern digital users."
+        target_audience = "Digital-first consumers, financial institutions, and modern businesses demanding secure, real-time transaction rails and clear accounting."
+        solution = f"{name} introduces a unified, transparent transaction architecture that guarantees security, speed, and real-time reconciliation."
+        why_now = "Global regulatory clarity and the mainstream adoption of instant payment protocols make this the ideal inflection point for modern financial tooling."
+    elif "e-commerce" in text_corpus or "shop" in text_corpus or "store" in text_corpus:
+        problem = "Traditional online storefronts suffer from slow load times, high bounce rates, and cumbersome checkout flows that reduce buyer conversion."
+        target_audience = "Direct-to-consumer merchants and online retail businesses looking to maximize customer conversion, retention, and average order value."
+        solution = f"{name} delivers a blazing-fast, headless shopping experience with optimized friction-free conversion paths."
+        why_now = "Modern consumers demand sub-second mobile page loads and edge computing now enables global personalization at zero latency penalty."
+    else:
+        problem = "Legacy architectures and fragmented tools create excessive complexity, high maintenance overhead, and subpar user experiences."
+        target_audience = "Modern engineering teams, business operators, and digital users who need reliable, intuitive tools to accomplish daily objectives."
+        solution = f"{name} solves this through a clean, unified system with a responsive user interface and robust backend integration."
+        why_now = "The confluence of modern cloud primitives, lightning-fast frontend frameworks, and distributed APIs makes unified architectures faster to build and scale than ever."
+
     return {
         "name": name,
         "description": description,
+        "summary": summary,
+        "problem": problem,
+        "targetAudience": target_audience,
+        "target_audience": target_audience,
+        "solution": solution,
+        "whyNow": why_now,
+        "why_now": why_now,
         "category": category,
         "client": client,
         "field": field,
