@@ -19,18 +19,22 @@ import AdminPage from "./components/AdminPage.jsx";
 import ProjectPage from "./components/ProjectPage.jsx";
 
 function HomePage({ about = false }) {
-  return <>
-    <Hero showCounters={!about} />
-    <Tools />
-    <Services />
-    {!about && <SelectedWork />}
-    <Testimonial />
-    <Partner />
-    <Award />
-    <HomeBlog />
-    <Contact />
-    <Footer />
-  </>;
+  return (
+    <>
+      <main id="main-content" tabIndex="-1" className="outline-none">
+        <Hero showCounters={!about} />
+        <Tools />
+        <Services />
+        {!about && <SelectedWork />}
+        <Testimonial />
+        <Partner />
+        <Award />
+        <HomeBlog />
+        <Contact />
+      </main>
+      <Footer />
+    </>
+  );
 }
 
 export default function App() {
@@ -46,6 +50,17 @@ export default function App() {
   else if (path === "/ultility-pages/license") content = <><Navbar /><LicensePage /></>;
   else if (path === "/admin") content = <AdminPage />;
   else content = <NotFound />;
-  return <div className="min-h-screen bg-black text-white"><CursorArrowEffect />{content}</div>;
+  return (
+    <div className="min-h-screen bg-black text-white">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[9999] focus:bg-accent focus:text-white focus:px-4 focus:py-2 focus:font-mono focus:text-sm focus:outline-none focus:ring-2 focus:ring-white"
+      >
+        Skip to main content
+      </a>
+      <CursorArrowEffect />
+      {content}
+    </div>
+  );
 }
 
