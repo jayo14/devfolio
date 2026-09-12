@@ -71,9 +71,12 @@ function ServiceCard({ title, titleAccent, tag, subTags, desc }) {
   return (
     <a
       href="/contact"
+      aria-label={`${title} service: ${desc}`}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="group relative block h-[324px] w-full border border-line p-8"
+      onFocus={() => setHovered(true)}
+      onBlur={() => setHovered(false)}
+      className="group relative block h-[324px] w-full border border-line p-8 focus:outline-none focus:ring-2 focus:ring-accent"
       style={{
         backgroundColor: hovered ? "#000000" : "#080808",
       }}
