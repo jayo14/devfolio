@@ -19,19 +19,34 @@ const tools = [
 function ToolboxCell({ Icon, label, index }) {
   const [hovered, setHovered] = useState(false);
   if (!Icon) return <div className="toolbox-cell toolbox-cell-empty" aria-hidden="true" />;
+  const descId = `tool-desc-${index}`;
+
   return (
     <a
       data-cursor-arrow
-      href="#"
+      href="#about"
       aria-label={label}
+      aria-description={label}
+      aria-describedby={descId}
+      title={label}
       className="toolbox-cell"
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
+      onFocus={() => setHovered(true)}
+      onBlur={() => setHovered(false)}
     >
       {[0, 6, 12, 18].includes(index) && <PlusCorner corner="top-right" />}
       <motion.span animate={{ color: hovered ? "#ff4f22" : "#ffffff" }} transition={{ duration: DUR.hover }}>
         <Icon className={label === "Eve by Vercel" ? "h-auto w-14" : "h-14 w-14"} aria-hidden="true" />
       </motion.span>
+      <span
+        id={descId}
+        role="tooltip"
+        aria-hidden={!hovered}
+        className={`toolbox-tooltip ${hovered ? "opacity-100 translate-y-0" : "opacity-0 translate-y-1"}`}
+      >
+        {label}
+      </span>
     </a>
   );
 }
