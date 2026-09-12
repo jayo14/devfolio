@@ -8,6 +8,11 @@ from pydantic import BaseModel, HttpUrl
 class ProjectCreate(BaseModel):
     title: str
     description: str = ""
+    summary: str = ""
+    problem: str = ""
+    targetAudience: str = ""
+    solution: str = ""
+    whyNow: str = ""
     imageUrl: str = ""
     sliderImage: str = ""
     client: str = ""
@@ -20,6 +25,11 @@ class ProjectCreate(BaseModel):
 class ProjectUpdate(BaseModel):
     title: str | None = None
     description: str | None = None
+    summary: str | None = None
+    problem: str | None = None
+    targetAudience: str | None = None
+    solution: str | None = None
+    whyNow: str | None = None
     imageUrl: str | None = None
     sliderImage: str | None = None
     client: str | None = None
@@ -34,6 +44,11 @@ class ProjectOut(BaseModel):
     title: str
     slug: str
     description: str
+    summary: str = ""
+    problem: str = ""
+    targetAudience: str = ""
+    solution: str = ""
+    whyNow: str = ""
     imageUrl: str
     sliderImage: str
     client: str
@@ -52,6 +67,11 @@ class ProjectOut(BaseModel):
             title=obj.title,
             slug=obj.slug,
             description=obj.description or "",
+            summary=getattr(obj, "summary", "") or "",
+            problem=getattr(obj, "problem", "") or "",
+            targetAudience=getattr(obj, "target_audience", "") or "",
+            solution=getattr(obj, "solution", "") or "",
+            whyNow=getattr(obj, "why_now", "") or "",
             imageUrl=obj.image_url or "",
             sliderImage=obj.slider_image or "",
             client=obj.client or "",
@@ -150,6 +170,11 @@ class MagicStep(BaseModel):
 class MagicReviewData(BaseModel):
     name: str = ""
     description: str = ""
+    summary: str = ""
+    problem: str = ""
+    targetAudience: str = ""
+    solution: str = ""
+    whyNow: str = ""
     client: str = ""
     field: str = ""
     role: str = ""
@@ -182,6 +207,11 @@ class MagicJobOut(BaseModel):
 class MagicPublishRequest(BaseModel):
     title: str
     description: str = ""
+    summary: str = ""
+    problem: str = ""
+    targetAudience: str = ""
+    solution: str = ""
+    whyNow: str = ""
     imageUrl: str = ""
     sliderImage: str = ""
     client: str = ""
