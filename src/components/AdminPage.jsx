@@ -1,9 +1,7 @@
 import { useState, useEffect } from "react";
 import { Container } from "./Container.jsx";
-import Navbar from "./Navbar.jsx";
-import Footer from "./Footer.jsx";
 import { useAdminStore } from "../lib/adminStore.js";
-import { Pencil, Trash2, Plus, ExternalLink, X, Lock, LogOut, User as UserIcon } from "lucide-react";
+import { Pencil, Trash2, Plus, ExternalLink, X, Lock, LogOut, User as UserIcon, Eye, EyeOff } from "lucide-react";
 import MagicButton from "./MagicButton.jsx";
 import MagicWizard from "./MagicWizard.jsx";
 
@@ -186,6 +184,7 @@ function LoginForm() {
   const { login, authLoading, authError, clearError } = useAdminStore();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -227,14 +226,30 @@ function LoginForm() {
             </Field>
 
             <Field label="Password" required>
-              <Input
-                type="password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••"
-                required
-                autoComplete="current-password"
-              />
+              <div className="admin-password-field-wrapper">
+                <Input
+                  type={showPassword ? "text" : "password"}
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
+                  required
+                  autoComplete="current-password"
+                  style={{ paddingRight: "44px" }}
+                />
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setShowPassword((prev) => !prev);
+                  }}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                  title={showPassword ? "Hide password" : "Show password"}
+                  className="admin-password-toggle-btn"
+                >
+                  {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+              </div>
             </Field>
 
             <button
