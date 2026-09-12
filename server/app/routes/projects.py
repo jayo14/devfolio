@@ -51,6 +51,11 @@ def create_project(
         title=data.title,
         slug=slug,
         description=data.description,
+        summary=data.summary,
+        problem=data.problem,
+        target_audience=data.targetAudience,
+        solution=data.solution,
+        why_now=data.whyNow,
         image_url=data.imageUrl,
         slider_image=data.sliderImage,
         client=data.client,
@@ -84,6 +89,8 @@ def update_project(
         "sliderImage": "slider_image",
         "completedDate": "completed_date",
         "liveUrl": "live_url",
+        "targetAudience": "target_audience",
+        "whyNow": "why_now",
     }
 
     for key, value in updates.items():
