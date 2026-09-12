@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { FaDev, FaGithub, FaLinkedinIn, FaXTwitter } from "react-icons/fa6";
+import { FaDev, FaGithub, FaLinkedinIn, FaWhatsapp, FaXTwitter } from "react-icons/fa6";
 import { EASE, DUR } from "../lib/easing.js";
 import SectionFrame from "./SectionFrame.jsx";
 import { Container } from "./Container.jsx";
@@ -79,6 +79,7 @@ function SocialCell({ filled, link = null }) {
       target="_blank"
       rel="noopener noreferrer"
       aria-label={link.label}
+      title={link.label}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
       style={{
@@ -124,7 +125,7 @@ function SocialCell({ filled, link = null }) {
 
    Row 1:  [_]  [X]  [_]  [GH]
    Row 2:  [X]  [_]  [DR] [_]
-   Row 3:  [_]  [IG] [_]  [_]
+   Row 3:  [_]  [WA] [_]  [_]
 
    _ = empty black   X = filled dark (no link)
 ───────────────────────────────────────────── */
@@ -141,7 +142,7 @@ const socialGrid = [
   { filled: false },
   // Row 3
   { filled: false },
-  { filled: true, link: null },
+  { filled: true, link: { icon: FaWhatsapp, href: "https://wa.me/2348096044860", label: "WhatsApp: +2348096044860" } },
   { filled: false },
   { filled: false },
 ];
@@ -204,8 +205,8 @@ const Footer = () => {
             <FooterLinkCol
               title="CONTACT"
               links={[
-                { label: "LGC.studio@gmail.com", href: "mailto:LGC.studio@gmail.com" },
-                { label: "+34 123456789",         href: "tel:+34123456789" },
+                { label: "johnayobami77@proton.me", href: "mailto:johnayobami77@proton.me" },
+                { label: "+2348067954912",         href: "tel:+2348067954912" },
               ]}
             />
           }
