@@ -25,26 +25,66 @@ const Hero = ({ showCounters = true }) => {
     }
 
     gsap.fromTo(track, { opacity: 0, y: 36 }, { opacity: 1, y: 0, duration: 1.1, delay: 0.35, ease: "power3.out" });
+
+    // Enable 3D perspective and center origin
+    gsap.set(scene, {
+      transformPerspective: 1200,
+      transformOrigin: "center center",
+      force3D: true,
+    });
+
+    // High-performance GSAP quickTo interpolators for mouse following
+    const rotateXTo = gsap.quickTo(scene, "rotationX", { duration: 0.7, ease: "power3.out" });
+    const rotateYTo = gsap.quickTo(scene, "rotationY", { duration: 0.7, ease: "power3.out" });
+    const rotateZTo = gsap.quickTo(scene, "rotationZ", { duration: 0.85, ease: "power3.out" });
+
     const updateScroll = () => {
       const progress = Math.min(window.scrollY / 900, 1);
-      gsap.to(scene, { y: -progress * 90, duration: 0.55, ease: "power2.out", overwrite: true });
+      gsap.to(scene, { y: -progress * 90, duration: 0.55, ease: "power2.out", overwrite: "auto" });
     };
+
     const updatePointer = (event) => {
-      const bounds = track.getBoundingClientRect();
-      const x = (event.clientX - bounds.left) / Math.max(bounds.width, 1) - 0.5;
-      const y = (event.clientY - bounds.top) / Math.max(bounds.height, 1) - 0.5;
-      gsap.to(scene, { rotationY: x * 5, rotationX: y * -4, duration: 0.5, ease: "power3.out", overwrite: true });
+      const rect = scene.getBoundingClientRect();
+
+      // Only track when hero scene is roughly in view
+      if (rect.bottom < -50 || rect.top > window.innerHeight + 50) return;
+
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      // Normalized coordinates relative to the keyboard center
+      const rawX = (event.clientX - centerX) / (window.innerWidth * 0.5);
+      const rawY = (event.clientY - centerY) / (window.innerHeight * 0.5);
+
+      // Clamp to prevent extreme tilt when cursor is near edges
+      const clampedX = Math.max(-1.3, Math.min(1.3, rawX));
+      const clampedY = Math.max(-1.3, Math.min(1.3, rawY));
+
+      // Turn on axes to face the mouse
+      const targetRotY = clampedX * 26;   // Turn along Y-axis to face left/right
+      const targetRotX = -clampedY * 20;  // Turn along X-axis to face up/down
+      const targetRotZ = clampedX * -2;   // Subtle realistic banking
+
+      rotateYTo(targetRotY);
+      rotateXTo(targetRotX);
+      rotateZTo(targetRotZ);
     };
-    const resetPointer = () => gsap.to(scene, { rotationY: 0, rotationX: 0, duration: 0.65, ease: "power3.out", overwrite: true });
+
+    const resetPointer = () => {
+      rotateXTo(0);
+      rotateYTo(0);
+      rotateZTo(0);
+    };
 
     window.addEventListener("scroll", updateScroll, { passive: true });
-    track.addEventListener("pointermove", updatePointer);
-    track.addEventListener("pointerleave", resetPointer);
+    window.addEventListener("pointermove", updatePointer, { passive: true });
+    document.addEventListener("mouseleave", resetPointer);
     updateScroll();
+
     return () => {
       window.removeEventListener("scroll", updateScroll);
-      track.removeEventListener("pointermove", updatePointer);
-      track.removeEventListener("pointerleave", resetPointer);
+      window.removeEventListener("pointermove", updatePointer);
+      document.removeEventListener("mouseleave", resetPointer);
       gsap.killTweensOf([track, scene]);
     };
   }, []);
