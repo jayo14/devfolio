@@ -13,12 +13,35 @@ const schema = z.object({
   message: z.string().optional(),
 });
 
-function FormField({ label, required = false, placeholder, type = "text", textarea = false, register, error }) {
+function FormField({ label, name, required = false, placeholder, type = "text", textarea = false, register, error }) {
+  const fieldId = `contact-${name || label.toLowerCase().replace(/\s+/g, "-")}`;
+  const errorId = `${fieldId}-error`;
+
   return (
-    <label className="contact-field">
-      <span>{label}{required && <b>*</b>}</span>
-      {textarea ? <textarea {...register} placeholder={placeholder} rows={5} /> : <input {...register} type={type} placeholder={placeholder} />}
-      {error && <small>{error}</small>}
+    <label htmlFor={fieldId} className="contact-field">
+      <span>{label}{required && <b aria-hidden="true">*</b>}</span>
+      {textarea ? (
+        <textarea
+          id={fieldId}
+          {...register}
+          placeholder={placeholder}
+          rows={5}
+          aria-required={required}
+          aria-invalid={!!error}
+          aria-describedby={error ? errorId : undefined}
+        />
+      ) : (
+        <input
+          id={fieldId}
+          {...register}
+          type={type}
+          placeholder={placeholder}
+          aria-required={required}
+          aria-invalid={!!error}
+          aria-describedby={error ? errorId : undefined}
+        />
+      )}
+      {error && <small id={errorId} role="alert">{error}</small>}
     </label>
   );
 }
@@ -36,12 +59,12 @@ function ContactForm() {
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className="contact-fields-grid">
-            <FormField label="First Name" required placeholder="Your first name" register={register("firstName")} error={errors.firstName?.message} />
-            <FormField label="Last Name" required placeholder="Your last name" register={register("lastName")} error={errors.lastName?.message} />
+            <FormField label="First Name" name="firstName" required placeholder="Your first name" register={register("firstName")} error={errors.firstName?.message} />
+            <FormField label="Last Name" name="lastName" required placeholder="Your last name" register={register("lastName")} error={errors.lastName?.message} />
           </div>
-          <FormField label="Email Address" required placeholder="Your email address" type="email" register={register("email")} error={errors.email?.message} />
-          <FormField label="Phone Number" required placeholder="+1 234 5678" type="tel" register={register("phone")} error={errors.phone?.message} />
-          <FormField label="Message" placeholder="Write your message here..." textarea register={register("message")} error={errors.message?.message} />
+          <FormField label="Email Address" name="email" required placeholder="Your email address" type="email" register={register("email")} error={errors.email?.message} />
+          <FormField label="Phone Number" name="phone" required placeholder="+1 234 5678" type="tel" register={register("phone")} error={errors.phone?.message} />
+          <FormField label="Message" name="message" placeholder="Write your message here..." textarea register={register("message")} error={errors.message?.message} />
           <button type="submit" className="contact-submit">Send Your Message</button>
           {status === "error" && <div className="form-status error" role="alert">Oops! Something went wrong while submitting the form.</div>}
         </form>
