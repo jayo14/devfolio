@@ -42,6 +42,11 @@ export default function MagicWizard({ isOpen, onClose, onProjectCreated }) {
   const [reviewForm, setReviewForm] = useState({
     title: "",
     description: "",
+    summary: "",
+    problem: "",
+    targetAudience: "",
+    solution: "",
+    whyNow: "",
     client: "",
     field: "",
     role: "",
@@ -81,6 +86,11 @@ export default function MagicWizard({ isOpen, onClose, onProjectCreated }) {
             setReviewForm({
               title: r.name || "",
               description: r.description || "",
+              summary: r.summary || "",
+              problem: r.problem || "",
+              targetAudience: r.targetAudience || r.who || "",
+              solution: r.solution || "",
+              whyNow: r.whyNow || "",
               client: r.client || "",
               field: r.field || "",
               role: r.role || "",
@@ -457,14 +467,72 @@ export default function MagicWizard({ isOpen, onClose, onProjectCreated }) {
             </label>
 
             <label className="admin-field">
+              <span>Short Summary / Elevator Pitch</span>
+              <input
+                type="text"
+                value={reviewForm.summary}
+                onChange={(e) => setReviewForm({ ...reviewForm, summary: e.target.value })}
+                placeholder="1-2 sentence high-impact summary"
+                className="admin-input"
+              />
+            </label>
+
+            <label className="admin-field">
               <span>Description</span>
               <textarea
                 value={reviewForm.description}
                 onChange={(e) => setReviewForm({ ...reviewForm, description: e.target.value })}
                 rows={3}
+                placeholder="Detailed project overview"
                 className="admin-textarea"
               />
             </label>
+
+            <div className="admin-form-grid">
+              <label className="admin-field">
+                <span>The Problem (Core Friction / Pain Point)</span>
+                <textarea
+                  value={reviewForm.problem}
+                  onChange={(e) => setReviewForm({ ...reviewForm, problem: e.target.value })}
+                  rows={2}
+                  placeholder="What friction or challenge does this solve?"
+                  className="admin-textarea"
+                />
+              </label>
+
+              <label className="admin-field">
+                <span>The Who (Target Audience &amp; Customers)</span>
+                <textarea
+                  value={reviewForm.targetAudience}
+                  onChange={(e) => setReviewForm({ ...reviewForm, targetAudience: e.target.value })}
+                  rows={2}
+                  placeholder="Who experiences this problem and would pay for it?"
+                  className="admin-textarea"
+                />
+              </label>
+
+              <label className="admin-field">
+                <span>The Solution &amp; Unique Approach</span>
+                <textarea
+                  value={reviewForm.solution}
+                  onChange={(e) => setReviewForm({ ...reviewForm, solution: e.target.value })}
+                  rows={2}
+                  placeholder="How does this solve it uniquely?"
+                  className="admin-textarea"
+                />
+              </label>
+
+              <label className="admin-field">
+                <span>Why Now? (Inflection Point / Market Timing)</span>
+                <textarea
+                  value={reviewForm.whyNow}
+                  onChange={(e) => setReviewForm({ ...reviewForm, whyNow: e.target.value })}
+                  rows={2}
+                  placeholder="Why is now the best time for this solution?"
+                  className="admin-textarea"
+                />
+              </label>
+            </div>
 
             {reviewForm.technologies?.length > 0 && (
               <div className="magic-tech-tags">
