@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, useMotionValueEvent, useScroll } from "framer-motion";
 import { Menu, X } from "lucide-react";
 import { Container } from "./Container.jsx";
@@ -12,6 +12,17 @@ export function Navbar() {
   const { scrollY } = useScroll();
 
   useMotionValueEvent(scrollY, "change", (value) => setScrolled(value > 100));
+
+  useEffect(() => {
+    if (!menuOpen) return;
+    const handleKeyDown = (e) => {
+      if (e.key === "Escape") setMenuOpen(false);
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [menuOpen]);
+
+  const currentPath = typeof window !== "undefined" ? window.location.pathname.replace(/\/+$/, "") || "/" : "/";
 
   return (
     <motion.header
@@ -34,13 +45,22 @@ export function Navbar() {
             {menuOpen ? <X aria-hidden="true" /> : <Menu aria-hidden="true" />}
           </button>
 
-          <nav id="primary-navigation" aria-label="Primary" className={menuOpen ? "primary-navigation is-open" : "primary-navigation"}>
+          <nav id="primary-navigation" aria-label="Primary navigation" className={menuOpen ? "primary-navigation is-open" : "primary-navigation"}>
             <ul>
-              {siteRoutes.map((route) => (
-                <li key={route.href}>
-                  <a href={route.href} onClick={() => setMenuOpen(false)}>{route.label}</a>
-                </li>
-              ))}
+              {siteRoutes.map((route) => {
+                const isCurrent = currentPath === route.href;
+                return (
+                  <li key={route.href}>
+                    <a
+                      href={route.href}
+                      aria-current={isCurrent ? "page" : undefined}
+                      onClick={() => setMenuOpen(false)}
+                    >
+                      {route.label}
+                    </a>
+                  </li>
+                );
+              })}
             </ul>
           </nav>
         </div>
