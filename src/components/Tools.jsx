@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { FaAws } from "react-icons/fa6";
-import { SiDjango, SiExpo, SiFastapi, SiFigma, SiFlutter, SiGit, SiGithub, SiHtml5, SiHuggingface, SiLangchain, SiNextdotjs, SiPython, SiReact, SiTailwindcss } from "react-icons/si";
+import { SiDjango, SiExpo, SiFastapi, SiFigma, SiFlutter, SiGit, SiGithub, SiHtml5, SiHuggingface, SiJavascript, SiLangchain, SiNextdotjs, SiPython, SiReact, SiTailwindcss, SiTypescript } from "react-icons/si";
 import GhostButton from "./GhostButton.jsx";
 import PlusCorner from "./PlusCorner.jsx";
 import { DUR } from "../lib/easing.js";
@@ -9,11 +9,11 @@ import { Container } from "./Container.jsx";
 import EveLogo from "./EveLogo.jsx";
 
 const tools = [
-  { Icon: SiReact, label: "React" }, null, { Icon: SiHtml5, label: "HTML5" }, { Icon: SiGithub, label: "GitHub" }, null,
+  { Icon: SiReact, label: "React" }, { Icon: SiTypescript, label: "TypeScript" }, { Icon: SiJavascript, label: "JavaScript" }, { Icon: SiHtml5, label: "HTML5" }, null,
   { Icon: SiFigma, label: "Figma" }, { Icon: SiNextdotjs, label: "Next.js" }, null, { Icon: SiPython, label: "Python" }, { Icon: SiDjango, label: "Django" },
   null, { Icon: EveLogo, label: "Eve by Vercel" }, { Icon: SiFastapi, label: "FastAPI" }, null, { Icon: SiTailwindcss, label: "Tailwind CSS" },
   { Icon: SiExpo, label: "Expo" }, null, { Icon: SiFlutter, label: "Flutter" }, { Icon: SiGit, label: "Git" }, { Icon: SiReact, label: "React Native" },
-  { Icon: SiLangchain, label: "LangChain" }, { Icon: FaAws, label: "AWS" }, null, { Icon: SiHuggingface, label: "Hugging Face" }, null,
+  { Icon: SiLangchain, label: "LangChain" }, { Icon: FaAws, label: "AWS" }, { Icon: SiGithub, label: "GitHub" }, { Icon: SiHuggingface, label: "Hugging Face" }, null,
 ];
 
 function ToolboxCell({ Icon, label, index }) {
