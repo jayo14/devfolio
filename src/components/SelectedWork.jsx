@@ -44,18 +44,29 @@ const SelectedWork = () => {
   }, [emblaApi]);
 
   return (
-    <section id="selected-work" className="original-slider-work bg-black text-white">
+    <section id="selected-work" className="original-slider-work bg-black text-white" aria-label="Selected Projects">
       <Container>
-        <div className="original-work-slider">
+        <div
+          className="original-work-slider"
+          role="region"
+          aria-roledescription="carousel"
+          aria-label="Featured projects showcase"
+        >
           <div ref={emblaRef} className="overflow-hidden">
             <div className="flex">
               {slides.map((slide, index) => (
-                <div key={`${slide.image}-${index}`} className="min-w-0 flex-[0_0_100%]">
+                <div
+                  key={`${slide.image}-${index}`}
+                  className="min-w-0 flex-[0_0_100%]"
+                  role="group"
+                  aria-roledescription="slide"
+                  aria-label={`Project ${index + 1} of ${slides.length}: ${slide.title}`}
+                >
                   <div className="original-work-slide-top">
                     <a data-cursor-arrow className="original-work-image-link" href={slide.href} target={slide.href.startsWith("/") ? undefined : "_blank"} rel={slide.href.startsWith("/") ? undefined : "noreferrer"}>
                       <img src={slide.image} alt={slide.title} className="original-work-image" />
                     </a>
-                    <a className="original-work-arrow" href={slide.href} target={slide.href.startsWith("/") ? undefined : "_blank"} rel={slide.href.startsWith("/") ? undefined : "noreferrer"} aria-label={`Open ${slide.title}`}>
+                    <a className="original-work-arrow" href={slide.href} target={slide.href.startsWith("/") ? undefined : "_blank"} rel={slide.href.startsWith("/") ? undefined : "noreferrer"} aria-label={`Open details for ${slide.title}`}>
                       <img src={originalAssets.arrow} alt="" />
                     </a>
                   </div>
@@ -72,7 +83,7 @@ const SelectedWork = () => {
           <button type="button" className="original-work-arrow-control original-work-arrow-right" aria-label="Next project" onClick={() => emblaApi?.scrollNext()}>
             <HiChevronRight aria-hidden="true" />
           </button>
-          <div className="original-work-counter" aria-live="polite">{selectedIndex + 1} / {slides.length}</div>
+          <div className="original-work-counter" aria-live="polite" aria-atomic="true">{selectedIndex + 1} / {slides.length}</div>
         </div>
       </Container>
     </section>
