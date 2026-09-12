@@ -13,7 +13,14 @@ from app.models import User
 
 load_dotenv()
 
-SECRET_KEY = os.getenv("JWT_SECRET_KEY", "devfolio-super-secret-key-change-in-prod-12345")
+DEFAULT_INSECURE_SECRET = "devfolio-super-secret-key-change-in-prod-12345"
+SECRET_KEY = os.getenv("JWT_SECRET_KEY", DEFAULT_INSECURE_SECRET)
+ENVIRONMENT = os.getenv("ENVIRONMENT", os.getenv("ENV", "development")).lower()
+
+if ENVIRONMENT in ("production", "prod"):
+    if not SECRET_KEY or SECRET_KEY == DEFAULT_INSECURE_SECRET:
+        raise RuntimeError("JWT_SECRET_KEY must be set to a secure, non-default key in production environment.")
+
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_HOURS = 24 * 7  # 7 days
 
