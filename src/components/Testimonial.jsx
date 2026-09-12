@@ -16,7 +16,13 @@ const testimonials = [
 
 function TestimonialThumb({ testimonial, isActive, onClick, index }) {
   return (
-    <button type="button" className={`testimonial-thumb ${isActive ? "is-active" : ""}`} onClick={onClick} aria-label={`Select testimonial from ${testimonial.name}`}>
+    <button
+      type="button"
+      className={`testimonial-thumb ${isActive ? "is-active" : ""}`}
+      onClick={onClick}
+      aria-pressed={isActive}
+      aria-label={`Testimonial ${index + 1} of ${testimonials.length}: ${testimonial.name}, ${testimonial.role}`}
+    >
       <span className="testimonial-thumb-image-wrap"><img src={testimonial.thumbAvatar} alt="" className="testimonial-thumb-image" loading="lazy" /></span>
       {isActive && <div className="testimonial-thumb-active-bg" aria-hidden="true"><PlusCorner corner="top-left" color="accent" /><PlusCorner corner="top-right" color="accent" /><PlusCorner corner="bottom-right" color="accent" /><PlusCorner corner="bottom-left" color="accent" /></div>}
       <span className="sr-only">Testimonial {index + 1}</span>
@@ -64,12 +70,12 @@ const Testimonial = () => {
                 </div>
               </div>
               <div className="testimonial-slider">
-                <div className="testimonial-stage">
+                <div className="testimonial-stage" aria-live="polite" aria-atomic="true">
                   <AnimatePresence mode="wait">
                     <motion.article key={active} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="testimonial-card">
                       <PlusCorner corner="top-left" color="accent" /><PlusCorner corner="top-right" color="accent" /><PlusCorner corner="bottom-right" color="accent" /><PlusCorner corner="bottom-left" color="accent" />
                       <p className="testimonial-quote">{activeTestimonial.quote.split("\n").map((line, index) => <span key={`${line}-${index}`}>{line}{index === 0 && active === 0 ? <br /> : null}</span>)}</p>
-                      <div className="testimonial-client"><img src={activeTestimonial.avatar} alt="" className="testimonial-client-image" /><div><p className="testimonial-client-name">{activeTestimonial.name}</p><p className="testimonial-client-role">{activeTestimonial.role}</p></div></div>
+                      <div className="testimonial-client"><img src={activeTestimonial.avatar} alt={activeTestimonial.name} className="testimonial-client-image" /><div><p className="testimonial-client-name">{activeTestimonial.name}</p><p className="testimonial-client-role">{activeTestimonial.role}</p></div></div>
                     </motion.article>
                   </AnimatePresence>
                   <button type="button" className="testimonial-arrow testimonial-arrow-left" aria-label="Previous testimonial" disabled={active === 0} onClick={selectPrevious}><HiChevronLeft aria-hidden="true" /></button>
