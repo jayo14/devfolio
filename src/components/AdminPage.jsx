@@ -370,6 +370,14 @@ export default function AdminPage() {
                 </h1>
               </div>
               <div className="admin-user-bar">
+                <a
+                  href="/"
+                  className="admin-logout-btn"
+                  style={{ textDecoration: "none" }}
+                  title="Return to portfolio site"
+                >
+                  <ExternalLink size={14} /> View Site
+                </a>
                 <div className="admin-user-info">
                   <UserIcon size={16} />
                   <span>{user?.email || "Admin"}</span>
@@ -513,8 +521,6 @@ export default function AdminPage() {
             )}
           </Container>
         </section>
-
-        <Footer />
       </main>
 
       {/* Modals */}
