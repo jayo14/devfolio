@@ -328,31 +328,39 @@ export default function AdminPage() {
 
   if (!token) {
     return (
-      <>
-        <Navbar />
-        <main>
-          <section className="inner-banner">
-            <Container>
-              <div className="section-heading">
+      <main className="min-h-screen flex flex-col justify-between">
+        <section className="inner-banner admin-banner">
+          <Container>
+            <div className="flex items-center justify-between">
+              <div className="section-heading mb-0">
                 <p className="eyebrow">// Authentication</p>
                 <h1>
                   Admin <span>Access</span>
                 </h1>
               </div>
-            </Container>
-          </section>
-          <LoginForm />
-          <Footer />
-        </main>
-      </>
+              <a
+                href="/"
+                className="admin-logout-btn"
+                style={{ textDecoration: "none" }}
+                title="Return to portfolio site"
+              >
+                <ExternalLink size={14} /> Back to Site
+              </a>
+            </div>
+          </Container>
+        </section>
+        <LoginForm />
+        <div className="py-8 text-center text-xs text-neutral-600 font-mono">
+          Devfolio Admin Portal
+        </div>
+      </main>
     );
   }
 
   return (
     <>
-      <Navbar />
-      <main>
-        <section className="inner-banner">
+      <main className="min-h-screen">
+        <section className="inner-banner admin-banner">
           <Container>
             <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
               <div className="section-heading mb-0">
