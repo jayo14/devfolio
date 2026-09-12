@@ -5,7 +5,7 @@ import Contact from "./Contact.jsx";
 import Footer from "./Footer.jsx";
 import { useAdminStore } from "../lib/adminStore.js";
 import { originalAssets } from "../lib/siteData.js";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, AlertCircle, Users, Lightbulb, Clock, Sparkles } from "lucide-react";
 
 export default function ProjectPage({ slug }) {
   const project = useAdminStore((s) => s.getProjectBySlug(slug));
@@ -134,6 +134,61 @@ export default function ProjectPage({ slug }) {
                 </div>
               )}
             </div>
+
+            {/* Short Summary Lead */}
+            {project.summary && (
+              <div className="project-summary-box">
+                <span className="project-summary-tag">
+                  <Sparkles size={14} className="text-accent" /> Strategic Overview
+                </span>
+                <p className="project-summary-text">{project.summary}</p>
+              </div>
+            )}
+
+            {/* Strategic Pillars: Problem, Who, Solution, Why Now */}
+            {(project.problem || project.targetAudience || project.solution || project.whyNow) && (
+              <div className="project-strategic-grid">
+                {project.problem && (
+                  <div className="project-pillar-card">
+                    <div className="project-pillar-header">
+                      <span className="project-pillar-icon"><AlertCircle size={18} /></span>
+                      <h3>The Problem</h3>
+                    </div>
+                    <p>{project.problem}</p>
+                  </div>
+                )}
+
+                {project.targetAudience && (
+                  <div className="project-pillar-card">
+                    <div className="project-pillar-header">
+                      <span className="project-pillar-icon"><Users size={18} /></span>
+                      <h3>The Who (Target Audience)</h3>
+                    </div>
+                    <p>{project.targetAudience}</p>
+                  </div>
+                )}
+
+                {project.solution && (
+                  <div className="project-pillar-card">
+                    <div className="project-pillar-header">
+                      <span className="project-pillar-icon"><Lightbulb size={18} /></span>
+                      <h3>The Solution &amp; Unique Approach</h3>
+                    </div>
+                    <p>{project.solution}</p>
+                  </div>
+                )}
+
+                {project.whyNow && (
+                  <div className="project-pillar-card">
+                    <div className="project-pillar-header">
+                      <span className="project-pillar-icon"><Clock size={18} /></span>
+                      <h3>Why Now?</h3>
+                    </div>
+                    <p>{project.whyNow}</p>
+                  </div>
+                )}
+              </div>
+            )}
 
             {project.description && (
               <div className="blog-detail-copy">
