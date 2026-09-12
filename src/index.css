@@ -359,6 +359,7 @@ body.cursor-arrow-active .cursor-arrow-follower { opacity: 1; visibility: visibl
 .project-meta-item strong { font-family: "Poppins", sans-serif; font-size: 16px; font-weight: 500; }
 
 /* ─── Admin Dashboard ─────────────────────────────────────── */
+.admin-banner { padding-top: 64px; padding-bottom: 40px; }
 .admin-section { padding-top: 0; padding-bottom: 120px; }
 .admin-error-banner { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 24px; padding: 12px 20px; border: 1px solid #e53e3e; background: rgba(229, 62, 62, .1); font-family: "Inconsolata", monospace; font-size: 14px; color: #fc8181; }
 .admin-loading { margin-bottom: 16px; font-family: "Inconsolata", monospace; font-size: 14px; color: var(--gray-06); text-align: center; }
@@ -371,6 +372,9 @@ body.cursor-arrow-active .cursor-arrow-follower { opacity: 1; visibility: visibl
 .admin-login-header h2 { margin: 0 0 8px; font-size: 28px; font-weight: 500; }
 .admin-login-header p { margin: 0; font-family: "Inconsolata", monospace; font-size: 14px; color: var(--gray-06); }
 .admin-login-form { display: flex; flex-direction: column; gap: 24px; }
+.admin-password-field-wrapper { position: relative; display: flex; align-items: center; width: 100%; }
+.admin-password-toggle-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--gray-06); cursor: pointer; padding: 4px; display: inline-flex; align-items: center; justify-content: center; transition: color .2s ease; z-index: 2; }
+.admin-password-toggle-btn:hover { color: var(--accent); }
 .admin-login-btn { width: 100%; justify-content: center; margin-top: 8px; font-size: 15px; }
 
 .admin-user-bar { display: flex; align-items: center; gap: 16px; padding: 8px 16px; border: 1px solid var(--border); background: var(--gray-01); }
