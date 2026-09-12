@@ -5,6 +5,7 @@ import Contact from "./Contact.jsx";
 import Footer from "./Footer.jsx";
 import { useAdminStore } from "../lib/adminStore.js";
 import { originalAssets } from "../lib/siteData.js";
+import { ChevronRight } from "lucide-react";
 
 export default function ProjectPage({ slug }) {
   const project = useAdminStore((s) => s.getProjectBySlug(slug));
@@ -71,6 +72,16 @@ export default function ProjectPage({ slug }) {
       <main>
         <section className="blog-detail">
           <Container>
+            <nav className="project-breadcrumb" aria-label="Breadcrumb">
+              <ol className="breadcrumb-list">
+                <li className="breadcrumb-item"><a href="/">Home</a></li>
+                <li className="breadcrumb-separator"><ChevronRight size={14} /></li>
+                <li className="breadcrumb-item"><a href="/work">Work</a></li>
+                <li className="breadcrumb-separator"><ChevronRight size={14} /></li>
+                <li className="breadcrumb-item breadcrumb-current"><span aria-current="page">{project.title}</span></li>
+              </ol>
+            </nav>
+
             <div className="blog-detail-heading">
               <p className="eyebrow">// Project</p>
               {project.completedDate && (
