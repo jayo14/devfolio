@@ -131,55 +131,106 @@ def synthesize_project_intelligence(website_data: dict, repo_data: dict) -> dict
     }
 
 
-async def generate_project_intelligence(website_data: dict, repo_data: dict) -> dict:
-    """Generates project intelligence.
+def _parse_llm_json(text: str) -> dict | None:
+    """Robustly extracts and parses a JSON dictionary from LLM responses."""
+    if not text:
+        return None
+    # Strip markdown code blocks if present
+    cleaned = re.sub(r"^```(?:json)?\s*", "", text.strip(), flags=re.MULTILINE)
+    cleaned = re.sub(r"\s*```$", "", cleaned.strip(), flags=re.MULTILINE)
 
-    If an AI API key (GEMINI_API_KEY / OPENAI_API_KEY) is available, calls the LLM
-    for synthesis; otherwise uses the deterministic analyzer.
+    # 1. Try direct parse
+    try:
+        data = json.loads(cleaned.strip())
+        if isinstance(data, dict):
+            return data
+    except Exception:
+        pass
+
+    # 2. Extract substring between first { and last }
+    match = re.search(r"\{.*\}", cleaned, re.DOTALL)
+    if match:
+        try:
+            data = json.loads(match.group(0))
+            if isinstance(data, dict):
+                return data
+        except Exception:
+            pass
+
+    return None
+
+
+async def generate_project_intelligence(website_data: dict, repo_data: dict) -> dict:
+    """Generates project intelligence with strategic pillars (problem, who, solution, why now, summary).
+
+    If an AI API key (GEMINI_API_KEY) is available, calls Gemini for deep synthesis;
+    otherwise gracefully uses the deterministic strategic analyzer.
     """
     base_intelligence = synthesize_project_intelligence(website_data, repo_data)
 
     gemini_key = os.getenv("GEMINI_API_KEY")
     if gemini_key:
         try:
-            prompt = f"""
-You are a portfolio copywriter. Given the following facts about a project, provide a JSON object with:
-- "name": clean, punchy project title
-- "description": 2-3 concise, professional sentences highlighting its purpose and strengths
-- "category": primary category
-- "client": client or creator name
-- "field": primary field
-- "role": creator role
+            readme_snippet = (repo_data.get("readmeSnippet") or "")[:1200]
+            prompt = f"""You are an elite technology venture strategist and portfolio copywriter.
+Analyze the following verified facts from a deployed project's website and GitHub repository:
 
-Facts:
-- Website Title: {website_data.get('title')}
-- Website Description: {website_data.get('description')}
-- Headings: {website_data.get('headings')}
-- Repository: {repo_data.get('fullName')}
-- Technologies: {repo_data.get('technologies')}
-- Repo Description: {repo_data.get('description')}
+Website Title: {website_data.get('title')}
+Website Description: {website_data.get('description')}
+Website Headings: {website_data.get('headings')}
+Repository Name: {repo_data.get('fullName')}
+Repository Description: {repo_data.get('description')}
+Repository README snippet: {readme_snippet}
+Technologies: {repo_data.get('technologies')}
+Languages: {repo_data.get('languages')}
 
-Respond ONLY with valid JSON.
-"""
+Produce a thorough, deeply compelling project analysis in JSON format with exactly these keys:
+- "name": Clean, punchy project title
+- "summary": A crisp 1-2 sentence executive summary of what the project is and why it matters
+- "description": A thorough, engaging description explaining what the product does, its architecture, and real-world value
+- "problem": The concrete problem, inefficiency, or pain point currently facing users or the industry
+- "targetAudience": The "who" — the specific people, professions, or customer segments facing this problem that would pay for or adopt this solution
+- "solution": The solution and its unique approach — what makes this specific implementation, architecture, or product strategy distinct and effective
+- "whyNow": "Why now?" — why this is the ideal inflection point for this product to succeed (e.g. recent technological advancements, market shifts, adoption dynamics)
+- "category": Primary category (e.g. AI Workflow Platform, FinTech Engine, Developer Infrastructure)
+- "client": Creator or organization
+- "field": Primary technical discipline
+- "role": Creator role (e.g. Lead Architect & Full-Stack Engineer)
+
+Output ONLY valid JSON. Do not include markdown preamble or trailing commentary."""
+
             url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_key}"
-            async with httpx.AsyncClient(timeout=10.0) as client:
+            async with httpx.AsyncClient(timeout=12.0) as client:
                 res = await client.post(
                     url,
                     json={"contents": [{"parts": [{"text": prompt}]}]},
                 )
                 if res.status_code == 200:
-                    text_resp = res.json()["candidates"][0]["content"]["parts"][0]["text"]
-                    clean_json = re.search(r"\{.*\}", text_resp, re.DOTALL)
-                    if clean_json:
-                        ai_data = json.loads(clean_json.group(0))
-                        base_intelligence.update({
-                            "name": ai_data.get("name", base_intelligence["name"]),
-                            "description": ai_data.get("description", base_intelligence["description"]),
-                            "category": ai_data.get("category", base_intelligence["category"]),
-                            "client": ai_data.get("client", base_intelligence["client"]),
-                            "field": ai_data.get("field", base_intelligence["field"]),
-                            "role": ai_data.get("role", base_intelligence["role"]),
-                        })
+                    candidates = res.json().get("candidates", [])
+                    if candidates:
+                        parts = candidates[0].get("content", {}).get("parts", [])
+                        if parts:
+                            text_resp = parts[0].get("text", "")
+                            ai_data = _parse_llm_json(text_resp)
+                            if ai_data:
+                                target_aud = ai_data.get("targetAudience") or ai_data.get("who") or ai_data.get("target_audience") or base_intelligence["targetAudience"]
+                                why_now_val = ai_data.get("whyNow") or ai_data.get("why_now") or base_intelligence["whyNow"]
+
+                                base_intelligence.update({
+                                    "name": ai_data.get("name") or base_intelligence["name"],
+                                    "summary": ai_data.get("summary") or base_intelligence["summary"],
+                                    "description": ai_data.get("description") or base_intelligence["description"],
+                                    "problem": ai_data.get("problem") or base_intelligence["problem"],
+                                    "targetAudience": target_aud,
+                                    "target_audience": target_aud,
+                                    "solution": ai_data.get("solution") or base_intelligence["solution"],
+                                    "whyNow": why_now_val,
+                                    "why_now": why_now_val,
+                                    "category": ai_data.get("category") or base_intelligence["category"],
+                                    "client": ai_data.get("client") or base_intelligence["client"],
+                                    "field": ai_data.get("field") or base_intelligence["field"],
+                                    "role": ai_data.get("role") or base_intelligence["role"],
+                                })
         except Exception:
             pass
 
