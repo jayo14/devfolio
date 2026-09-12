@@ -120,8 +120,9 @@ def seed():
         else:
             print(f"BlogLink table already contains {db.query(BlogLink).count()} entries.")
 
-        # Seed default admin user if none exists
-        if db.query(User).count() == 0:
+        # Seed or update default admin user
+        admin_user = db.query(User).filter(User.email == DEFAULT_ADMIN_EMAIL.lower()).first()
+        if not admin_user:
             admin_user = User(
                 id=_generate_id(),
                 email=DEFAULT_ADMIN_EMAIL.lower(),
@@ -129,9 +130,11 @@ def seed():
             )
             db.add(admin_user)
             db.commit()
-            print(f"Seeded default admin user: {DEFAULT_ADMIN_EMAIL} (password: {DEFAULT_ADMIN_PASSWORD})")
+            print(f"Seeded default admin user: {DEFAULT_ADMIN_EMAIL}")
         else:
-            print(f"Users table already contains {db.query(User).count()} entries.")
+            admin_user.hashed_password = hash_password(DEFAULT_ADMIN_PASSWORD)
+            db.commit()
+            print(f"Updated default admin user password: {DEFAULT_ADMIN_EMAIL}")
     finally:
         db.close()
 
