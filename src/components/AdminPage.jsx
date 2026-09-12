@@ -49,7 +49,12 @@ function Select({ children, ...props }) {
 /* ─── Project form (modal) ───────────────────────────────── */
 const emptyProject = {
   title: "",
+  summary: "",
   description: "",
+  problem: "",
+  targetAudience: "",
+  solution: "",
+  whyNow: "",
   imageUrl: "",
   client: "",
   field: "",
@@ -86,7 +91,7 @@ function ProjectModal({ initial, onSave, onClose }) {
               <Input value={form.client} onChange={set("client")} placeholder="Client name" />
             </Field>
             <Field label="Field">
-              <Input value={form.field} onChange={set("field")} placeholder="e.g. Web App, NFT" />
+              <Input value={form.field} onChange={set("field")} placeholder="e.g. Web App, FinTech" />
             </Field>
             <Field label="Role">
               <Input value={form.role} onChange={set("role")} placeholder="e.g. Full-Stack Dev" />
@@ -98,15 +103,32 @@ function ProjectModal({ initial, onSave, onClose }) {
               <Input type="url" value={form.liveUrl} onChange={set("liveUrl")} placeholder="https://..." />
             </Field>
           </div>
+          <Field label="Short Summary / Elevator Pitch">
+            <Input value={form.summary || ""} onChange={set("summary")} placeholder="1-2 sentence high-impact summary" />
+          </Field>
           <Field label="Cover Image URL" required>
             <Input type="url" value={form.imageUrl} onChange={set("imageUrl")} placeholder="https://..." required />
           </Field>
           <Field label="Slider Image URL">
             <Input type="url" value={form.sliderImage} onChange={set("sliderImage")} placeholder="https://... (for homepage slider)" />
           </Field>
-          <Field label="Description">
-            <TextArea value={form.description} onChange={set("description")} placeholder="Project description..." rows={4} />
+          <Field label="Detailed Description">
+            <TextArea value={form.description} onChange={set("description")} placeholder="Comprehensive project description..." rows={3} />
           </Field>
+          <div className="admin-form-grid">
+            <Field label="The Problem">
+              <TextArea value={form.problem || ""} onChange={set("problem")} placeholder="Core friction or unmet market challenge..." rows={2} />
+            </Field>
+            <Field label="The Who (Target Audience)">
+              <TextArea value={form.targetAudience || ""} onChange={set("targetAudience")} placeholder="Specific customers or people facing this problem..." rows={2} />
+            </Field>
+            <Field label="The Solution & Unique Approach">
+              <TextArea value={form.solution || ""} onChange={set("solution")} placeholder="Unique architectural or technological approach..." rows={2} />
+            </Field>
+            <Field label="Why Now?">
+              <TextArea value={form.whyNow || ""} onChange={set("whyNow")} placeholder="Why now is the inflection point for this product..." rows={2} />
+            </Field>
+          </div>
           <div className="admin-modal-actions">
             <button type="button" onClick={onClose} className="outline-button">
               Cancel
