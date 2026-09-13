@@ -106,10 +106,13 @@ def synthesize_project_intelligence(website_data: dict, repo_data: dict) -> dict
         solution = f"{name} delivers a blazing-fast, headless shopping experience with optimized friction-free conversion paths."
         why_now = "Modern consumers demand sub-second mobile page loads and edge computing now enables global personalization at zero latency penalty."
     else:
-        problem = "Legacy architectures and fragmented tools create excessive complexity, high maintenance overhead, and subpar user experiences."
-        target_audience = "Modern engineering teams, business operators, and digital users who need reliable, intuitive tools to accomplish daily objectives."
-        solution = f"{name} solves this through a clean, unified system with a responsive user interface and robust backend integration."
-        why_now = "The confluence of modern cloud primitives, lightning-fast frontend frameworks, and distributed APIs makes unified architectures faster to build and scale than ever."
+        # Dynamic contextual synthesis from project name, description, and technologies
+        domain_name = web_desc or repo_desc or "digital workflows"
+        tech_highlights = ", ".join(all_techs[:3]) if all_techs else "modern web technologies"
+        problem = f"Existing approaches to {name.lower()} remain fragmented across disjointed interfaces, leading to excessive friction, administrative drag, and unpredictable user experiences."
+        target_audience = f"Forward-thinking teams and digital professionals seeking a streamlined, purpose-built platform to manage and scale their operations effortlessly."
+        solution = f"{name} introduces a unified system powered by {tech_highlights}, combining intuitive interface design with resilient, end-to-end execution."
+        why_now = f"The convergence of reactive UI frameworks, low-latency edge computing, and distributed APIs creates the perfect window to deliver {name} with unmatched responsiveness."
 
     return {
         "name": name,
@@ -168,14 +171,26 @@ async def generate_project_intelligence(website_data: dict, repo_data: dict) -> 
     """
     base_intelligence = synthesize_project_intelligence(website_data, repo_data)
 
-    gemini_key = os.getenv("GEMINI_API_KEY")
+    from pathlib import Path
+    from dotenv import load_dotenv
+
+    # Load from server/.env, parent .env, or system environment
+    server_env = Path(__file__).resolve().parents[2] / ".env"
+    root_env = Path(__file__).resolve().parents[3] / ".env"
+    if server_env.exists():
+        load_dotenv(server_env)
+    if root_env.exists():
+        load_dotenv(root_env)
+    load_dotenv()
+
+    gemini_key = os.getenv("GEMINI_API_KEY") or os.getenv("GOOGLE_API_KEY")
     if gemini_key:
-        try:
-            readme_snippet = (repo_data.get("readmeSnippet") or "")[:1200]
-            prompt = f"""You are an elite technology venture strategist and portfolio copywriter.
+        gemini_key = gemini_key.strip()
+        readme_snippet = (repo_data.get("readmeSnippet") or "")[:1500]
+        prompt = f"""You are an elite technology venture strategist, product architect, and portfolio copywriter.
 Analyze the following verified facts from a deployed project's website and GitHub repository:
 
-Website Title: {website_data.get('title')}
+Project Title: {website_data.get('title') or base_intelligence['name']}
 Website Description: {website_data.get('description')}
 Website Headings: {website_data.get('headings')}
 Repository Name: {repo_data.get('fullName')}
@@ -184,54 +199,81 @@ Repository README snippet: {readme_snippet}
 Technologies: {repo_data.get('technologies')}
 Languages: {repo_data.get('languages')}
 
-Produce a thorough, deeply compelling project analysis in JSON format with exactly these keys:
-- "name": Clean, punchy project title
-- "summary": A crisp 1-2 sentence executive summary of what the project is and why it matters
-- "description": A thorough, engaging description explaining what the product does, its architecture, and real-world value
-- "problem": The concrete problem, inefficiency, or pain point currently facing users or the industry
-- "targetAudience": The "who" — the specific people, professions, or customer segments facing this problem that would pay for or adopt this solution
-- "solution": The solution and its unique approach — what makes this specific implementation, architecture, or product strategy distinct and effective
-- "whyNow": "Why now?" — why this is the ideal inflection point for this product to succeed (e.g. recent technological advancements, market shifts, adoption dynamics)
-- "category": Primary category (e.g. AI Workflow Platform, FinTech Engine, Developer Infrastructure)
+Produce a thorough, deeply compelling, highly specific project analysis in JSON format with exactly these keys:
+- "name": Clean, punchy project title (e.g. {base_intelligence['name']})
+- "summary": A crisp 1-2 sentence executive summary of what this specific project does and why it matters
+- "description": A thorough, engaging 2-3 paragraph description explaining what the product actually does, its architecture, and real-world value
+- "problem": The Problem (Core Friction / Pain Point) — The concrete, real-world pain point or architectural inefficiency that this specific project was created to solve
+- "targetAudience": The Who (Target Audience & Customers) — The specific users, teams, or market segments experiencing this friction who will use or adopt this solution
+- "solution": The Solution & Unique Approach — What makes this specific system, UX, or technical approach uniquely capable of solving the problem
+- "whyNow": Why Now? (Inflection Point / Market Timing) — The specific technological breakthroughs, platform dynamics, or market conditions that make this the optimal time for this solution
+- "category": Primary category (e.g. AI Workflow Platform, FinTech Engine, Developer Infrastructure, Creative Portfolio)
 - "client": Creator or organization
 - "field": Primary technical discipline
 - "role": Creator role (e.g. Lead Architect & Full-Stack Engineer)
 
-Output ONLY valid JSON. Do not include markdown preamble or trailing commentary."""
+Output ONLY valid JSON matching this schema."""
 
-            url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key={gemini_key}"
-            async with httpx.AsyncClient(timeout=12.0) as client:
-                res = await client.post(
-                    url,
-                    json={"contents": [{"parts": [{"text": prompt}]}]},
-                )
-                if res.status_code == 200:
-                    candidates = res.json().get("candidates", [])
-                    if candidates:
-                        parts = candidates[0].get("content", {}).get("parts", [])
-                        if parts:
-                            text_resp = parts[0].get("text", "")
-                            ai_data = _parse_llm_json(text_resp)
-                            if ai_data:
-                                target_aud = ai_data.get("targetAudience") or ai_data.get("who") or ai_data.get("target_audience") or base_intelligence["targetAudience"]
-                                why_now_val = ai_data.get("whyNow") or ai_data.get("why_now") or base_intelligence["whyNow"]
+        # Support modern Gemini endpoints with robust fallback
+        candidate_models = [
+            "gemini-3.6-flash",
+            "gemini-3.5-flash",
+            "gemini-flash-latest",
+            "gemini-2.5-flash-lite",
+            "gemini-3.7-flash",
+        ]
+        for model_name in candidate_models:
+            try:
+                url = f"https://generativelanguage.googleapis.com/v1beta/models/{model_name}:generateContent?key={gemini_key}"
+                payload = {
+                    "contents": [{"parts": [{"text": prompt}]}],
+                    "generationConfig": {
+                        "responseMimeType": "application/json"
+                    }
+                }
+                async with httpx.AsyncClient(timeout=30.0) as client:
+                    res = await client.post(
+                        url,
+                        headers={"Content-Type": "application/json"},
+                        json=payload,
+                    )
+                    if res.status_code == 200:
+                        candidates = res.json().get("candidates", [])
+                        if candidates:
+                            parts = candidates[0].get("content", {}).get("parts", [])
+                            if parts:
+                                text_resp = parts[0].get("text", "")
+                                ai_data = _parse_llm_json(text_resp)
+                                if ai_data:
+                                    target_aud = (
+                                        ai_data.get("targetAudience")
+                                        or ai_data.get("who")
+                                        or ai_data.get("target_audience")
+                                        or base_intelligence["targetAudience"]
+                                    )
+                                    why_now_val = (
+                                        ai_data.get("whyNow")
+                                        or ai_data.get("why_now")
+                                        or base_intelligence["whyNow"]
+                                    )
 
-                                base_intelligence.update({
-                                    "name": ai_data.get("name") or base_intelligence["name"],
-                                    "summary": ai_data.get("summary") or base_intelligence["summary"],
-                                    "description": ai_data.get("description") or base_intelligence["description"],
-                                    "problem": ai_data.get("problem") or base_intelligence["problem"],
-                                    "targetAudience": target_aud,
-                                    "target_audience": target_aud,
-                                    "solution": ai_data.get("solution") or base_intelligence["solution"],
-                                    "whyNow": why_now_val,
-                                    "why_now": why_now_val,
-                                    "category": ai_data.get("category") or base_intelligence["category"],
-                                    "client": ai_data.get("client") or base_intelligence["client"],
-                                    "field": ai_data.get("field") or base_intelligence["field"],
-                                    "role": ai_data.get("role") or base_intelligence["role"],
-                                })
-        except Exception:
-            pass
+                                    base_intelligence.update({
+                                        "name": ai_data.get("name") or base_intelligence["name"],
+                                        "summary": ai_data.get("summary") or base_intelligence["summary"],
+                                        "description": ai_data.get("description") or base_intelligence["description"],
+                                        "problem": ai_data.get("problem") or base_intelligence["problem"],
+                                        "targetAudience": target_aud,
+                                        "target_audience": target_aud,
+                                        "solution": ai_data.get("solution") or base_intelligence["solution"],
+                                        "whyNow": why_now_val,
+                                        "why_now": why_now_val,
+                                        "category": ai_data.get("category") or base_intelligence["category"],
+                                        "client": ai_data.get("client") or base_intelligence["client"],
+                                        "field": ai_data.get("field") or base_intelligence["field"],
+                                        "role": ai_data.get("role") or base_intelligence["role"],
+                                    })
+                                    break
+            except Exception:
+                continue
 
     return base_intelligence

@@ -13,18 +13,46 @@ import {
 } from "lucide-react";
 import { useAdminStore } from "../lib/adminStore.js";
 
-function isValidUrl(val) {
+export function normalizeWebsiteUrl(val) {
+  if (!val) return "";
+  let clean = val.trim();
+  if (clean && !clean.startsWith("http://") && !clean.startsWith("https://")) {
+    clean = `https://${clean}`;
+  }
+  return clean;
+}
+
+export function isValidUrl(val) {
+  if (!val) return false;
   try {
-    const u = new URL(val.startsWith("http") ? val : `https://${val}`);
-    return u.protocol === "http:" || u.protocol === "https:";
+    const clean = normalizeWebsiteUrl(val);
+    const u = new URL(clean);
+    return (u.protocol === "http:" || u.protocol === "https:") && Boolean(u.hostname);
   } catch {
     return false;
   }
 }
 
-function isValidGithubUrl(val) {
-  const pattern = /^(https?:\/\/)?(www\.)?github\.com\/[a-zA-Z0-9_\-\.]+\/[a-zA-Z0-9_\-\.]+$/i;
-  return pattern.test(val.trim());
+export function extractGithubRepo(val) {
+  if (!val) return "";
+  let clean = val.trim();
+  // Strip git@ or http/https protocol
+  clean = clean.replace(/^(?:https?:\/\/)?(?:www\.)?github\.com\/?/i, "");
+  clean = clean.replace(/^git@github\.com:/i, "");
+  clean = clean.replace(/\.git\/?$/i, "");
+  clean = clean.replace(/^\/+|\/+$/g, "");
+  return clean;
+}
+
+export function isValidGithubRepo(val) {
+  const repo = extractGithubRepo(val);
+  const pattern = /^[a-zA-Z0-9_\-\.]+\/[a-zA-Z0-9_\-\.]+$/;
+  return pattern.test(repo);
+}
+
+export function toFullGithubUrl(val) {
+  const repo = extractGithubRepo(val);
+  return repo ? `https://github.com/${repo}` : "";
 }
 
 export default function MagicWizard({ isOpen, onClose, onProjectCreated }) {
@@ -120,7 +148,7 @@ export default function MagicWizard({ isOpen, onClose, onProjectCreated }) {
 
   // Validation
   const webValid = isValidUrl(websiteUrl);
-  const ghValid = isValidGithubUrl(githubUrl);
+  const ghValid = isValidGithubRepo(githubUrl);
   const sourcesValid = webValid && ghValid;
 
   const handleStartMagic = async (e) => {
@@ -128,7 +156,9 @@ export default function MagicWizard({ isOpen, onClose, onProjectCreated }) {
     if (!sourcesValid) return;
     setPollError(null);
     try {
-      const id = await startMagicJob(websiteUrl, githubUrl);
+      const fullWeb = normalizeWebsiteUrl(websiteUrl);
+      const fullGh = toFullGithubUrl(githubUrl);
+      const id = await startMagicJob(fullWeb, fullGh);
       setJobId(id);
       setPhase("pipeline");
     } catch (err) {
@@ -180,11 +210,11 @@ export default function MagicWizard({ isOpen, onClose, onProjectCreated }) {
             <div className="magic-welcome-features">
               <div className="magic-feature-item">
                 <Check size={16} className="text-accent" />
-                <span>Deterministic browser &amp; repository inspection</span>
+                <span>Zero configuration required</span>
               </div>
               <div className="magic-feature-item">
                 <Check size={16} className="text-accent" />
-                <span>Multi-device screenshot frame composition</span>
+                <span>Photorealistic dual-device mockup creation</span>
               </div>
               <div className="magic-feature-item">
                 <Check size={16} className="text-accent" />
@@ -211,7 +241,7 @@ export default function MagicWizard({ isOpen, onClose, onProjectCreated }) {
           <form onSubmit={handleStartMagic} className="magic-phase-sources">
             <div className="magic-sources-intro">
               <h3>Connect Project Sources</h3>
-              <p>Enter the deployed web URL and the public GitHub repository URL.</p>
+              <p>Enter the deployed web URL and the public GitHub repository.</p>
             </div>
 
             {pollError && (
@@ -223,40 +253,68 @@ export default function MagicWizard({ isOpen, onClose, onProjectCreated }) {
 
             <div className="magic-form-group">
               <label className="admin-field">
-                <span>
-                  Website URL <b>*</b>
+                <span className="flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-[17px] text-neutral-400">public</span>
+                    Website URL <b>*</b>
+                  </span>
+                  {websiteUrl && webValid && (
+                    <span className="inline-flex items-center gap-1 text-xs text-emerald-400 font-mono">
+                      <Check size={14} /> Valid URL
+                    </span>
+                  )}
                 </span>
-                <input
-                  type="url"
-                  value={websiteUrl}
-                  onChange={(e) => setWebsiteUrl(e.target.value)}
-                  placeholder="https://my-app.vercel.app"
-                  required
-                  className={`admin-input ${websiteUrl && !webValid ? "border-red-500" : ""}`}
-                />
+                <div className="magic-input-group">
+                  <span className="magic-input-prefix">https://</span>
+                  <input
+                    type="text"
+                    value={websiteUrl.replace(/^https?:\/\//i, "")}
+                    onChange={(e) => {
+                      const raw = e.target.value.trim();
+                      setWebsiteUrl(raw);
+                    }}
+                    placeholder="my-app.vercel.app"
+                    required
+                    className={`admin-input magic-grouped-input ${websiteUrl && !webValid ? "border-red-500" : ""}`}
+                  />
+                </div>
               </label>
               {websiteUrl && !webValid && (
-                <p className="magic-field-error">Please enter a valid HTTP/HTTPS URL.</p>
+                <p className="magic-field-error">Please enter a valid website hostname or URL.</p>
               )}
             </div>
 
             <div className="magic-form-group">
               <label className="admin-field">
-                <span>
-                  GitHub Repository <b>*</b>
+                <span className="flex items-center justify-between">
+                  <span className="flex items-center gap-1.5">
+                    <span className="material-symbols-outlined text-[17px] text-neutral-400">code</span>
+                    GitHub Repository <b>*</b>
+                  </span>
+                  {githubUrl && ghValid && (
+                    <span className="inline-flex items-center gap-1 text-xs text-emerald-400 font-mono">
+                      <Check size={14} /> Valid Repo
+                    </span>
+                  )}
                 </span>
-                <input
-                  type="url"
-                  value={githubUrl}
-                  onChange={(e) => setGithubUrl(e.target.value)}
-                  placeholder="https://github.com/username/project"
-                  required
-                  className={`admin-input ${githubUrl && !ghValid ? "border-red-500" : ""}`}
-                />
+                <div className="magic-input-group">
+                  <span className="magic-input-prefix">github.com/</span>
+                  <input
+                    type="text"
+                    value={extractGithubRepo(githubUrl)}
+                    onChange={(e) => {
+                      const extracted = extractGithubRepo(e.target.value);
+                      setGithubUrl(extracted);
+                    }}
+                    placeholder="jayo14/devfolio"
+                    required
+                    className={`admin-input magic-grouped-input ${githubUrl && !ghValid ? "border-red-500" : ""}`}
+                  />
+                </div>
               </label>
               {githubUrl && !ghValid && (
                 <p className="magic-field-error">
-                  Expected format: https://github.com/username/repository
+                  Enter repository as: username/repository (e.g. jayo14/devfolio)
                 </p>
               )}
             </div>
@@ -360,14 +418,14 @@ export default function MagicWizard({ isOpen, onClose, onProjectCreated }) {
               <span className="magic-preview-badge">
                 <Eye size={14} /> LIVE PREVIEW
               </span>
-              <article className="work-card mb-0">
+              <article className="magic-showcase-preview">
                 {reviewForm.imageUrl && (
-                  <div className="work-card-image-wrap">
-                    <img src={reviewForm.imageUrl} alt={reviewForm.title} />
+                  <div className="magic-preview-hero-wrap">
+                    <img src={reviewForm.imageUrl} alt={reviewForm.title} className="magic-preview-hero-img" />
                   </div>
                 )}
-                <div className="work-card-details">
-                  <h2>{reviewForm.title || "Project Title"}</h2>
+                <div className="magic-preview-details">
+                  <h2 className="magic-preview-title">{reviewForm.title || "Project Title"}</h2>
                   <div className="work-meta-grid">
                     <p>
                       <span>Client</span>

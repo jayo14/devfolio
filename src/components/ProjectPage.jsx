@@ -93,11 +93,13 @@ export default function ProjectPage({ slug }) {
             </div>
 
             {project.imageUrl && (
-              <img
-                className="blog-detail-image"
-                src={project.imageUrl}
-                alt={project.title}
-              />
+              <div className="project-detail-hero-wrap">
+                <img
+                  className="project-detail-hero-image"
+                  src={project.imageUrl}
+                  alt={project.title}
+                />
+              </div>
             )}
 
             {/* Project meta */}

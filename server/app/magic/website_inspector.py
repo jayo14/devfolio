@@ -11,8 +11,8 @@ def extract_color_palette(html: str, soup: BeautifulSoup) -> dict:
     """
     colors = {
         "mode": "dark",
-        "primary": "#ff4f22",
-        "accent": "#ff4f22",
+        "primary": "",
+        "accent": "",
         "background": "#000000",
         "text": "#ffffff",
     }
@@ -20,7 +20,8 @@ def extract_color_palette(html: str, soup: BeautifulSoup) -> dict:
     # Detect theme-color meta tag
     theme_meta = soup.find("meta", attrs={"name": "theme-color"})
     if theme_meta and theme_meta.get("content"):
-        colors["accent"] = theme_meta["content"]
+        colors["accent"] = theme_meta["content"].strip()
+        colors["primary"] = theme_meta["content"].strip()
 
     # Search for hex colors in style tags
     style_content = " ".join([s.get_text() for s in soup.find_all("style")])
@@ -49,14 +50,29 @@ def extract_color_palette(html: str, soup: BeautifulSoup) -> dict:
             "#ffffff",
             "#000",
             "#000000",
+            "#111",
+            "#111111",
+            "#222",
+            "#222222",
             "#333",
             "#333333",
+            "#444",
+            "#444444",
+            "#555",
+            "#555555",
             "#666",
             "#888",
+            "#999",
+            "#aaa",
+            "#bbb",
             "#ccc",
+            "#ddd",
             "#eee",
         ):
-            colors["accent"] = clean
+            if not colors["accent"]:
+                colors["accent"] = clean
+            if not colors["primary"]:
+                colors["primary"] = clean
             break
 
     return colors

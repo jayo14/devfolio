@@ -9,13 +9,17 @@ class ValidationError(Exception):
 
 
 def validate_and_normalize_github_url(url: str) -> tuple[str, str, str]:
-    """Validates a GitHub repository URL and extracts (normalized_url, owner, repo)."""
+    """Validates a GitHub repository URL or 'owner/repo' shorthand and extracts (normalized_url, owner, repo)."""
     if not url or not isinstance(url, str):
         raise ValidationError("GitHub repository URL is required.")
 
-    cleaned = url.strip()
+    cleaned = url.strip().strip("/")
+    # Support shorthand "owner/repo" or "github.com/owner/repo"
     if not cleaned.startswith(("http://", "https://")):
-        cleaned = f"https://{cleaned}"
+        if not cleaned.lower().startswith("github.com/"):
+            cleaned = f"https://github.com/{cleaned}"
+        else:
+            cleaned = f"https://{cleaned}"
 
     parsed = urlparse(cleaned)
     if parsed.netloc.lower() not in ("github.com", "www.github.com"):
@@ -24,7 +28,7 @@ def validate_and_normalize_github_url(url: str) -> tuple[str, str, str]:
     parts = [p for p in parsed.path.strip("/").split("/") if p]
     if len(parts) < 2:
         raise ValidationError(
-            "Invalid GitHub URL format. Expected: https://github.com/owner/repository"
+            "Invalid GitHub format. Expected: username/repository or https://github.com/username/repository"
         )
 
     owner = parts[0]

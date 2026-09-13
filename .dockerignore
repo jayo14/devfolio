@@ -1,0 +1,10 @@
+node_modules
+dist
+.env
+server/.env
+server/.venv
+server/__pycache__
+server/*.pyc
+server/*.db
+server/.pytest_cache
+.git

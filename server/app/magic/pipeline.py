@@ -127,7 +127,8 @@ async def execute_magic_pipeline(job_id: str):
         update_job_step(db, job_id, "generating_mockup", "processing", "Compositing multi-device presentation frame...")
         try:
             mockup_path = job_dir / "mockup.jpg"
-            create_mockup_composition(desktop_path, mobile_path, mockup_path)
+            theme_data = (intelligence and intelligence.get("theme")) or website_data.get("theme") or {}
+            create_mockup_composition(desktop_path, mobile_path, mockup_path, theme=theme_data)
             job.mockup_url = f"/static/magic/{job_id}/mockup.jpg"
             db.commit()
             update_job_step(db, job_id, "generating_mockup", "completed", "Generated high-resolution portfolio cover")
