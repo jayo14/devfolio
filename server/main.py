@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 
 from app.database import engine, Base, run_auto_migrations
-from app.routes import projects, blogs, auth, magic
+from app.routes import projects, blogs, auth, magic, upload
 
 Base.metadata.create_all(bind=engine)
 run_auto_migrations(engine)
@@ -32,6 +32,7 @@ app.include_router(auth.router)
 app.include_router(magic.router)
 app.include_router(projects.router)
 app.include_router(blogs.router)
+app.include_router(upload.router)
 
 
 @app.get("/health")

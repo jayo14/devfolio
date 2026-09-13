@@ -4,6 +4,7 @@ import { useAdminStore } from "../lib/adminStore.js";
 import { Pencil, Trash2, Plus, ExternalLink, X, Lock, LogOut, User as UserIcon, Eye, EyeOff } from "lucide-react";
 import MagicButton from "./MagicButton.jsx";
 import MagicWizard from "./MagicWizard.jsx";
+import ImageUploadField from "./ImageUploadField.jsx";
 
 /* ─── Platform badge colours & recognition ─────────────────── */
 const platformColors = {
@@ -230,12 +231,20 @@ function ProjectModal({ initial, onSave, onClose }) {
           <Field label="Short Summary / Elevator Pitch">
             <Input value={form.summary || ""} onChange={set("summary")} placeholder="1-2 sentence high-impact summary" />
           </Field>
-          <Field label="Cover Image URL" required>
-            <Input type="url" value={form.imageUrl} onChange={set("imageUrl")} placeholder="https://..." required />
-          </Field>
-          <Field label="Slider Image URL">
-            <Input type="url" value={form.sliderImage} onChange={set("sliderImage")} placeholder="https://... (for homepage slider)" />
-          </Field>
+          <ImageUploadField
+            label="Cover Image URL"
+            value={form.imageUrl}
+            onChange={(val) => set("imageUrl")({ target: { value: val } })}
+            placeholder="https://... (or drag & drop / click upload)"
+            required
+          />
+          <ImageUploadField
+            label="Slider Image URL"
+            value={form.sliderImage}
+            onChange={(val) => set("sliderImage")({ target: { value: val } })}
+            placeholder="https://... (for homepage slider)"
+            description="Displayed in the homepage slider"
+          />
           <Field label="Detailed Description">
             <TextArea value={form.description} onChange={set("description")} placeholder="Comprehensive project description..." rows={3} />
           </Field>
@@ -347,14 +356,15 @@ function BlogModal({ initial, onSave, onClose }) {
               </div>
             )}
           </Field>
-          <div className="admin-form-grid">
-            <Field label="Date">
-              <Input type="date" value={form.date} onChange={set("date")} />
-            </Field>
-            <Field label="Cover Image URL">
-              <Input type="url" value={form.coverImage} onChange={set("coverImage")} placeholder="https://..." />
-            </Field>
-          </div>
+          <Field label="Date">
+            <Input type="date" value={form.date} onChange={set("date")} />
+          </Field>
+          <ImageUploadField
+            label="Cover Image URL"
+            value={form.coverImage}
+            onChange={(val) => set("coverImage")({ target: { value: val } })}
+            placeholder="https://... (or drag & drop / click upload)"
+          />
           <div className="admin-modal-actions">
             <button type="button" onClick={onClose} className="outline-button">
               Cancel

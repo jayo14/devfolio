@@ -48,6 +48,31 @@ async function api(path, opts = {}, token = null) {
   return res.json();
 }
 
+async function uploadImageFile(file, token = null) {
+  const formData = new FormData();
+  formData.append("file", file);
+
+  const headers = {};
+  if (token) {
+    headers["Authorization"] = `Bearer ${token}`;
+  }
+
+  const res = await fetch(`${API_BASE}/api/upload`, {
+    method: "POST",
+    headers,
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => ({}));
+    throw new Error(body.detail || `Upload failed (${res.status})`);
+  }
+
+  const data = await res.json();
+  const fullUrl = API_BASE ? `${API_BASE.replace(/\/+$/, "")}${data.url}` : data.url;
+  return { ...data, fullUrl };
+}
+
 export const useAdminStore = create((set, get) => ({
   // ── Auth State ────────────────────────────────────────────
   token: getSavedToken(),
@@ -295,6 +320,10 @@ export const useAdminStore = create((set, get) => ({
       set({ magicError: err.message, magicLoading: false });
       throw err;
     }
+  },
+
+  uploadImage: async (file) => {
+    return uploadImageFile(file, get().token);
   },
 
   clearMagicJob: () => set({ currentMagicJob: null, magicError: null, magicLoading: false }),
