@@ -18,9 +18,10 @@ def send_contact_email(
     email: str,
     phone: str,
     message: str,
-    recipient: str = DEFAULT_RECIPIENT,
+    recipient: str | None = None,
 ) -> dict:
     """Sends a notification email for a contact form submission using the best available provider."""
+    target_recipient = (recipient or os.getenv("CONTACT_NOTIFICATION_EMAIL") or DEFAULT_RECIPIENT).strip()
     full_name = f"{first_name} {last_name}".strip()
     subject = f"[Devfolio] New Contact Message from {full_name}"
 
@@ -84,31 +85,60 @@ Reply directly to this email to respond to {full_name} ({email}).
     delivery_status = "unconfigured"
     delivery_error = None
 
-    # 1. Try Resend API if configured
-    resend_key = os.getenv("RESEND_API_KEY")
+    # 1. Try Resend if configured
+    resend_key = os.getenv("RESEND_API_KEY", "").strip()
     if resend_key:
+        from_email = os.getenv("RESEND_FROM", "Devfolio <onboarding@resend.dev>").strip()
         try:
-            res = httpx.post(
-                "https://api.resend.com/emails",
-                headers={
-                    "Authorization": f"Bearer {resend_key}",
-                    "Content-Type": "application/json",
-                },
-                json={
-                    "from": os.getenv("RESEND_FROM", "Devfolio <onboarding@resend.dev>"),
-                    "to": [recipient],
-                    "reply_to": email,
-                    "subject": subject,
-                    "text": text_body,
-                    "html": html_body,
-                },
-                timeout=10.0,
-            )
-            if res.status_code in (200, 201):
-                return {"delivered": True, "provider": "resend", "id": res.json().get("id")}
-            delivery_error = f"Resend API error ({res.status_code}): {res.text}"
+            import resend
+
+            resend.api_key = resend_key
+            resp = resend.Emails.send({
+                "from": from_email,
+                "to": [target_recipient],
+                "reply_to": email,
+                "subject": subject,
+                "text": text_body,
+                "html": html_body,
+            })
+            email_id = resp.get("id") if isinstance(resp, dict) else getattr(resp, "id", None)
+            return {
+                "delivered": True,
+                "provider": "resend",
+                "id": email_id,
+                "recipient": target_recipient,
+            }
         except Exception as e:
-            delivery_error = f"Resend exception: {e}"
+            # Fallback to direct HTTP post if SDK encounter issues
+            try:
+                res = httpx.post(
+                    "https://api.resend.com/emails",
+                    headers={
+                        "Authorization": f"Bearer {resend_key}",
+                        "Content-Type": "application/json",
+                    },
+                    json={
+                        "from": from_email,
+                        "to": [target_recipient],
+                        "reply_to": email,
+                        "subject": subject,
+                        "text": text_body,
+                        "html": html_body,
+                    },
+                    timeout=10.0,
+                )
+                if res.status_code in (200, 201):
+                    data = res.json()
+                    return {
+                        "delivered": True,
+                        "provider": "resend",
+                        "id": data.get("id"),
+                        "recipient": target_recipient,
+                    }
+                delivery_error = f"Resend API error ({res.status_code}): {res.text}"
+            except Exception as http_e:
+                delivery_error = f"Resend SDK error: {e}; HTTP fallback error: {http_e}"
+
 
     # 2. Try SMTP if configured
     smtp_host = os.getenv("SMTP_HOST")
@@ -120,7 +150,7 @@ Reply directly to this email to respond to {full_name} ({email}).
             msg = EmailMessage()
             msg["Subject"] = subject
             msg["From"] = os.getenv("SMTP_FROM", smtp_user)
-            msg["To"] = recipient
+            msg["To"] = target_recipient
             msg["Reply-To"] = email
             msg.set_content(text_body)
             msg.add_alternative(html_body, subtype="html")
@@ -167,7 +197,8 @@ Reply directly to this email to respond to {full_name} ({email}).
     return {
         "delivered": False,
         "provider": None,
-        "recipient": recipient,
+        "recipient": target_recipient,
         "note": "Message recorded in database. To enable automated email dispatch, add SMTP_HOST/USER/PASSWORD or RESEND_API_KEY to server/.env",
         "error": delivery_error,
     }
+
