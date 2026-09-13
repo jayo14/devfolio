@@ -221,3 +221,36 @@ class MagicPublishRequest(BaseModel):
     liveUrl: str = ""
 
 
+# ── Contact Messages ─────────────────────────────────────────
+
+
+class ContactMessageCreate(BaseModel):
+    firstName: str
+    lastName: str
+    email: str
+    phone: str
+    message: str = ""
+
+
+class ContactMessageOut(BaseModel):
+    id: str
+    firstName: str
+    lastName: str
+    email: str
+    phone: str
+    message: str
+    createdAt: datetime
+
+    @classmethod
+    def from_orm_model(cls, row):
+        return cls(
+            id=row.id,
+            firstName=row.first_name,
+            lastName=row.last_name,
+            email=row.email,
+            phone=row.phone,
+            message=row.message or "",
+            createdAt=row.created_at,
+        )
+
+

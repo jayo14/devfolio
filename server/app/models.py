@@ -105,3 +105,20 @@ class MagicJob(Base):
         return f"<MagicJob {self.id} ({self.status})>"
 
 
+class ContactMessage(Base):
+    __tablename__ = "contact_messages"
+
+    id = Column(String(12), primary_key=True, default=_generate_id)
+    first_name = Column(String(100), nullable=False)
+    last_name = Column(String(100), nullable=False)
+    email = Column(String(255), nullable=False)
+    phone = Column(String(50), nullable=False)
+    message = Column(Text, default="")
+    created_at = Column(
+        DateTime, default=lambda: datetime.now(timezone.utc), nullable=False
+    )
+
+    def __repr__(self):
+        return f"<ContactMessage {self.first_name} {self.last_name} ({self.email})>"
+
+

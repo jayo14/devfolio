@@ -5,6 +5,7 @@ import { Pencil, Trash2, Plus, ExternalLink, X, Lock, LogOut, User as UserIcon, 
 import MagicButton from "./MagicButton.jsx";
 import MagicWizard from "./MagicWizard.jsx";
 import ImageUploadField from "./ImageUploadField.jsx";
+import { resolveImageUrl } from "../lib/imageUrl.js";
 
 /* ─── Platform badge colours & recognition ─────────────────── */
 const platformColors = {
@@ -647,7 +648,7 @@ export default function AdminPage() {
                           <tr key={p.id}>
                             <td>
                               <div className="admin-project-cell">
-                                {p.imageUrl && <img src={p.imageUrl} alt="" className="admin-thumb" />}
+                                {p.imageUrl && <img src={resolveImageUrl(p.imageUrl)} alt="" className="admin-thumb" />}
                                 <div>
                                   <strong>{p.title}</strong>
                                   <span className="admin-slug">/work/{p.slug}</span>
@@ -694,7 +695,7 @@ export default function AdminPage() {
                   <div className="admin-card-grid">
                     {blogLinks.map((b) => (
                       <div key={b.id} className="admin-blog-card">
-                        {b.coverImage && <img src={b.coverImage} alt="" className="admin-blog-cover" />}
+                        {b.coverImage && <img src={resolveImageUrl(b.coverImage)} alt="" className="admin-blog-cover" />}
                         <div className="admin-blog-card-body">
                           <div className="admin-blog-platform" style={{ background: platformColor(b.platform) }}>
                             <PlatformLogo icon={detectPlatformInfo(b.url || b.platform).icon} size={14} />

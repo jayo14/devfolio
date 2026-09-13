@@ -47,15 +47,55 @@ function FormField({ label, name, required = false, placeholder, type = "text", 
 }
 
 function ContactForm() {
-  const [status, setStatus] = useState(null);
-  const { register, handleSubmit, formState: { errors } } = useForm({ resolver: zodResolver(schema) });
-  const onSubmit = () => setStatus("success");
+  const [status, setStatus] = useState(null); // null | "submitting" | "success" | "error"
+  const [errorMessage, setErrorMessage] = useState("");
+  const { register, handleSubmit, reset, formState: { errors } } = useForm({ resolver: zodResolver(schema) });
+
+  const onSubmit = async (data) => {
+    setStatus("submitting");
+    setErrorMessage("");
+
+    const apiBase = (import.meta.env.VITE_API_URL || "").replace(/\/+$/, "");
+    const endpoint = apiBase ? `${apiBase}/api/contact/` : "/api/contact/";
+
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      });
+
+      if (!res.ok) {
+        const body = await res.json().catch(() => ({}));
+        throw new Error(body.detail || `Submission failed (${res.status})`);
+      }
+
+      setStatus("success");
+      reset();
+    } catch (err) {
+      console.error("Contact submission error:", err);
+      setStatus("error");
+      setErrorMessage(err.message || "Oops! Something went wrong while submitting the form.");
+    }
+  };
 
   return (
     <div className="contact-card">
       <PlusCorner corner="top-left" color="white" /><PlusCorner corner="top-right" color="white" /><PlusCorner corner="bottom-right" color="white" /><PlusCorner corner="bottom-left" color="white" />
       {status === "success" ? (
-        <div className="form-status success" role="status">Thank you! Your submission has been received!</div>
+        <div className="form-status success" role="status">
+          <p className="font-medium text-white mb-2 text-xl">Thank you! Your message has been received.</p>
+          <p className="text-sm text-white/70 max-w-md mx-auto">
+            Your inquiry has been forwarded directly to John Ayobami (johnayobami77@proton.me). I will respond to your email as soon as possible.
+          </p>
+          <button
+            type="button"
+            onClick={() => setStatus(null)}
+            className="mt-6 inline-block text-xs font-mono text-accent hover:underline uppercase tracking-wider"
+          >
+            ← Send another message
+          </button>
+        </div>
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <div className="contact-fields-grid">
@@ -65,8 +105,18 @@ function ContactForm() {
           <FormField label="Email Address" name="email" required placeholder="Your email address" type="email" register={register("email")} error={errors.email?.message} />
           <FormField label="Phone Number" name="phone" required placeholder="+1 234 5678" type="tel" register={register("phone")} error={errors.phone?.message} />
           <FormField label="Message" name="message" placeholder="Write your message here..." textarea register={register("message")} error={errors.message?.message} />
-          <button type="submit" className="contact-submit">Send Your Message</button>
-          {status === "error" && <div className="form-status error" role="alert">Oops! Something went wrong while submitting the form.</div>}
+          <button
+            type="submit"
+            disabled={status === "submitting"}
+            className="contact-submit disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {status === "submitting" ? "Sending Your Message..." : "Send Your Message"}
+          </button>
+          {status === "error" && (
+            <div className="form-status error" role="alert">
+              {errorMessage || "Oops! Something went wrong while submitting the form."}
+            </div>
+          )}
         </form>
       )}
     </div>

@@ -5,6 +5,7 @@ import Contact from "./Contact.jsx";
 import Footer from "./Footer.jsx";
 import { originalAssets } from "../lib/siteData.js";
 import { useAdminStore } from "../lib/adminStore.js";
+import { resolveImageUrl } from "../lib/imageUrl.js";
 
 const staticCards = originalAssets.workImages.map((image, index) => ({ image, key: `myth-${index}` }));
 const mythFans = "https://stephaniebruce.co/?ref=lapaninja#myth-fans";
@@ -34,7 +35,7 @@ export default function WorkPage() {
             {/* Dynamic projects from admin store */}
             {projects.map((p) => (
               <article className="work-card" key={p.id}>
-                <a href={`/work/${p.slug}`} className="work-card-image-wrap"><img src={p.imageUrl} alt={p.title} loading="lazy" /></a>
+                <a href={`/work/${p.slug}`} className="work-card-image-wrap"><img src={resolveImageUrl(p.imageUrl)} alt={p.title} loading="lazy" /></a>
                 <div className="work-card-details">
                   <a href={`/work/${p.slug}`}><h2>{p.title}</h2></a>
                   <div className="work-meta-grid">

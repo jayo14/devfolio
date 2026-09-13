@@ -196,6 +196,10 @@ Website Headings: {website_data.get('headings')}
 Repository Name: {repo_data.get('fullName')}
 Repository Description: {repo_data.get('description')}
 Repository README snippet: {readme_snippet}
+Architecture: {repo_data.get('architecture')}
+Monorepo: {repo_data.get('isMonorepo')} ({repo_data.get('monorepoType')})
+Stack Breakdown by Domain: {repo_data.get('stack')}
+Subprojects / Packages: {[f"{sp['path']}: {', '.join(sp['technologies'])}" for sp in repo_data.get('subprojects', [])]}
 Technologies: {repo_data.get('technologies')}
 Languages: {repo_data.get('languages')}
 

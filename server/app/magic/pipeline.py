@@ -108,6 +108,19 @@ async def execute_magic_pipeline(job_id: str):
             desktop_path, mobile_path = await capture_web_screenshots(valid_web_url, job_dir)
             job.desktop_screenshot = f"/static/magic/{job_id}/desktop.png"
             job.mobile_screenshot = f"/static/magic/{job_id}/mobile.png"
+
+            # Upload screenshots to Neon S3 storage for persistent cloud hosting
+            try:
+                from app.storage import upload_bytes
+                if desktop_path and desktop_path.exists():
+                    d_res = upload_bytes(desktop_path.read_bytes(), "desktop.png", "image/png", folder=f"magic/{job_id}")
+                    job.desktop_screenshot = d_res["url"]
+                if mobile_path and mobile_path.exists():
+                    m_res = upload_bytes(mobile_path.read_bytes(), "mobile.png", "image/png", folder=f"magic/{job_id}")
+                    job.mobile_screenshot = m_res["url"]
+            except Exception:
+                pass
+
             db.commit()
             update_job_step(db, job_id, "capturing_screenshots", "completed", "Captured 1440x900 & 390x844 viewports")
         except Exception as e:
@@ -130,6 +143,16 @@ async def execute_magic_pipeline(job_id: str):
             theme_data = (intelligence and intelligence.get("theme")) or website_data.get("theme") or {}
             create_mockup_composition(desktop_path, mobile_path, mockup_path, theme=theme_data)
             job.mockup_url = f"/static/magic/{job_id}/mockup.jpg"
+
+            # Upload mockup to Neon S3 storage for persistent cloud hosting
+            try:
+                from app.storage import upload_bytes
+                if mockup_path and mockup_path.exists():
+                    mock_res = upload_bytes(mockup_path.read_bytes(), "mockup.jpg", "image/jpeg", folder=f"magic/{job_id}")
+                    job.mockup_url = mock_res["url"]
+            except Exception:
+                pass
+
             db.commit()
             update_job_step(db, job_id, "generating_mockup", "completed", "Generated high-resolution portfolio cover")
         except Exception as e:

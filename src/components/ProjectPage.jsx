@@ -6,6 +6,7 @@ import Footer from "./Footer.jsx";
 import { useAdminStore } from "../lib/adminStore.js";
 import { originalAssets } from "../lib/siteData.js";
 import { ChevronRight, AlertCircle, Users, Lightbulb, Clock, Sparkles } from "lucide-react";
+import { resolveImageUrl } from "../lib/imageUrl.js";
 
 export default function ProjectPage({ slug }) {
   const project = useAdminStore((s) => s.getProjectBySlug(slug));
@@ -96,7 +97,7 @@ export default function ProjectPage({ slug }) {
               <div className="project-detail-hero-wrap">
                 <img
                   className="project-detail-hero-image"
-                  src={project.imageUrl}
+                  src={resolveImageUrl(project.imageUrl)}
                   alt={project.title}
                 />
               </div>

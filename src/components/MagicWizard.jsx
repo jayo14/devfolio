@@ -12,6 +12,7 @@ import {
   Eye,
 } from "lucide-react";
 import { useAdminStore } from "../lib/adminStore.js";
+import { resolveImageUrl } from "../lib/imageUrl.js";
 
 export function normalizeWebsiteUrl(val) {
   if (!val) return "";
@@ -421,7 +422,7 @@ export default function MagicWizard({ isOpen, onClose, onProjectCreated }) {
               <article className="magic-showcase-preview">
                 {reviewForm.imageUrl && (
                   <div className="magic-preview-hero-wrap">
-                    <img src={reviewForm.imageUrl} alt={reviewForm.title} className="magic-preview-hero-img" />
+                    <img src={resolveImageUrl(reviewForm.imageUrl)} alt={reviewForm.title} className="magic-preview-hero-img" />
                   </div>
                 )}
                 <div className="magic-preview-details">

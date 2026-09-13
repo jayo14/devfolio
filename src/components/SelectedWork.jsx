@@ -5,6 +5,7 @@ import { HiChevronLeft, HiChevronRight } from "react-icons/hi2";
 import { Container } from "./Container.jsx";
 import { originalAssets } from "../lib/siteData.js";
 import { useAdminStore } from "../lib/adminStore.js";
+import { resolveImageUrl } from "../lib/imageUrl.js";
 
 const staticSlides = originalAssets.sliderImages.map((image) => ({
   image,
@@ -22,8 +23,12 @@ const SelectedWork = () => {
 
   const slides = useMemo(() => {
     const dynamic = projects
-      .filter((p) => p.sliderImage)
-      .map((p) => ({ image: p.sliderImage, title: p.title, href: `/work/${p.slug}` }));
+      .filter((p) => p.sliderImage || p.imageUrl)
+      .map((p) => ({
+        image: resolveImageUrl(p.sliderImage || p.imageUrl),
+        title: p.title,
+        href: `/work/${p.slug}`,
+      }));
     return [...dynamic, ...staticSlides];
   }, [projects]);
 
