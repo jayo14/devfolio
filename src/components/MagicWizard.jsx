@@ -13,6 +13,8 @@ import {
 } from "lucide-react";
 import { useAdminStore } from "../lib/adminStore.js";
 import { resolveImageUrl } from "../lib/imageUrl.js";
+import TechStackList from "./TechStackList.jsx";
+import { injectTechnologiesIntoDescription } from "../lib/techLogos.js";
 
 export function normalizeWebsiteUrl(val) {
   if (!val) return "";
@@ -171,7 +173,14 @@ export default function MagicWizard({ isOpen, onClose, onProjectCreated }) {
     e.preventDefault();
     if (!reviewForm.title.trim()) return;
     try {
-      const created = await publishMagicJob(jobId, reviewForm);
+      const payload = {
+        ...reviewForm,
+        description: injectTechnologiesIntoDescription(
+          reviewForm.description,
+          reviewForm.technologies
+        ),
+      };
+      const created = await publishMagicJob(jobId, payload);
       setPublishedProject(created);
       setPhase("completed");
       if (onProjectCreated) onProjectCreated(created);
@@ -598,12 +607,12 @@ export default function MagicWizard({ isOpen, onClose, onProjectCreated }) {
                 <span className="text-xs uppercase font-mono text-neutral-400">
                   Detected Technologies:
                 </span>
-                <div className="flex flex-wrap gap-2 mt-1">
-                  {reviewForm.technologies.map((t) => (
-                    <span key={t} className="text-xs font-mono bg-neutral-900 border border-neutral-700 px-2 py-1">
-                      {t}
-                    </span>
-                  ))}
+                <div className="mt-2">
+                  <TechStackList
+                    technologies={reviewForm.technologies}
+                    showLabel
+                    size="sm"
+                  />
                 </div>
               </div>
             )}

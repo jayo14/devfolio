@@ -7,6 +7,8 @@ import { useAdminStore } from "../lib/adminStore.js";
 import { originalAssets } from "../lib/siteData.js";
 import { ChevronRight, AlertCircle, Users, Lightbulb, Clock, Sparkles } from "lucide-react";
 import { resolveImageUrl } from "../lib/imageUrl.js";
+import TechStackList from "./TechStackList.jsx";
+import { extractProjectTechnologies, cleanDescription } from "../lib/techLogos.js";
 
 export default function ProjectPage({ slug }) {
   const project = useAdminStore((s) => s.getProjectBySlug(slug));
@@ -66,6 +68,8 @@ export default function ProjectPage({ slug }) {
       day: "numeric",
     });
   };
+
+  const technologies = extractProjectTechnologies(project);
 
   return (
     <>
@@ -138,6 +142,27 @@ export default function ProjectPage({ slug }) {
               )}
             </div>
 
+            {/* Technologies Used (as logos) */}
+            {technologies.length > 0 && (
+              <div className="project-technologies-bar mt-10 p-6 rounded border border-neutral-800 bg-neutral-900/40">
+                <div className="flex flex-wrap items-center justify-between gap-3 mb-4 pb-3 border-b border-neutral-800/80">
+                  <div className="flex items-center gap-2">
+                    <span className="font-mono text-xs uppercase tracking-widest text-[var(--accent)] font-bold">
+                      // Technologies
+                    </span>
+                    <span className="text-neutral-500">•</span>
+                    <span className="font-sans text-sm font-medium text-white">
+                      Tech Stack &amp; Infrastructure
+                    </span>
+                  </div>
+                  <span className="font-mono text-xs text-neutral-400">
+                    {technologies.length} {technologies.length === 1 ? "technology" : "technologies"}
+                  </span>
+                </div>
+                <TechStackList technologies={technologies} showLabel size="md" />
+              </div>
+            )}
+
             {/* Short Summary Lead */}
             {project.summary && (
               <div className="project-summary-box">
@@ -195,7 +220,7 @@ export default function ProjectPage({ slug }) {
 
             {project.description && (
               <div className="blog-detail-copy">
-                {project.description.split("\n\n").map((para, i) => (
+                {cleanDescription(project.description).split("\n\n").map((para, i) => (
                   <p key={i}>{para}</p>
                 ))}
               </div>

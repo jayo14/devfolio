@@ -6,6 +6,8 @@ import MagicButton from "./MagicButton.jsx";
 import MagicWizard from "./MagicWizard.jsx";
 import ImageUploadField from "./ImageUploadField.jsx";
 import { resolveImageUrl } from "../lib/imageUrl.js";
+import TechStackList from "./TechStackList.jsx";
+import { extractProjectTechnologies, injectTechnologiesIntoDescription } from "../lib/techLogos.js";
 
 /* ─── Platform badge colours & recognition ─────────────────── */
 const platformColors = {
@@ -192,11 +194,21 @@ const emptyProject = {
 
 function ProjectModal({ initial, onSave, onClose }) {
   const [form, setForm] = useState(initial || emptyProject);
+  const [techInput, setTechInput] = useState(() => {
+    return initial ? extractProjectTechnologies(initial).join(", ") : "";
+  });
   const set = (key) => (e) => setForm((f) => ({ ...f, [key]: e.target.value }));
+  
+  const parsedTechs = techInput
+    .split(",")
+    .map((t) => t.trim())
+    .filter(Boolean);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     if (!form.title.trim()) return;
-    onSave(form);
+    const finalDescription = injectTechnologiesIntoDescription(form.description, parsedTechs);
+    onSave({ ...form, description: finalDescription });
   };
 
   return (
@@ -231,6 +243,18 @@ function ProjectModal({ initial, onSave, onClose }) {
           </div>
           <Field label="Short Summary / Elevator Pitch">
             <Input value={form.summary || ""} onChange={set("summary")} placeholder="1-2 sentence high-impact summary" />
+          </Field>
+          <Field label="Technologies (comma-separated)">
+            <Input
+              value={techInput}
+              onChange={(e) => setTechInput(e.target.value)}
+              placeholder="e.g. React, Python, Django, Docker, PostgreSQL, Celery, FastAPI, LangChain"
+            />
+            {parsedTechs.length > 0 && (
+              <div className="mt-2.5">
+                <TechStackList technologies={parsedTechs} showLabel size="sm" />
+              </div>
+            )}
           </Field>
           <ImageUploadField
             label="Cover Image URL"
@@ -652,6 +676,15 @@ export default function AdminPage() {
                                 <div>
                                   <strong>{p.title}</strong>
                                   <span className="admin-slug">/work/{p.slug}</span>
+                                  {extractProjectTechnologies(p).length > 0 && (
+                                    <TechStackList
+                                      technologies={extractProjectTechnologies(p)}
+                                      showLabel={false}
+                                      size="sm"
+                                      max={6}
+                                      className="mt-1.5"
+                                    />
+                                  )}
                                 </div>
                               </div>
                             </td>
