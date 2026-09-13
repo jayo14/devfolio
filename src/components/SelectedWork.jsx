@@ -7,12 +7,6 @@ import { originalAssets } from "../lib/siteData.js";
 import { useAdminStore } from "../lib/adminStore.js";
 import { resolveImageUrl } from "../lib/imageUrl.js";
 
-const staticSlides = originalAssets.sliderImages.map((image) => ({
-  image,
-  title: "Newz Magazine Site",
-  href: "https://stephaniebruce.co/?ref=lapaninja#myth-fans",
-}));
-
 const SelectedWork = () => {
   const projects = useAdminStore((s) => s.projects);
   const fetchProjects = useAdminStore((s) => s.fetchProjects);
@@ -22,18 +16,23 @@ const SelectedWork = () => {
   }, [projects.length, fetchProjects]);
 
   const slides = useMemo(() => {
-    const dynamic = projects
+    return projects
       .filter((p) => p.sliderImage || p.imageUrl)
       .map((p) => ({
+        id: p.id,
         image: resolveImageUrl(p.sliderImage || p.imageUrl),
         title: p.title,
         href: `/work/${p.slug}`,
       }));
-    return [...dynamic, ...staticSlides];
   }, [projects]);
 
-  const autoplay = useMemo(() => Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true }), []);
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true }, [autoplay]);
+  const canScroll = slides.length > 1;
+  const autoplay = useMemo(
+    () => (canScroll ? Autoplay({ delay: 5000, stopOnInteraction: false, stopOnMouseEnter: true }) : null),
+    [canScroll]
+  );
+  const plugins = useMemo(() => (autoplay ? [autoplay] : []), [autoplay]);
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: canScroll }, plugins);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   useEffect(() => {
@@ -48,6 +47,8 @@ const SelectedWork = () => {
     };
   }, [emblaApi]);
 
+  if (slides.length === 0) return null;
+
   return (
     <section id="selected-work" className="original-slider-work bg-black text-white" aria-label="Selected Projects">
       <Container>
@@ -61,38 +62,57 @@ const SelectedWork = () => {
             <div className="flex">
               {slides.map((slide, index) => (
                 <div
-                  key={`${slide.image}-${index}`}
+                  key={slide.id || `proj-slide-${index}`}
                   className="min-w-0 flex-[0_0_100%]"
                   role="group"
                   aria-roledescription="slide"
                   aria-label={`Project ${index + 1} of ${slides.length}: ${slide.title}`}
                 >
                   <div className="original-work-slide-top">
-                    <a data-cursor-arrow className="original-work-image-link" href={slide.href} target={slide.href.startsWith("/") ? undefined : "_blank"} rel={slide.href.startsWith("/") ? undefined : "noreferrer"}>
+                    <a data-cursor-arrow className="original-work-image-link" href={slide.href}>
                       <img src={slide.image} alt={slide.title} className="original-work-image" />
                     </a>
-                    <a className="original-work-arrow" href={slide.href} target={slide.href.startsWith("/") ? undefined : "_blank"} rel={slide.href.startsWith("/") ? undefined : "noreferrer"} aria-label={`Open details for ${slide.title}`}>
+                    <a className="original-work-arrow" href={slide.href} aria-label={`Open details for ${slide.title}`}>
                       <img src={originalAssets.arrow} alt="" />
                     </a>
                   </div>
                   <div className="original-work-slide-bottom">
-                    <a className="original-work-title" href={slide.href} target={slide.href.startsWith("/") ? undefined : "_blank"} rel={slide.href.startsWith("/") ? undefined : "noreferrer"}>{slide.title}</a>
+                    <a className="original-work-title" href={slide.href}>
+                      {slide.title}
+                    </a>
                   </div>
                 </div>
               ))}
             </div>
           </div>
-          <button type="button" className="original-work-arrow-control original-work-arrow-left" aria-label="Previous project" onClick={() => emblaApi?.scrollPrev()}>
-            <HiChevronLeft aria-hidden="true" />
-          </button>
-          <button type="button" className="original-work-arrow-control original-work-arrow-right" aria-label="Next project" onClick={() => emblaApi?.scrollNext()}>
-            <HiChevronRight aria-hidden="true" />
-          </button>
-          <div className="original-work-counter" aria-live="polite" aria-atomic="true">{selectedIndex + 1} / {slides.length}</div>
+          {canScroll && (
+            <>
+              <button
+                type="button"
+                className="original-work-arrow-control original-work-arrow-left"
+                aria-label="Previous project"
+                onClick={() => emblaApi?.scrollPrev()}
+              >
+                <HiChevronLeft aria-hidden="true" />
+              </button>
+              <button
+                type="button"
+                className="original-work-arrow-control original-work-arrow-right"
+                aria-label="Next project"
+                onClick={() => emblaApi?.scrollNext()}
+              >
+                <HiChevronRight aria-hidden="true" />
+              </button>
+              <div className="original-work-counter" aria-live="polite" aria-atomic="true">
+                {selectedIndex + 1} / {slides.length}
+              </div>
+            </>
+          )}
         </div>
       </Container>
     </section>
   );
+
 };
 
 export default SelectedWork;
