@@ -35,5 +35,6 @@ app.include_router(blogs.router)
 
 
 @app.get("/health")
+@app.get("/api/health")
 def health():
     return {"status": "ok"}

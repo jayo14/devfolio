@@ -17,6 +17,7 @@ import LicensePage from "./components/LicensePage.jsx";
 import CursorArrowEffect from "./components/CursorArrowEffect.jsx";
 import AdminPage from "./components/AdminPage.jsx";
 import ProjectPage from "./components/ProjectPage.jsx";
+import ServerWarmupBanner from "./components/ServerWarmupBanner.jsx";
 
 function HomePage({ about = false }) {
   return (
@@ -59,6 +60,7 @@ export default function App() {
         Skip to main content
       </a>
       <CursorArrowEffect />
+      <ServerWarmupBanner />
       {content}
     </div>
   );

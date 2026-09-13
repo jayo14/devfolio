@@ -1,0 +1,33 @@
+name: Render Backend Keep-Alive
+
+on:
+  schedule:
+    # Runs every 10 minutes to keep Render free tier awake
+    - cron: '*/10 * * * *'
+  workflow_dispatch:
+    inputs:
+      backend_url:
+        description: 'Optional backend URL override to ping'
+        required: false
+        type: string
+
+jobs:
+  ping-backend:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Health Endpoint
+        run: |
+          URL="${{ inputs.backend_url || secrets.RENDER_BACKEND_URL || vars.RENDER_BACKEND_URL }}"
+          if [ -z "$URL" ]; then
+            echo "RENDER_BACKEND_URL secret or variable not set. Please configure it in your GitHub repository Settings > Secrets and variables > Actions."
+            exit 1
+          fi
+          HEALTH_URL="${URL%/}/health"
+          echo "Pinging backend health endpoint: $HEALTH_URL"
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" --max-time 30 "$HEALTH_URL")
+          echo "HTTP Status Code: $STATUS"
+          if [ "$STATUS" -ne 200 ]; then
+            echo "Warning: Health check returned non-200 status ($STATUS)"
+          else
+            echo "Backend is alive and responsive."
+          fi
