@@ -8,6 +8,7 @@ const SplineScene = () => {
         height: "100%",
         display: "block",
         background: "transparent",
+        pointerEvents: "none",
       }}
     />
   );

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { FaGithub, FaXTwitter, FaLinkedinIn, FaInstagram } from "react-icons/fa6";
+import { FaGithub, FaXTwitter, FaLinkedinIn, FaWhatsapp } from "react-icons/fa6";
 import { Container } from "./Container.jsx";
 import BrandLogo from "./BrandLogo.jsx";
 import PlusCorner from "./PlusCorner.jsx";
@@ -65,7 +65,7 @@ function SocialCell({ filled, link = null, plusTopLeft = false, plusTopRight = f
    4×3 SOCIAL CHECKERBOARD GRID (matching screenshot)
    Row 1: [empty]  [dark]   [empty]  [GitHub]
    Row 2: [X (+)]  [empty]  [LinkedIn] [empty]
-   Row 3: [empty]  [Insta (+)] [empty] [empty]
+   Row 3: [empty]  [WhatsApp (+)] [empty] [empty]
 ───────────────────────────────────────────── */
 const socialCells = [
   // Row 1
@@ -80,7 +80,7 @@ const socialCells = [
   { filled: false },
   // Row 3
   { filled: false },
-  { filled: true, plusTopRight: true, link: { icon: FaInstagram, href: "https://wa.me/2348096044860", label: "Instagram / WhatsApp" } },
+  { filled: true, plusTopRight: true, link: { icon: FaWhatsapp, href: "https://wa.me/2348096044860", label: "WhatsApp" } },
   { filled: false },
   { filled: false },
 ];

@@ -26,21 +26,29 @@ const Hero = ({ showCounters = true }) => {
 
     gsap.fromTo(track, { opacity: 0, y: 36 }, { opacity: 1, y: 0, duration: 1.1, delay: 0.35, ease: "power3.out" });
 
-    // Enable 3D perspective and center origin
+    // Enable true 3D perspective and center origin on both track and scene
+    gsap.set(track, {
+      perspective: 1000,
+      transformStyle: "preserve-3d",
+    });
     gsap.set(scene, {
-      transformPerspective: 1200,
+      transformPerspective: 1000,
       transformOrigin: "center center",
+      transformStyle: "preserve-3d",
       force3D: true,
     });
 
-    // High-performance GSAP quickTo interpolators for mouse following
-    const rotateXTo = gsap.quickTo(scene, "rotationX", { duration: 0.7, ease: "power3.out" });
-    const rotateYTo = gsap.quickTo(scene, "rotationY", { duration: 0.7, ease: "power3.out" });
-    const rotateZTo = gsap.quickTo(scene, "rotationZ", { duration: 0.85, ease: "power3.out" });
+    // High-performance GSAP quickTo interpolators for true 3D mouse tracking
+    const rotateXTo = gsap.quickTo(scene, "rotationX", { duration: 0.55, ease: "power2.out" });
+    const rotateYTo = gsap.quickTo(scene, "rotationY", { duration: 0.55, ease: "power2.out" });
+    const rotateZTo = gsap.quickTo(scene, "rotationZ", { duration: 0.65, ease: "power2.out" });
+    const xTo = gsap.quickTo(scene, "x", { duration: 0.55, ease: "power2.out" });
+    const yTo = gsap.quickTo(scene, "y", { duration: 0.55, ease: "power2.out" });
+    const zTo = gsap.quickTo(scene, "z", { duration: 0.55, ease: "power2.out" });
 
     const updateScroll = () => {
       const progress = Math.min(window.scrollY / 900, 1);
-      gsap.to(scene, { y: -progress * 90, duration: 0.55, ease: "power2.out", overwrite: "auto" });
+      gsap.to(track, { y: -progress * 90, duration: 0.55, ease: "power2.out", overwrite: "auto" });
     };
 
     const updatePointer = (event) => {
@@ -56,24 +64,35 @@ const Hero = ({ showCounters = true }) => {
       const rawX = (event.clientX - centerX) / (window.innerWidth * 0.5);
       const rawY = (event.clientY - centerY) / (window.innerHeight * 0.5);
 
-      // Clamp to prevent extreme tilt when cursor is near edges
+      // Smooth clamp to prevent extreme tilt when cursor is near edges
       const clampedX = Math.max(-1.3, Math.min(1.3, rawX));
       const clampedY = Math.max(-1.3, Math.min(1.3, rawY));
 
-      // Turn on axes to face the mouse
-      const targetRotY = clampedX * 26;   // Turn along Y-axis to face left/right
-      const targetRotX = -clampedY * 20;  // Turn along X-axis to face up/down
-      const targetRotZ = clampedX * -2;   // Subtle realistic banking
+      // 3D rotation angles to turn and face the mouse on X, Y, and Z axes
+      const targetRotY = clampedX * 36;                                  // Yaw (turns left/right to face mouse)
+      const targetRotX = -clampedY * 28;                                 // Pitch (tilts up/down to face mouse)
+      const targetRotZ = (clampedX * clampedY) * -16 + (clampedX * -4); // Roll (dynamic 3D banking)
+
+      // Parallax 3D translations
+      const targetX = clampedX * 32;
+      const targetY = clampedY * 24;
+      const targetZ = Math.min(45, (Math.abs(clampedX) + Math.abs(clampedY)) * 18);
 
       rotateYTo(targetRotY);
       rotateXTo(targetRotX);
       rotateZTo(targetRotZ);
+      xTo(targetX);
+      yTo(targetY);
+      zTo(targetZ);
     };
 
     const resetPointer = () => {
       rotateXTo(0);
       rotateYTo(0);
       rotateZTo(0);
+      xTo(0);
+      yTo(0);
+      zTo(0);
     };
 
     window.addEventListener("scroll", updateScroll, { passive: true });
