@@ -99,7 +99,7 @@ const Hero = ({ showCounters = true }) => {
             <div className="hero-details-wrap">
               <div className="hero-sub-title-wrap"><p className="hero-sub-title mb-6 font-inconsolata text-base text-white">// Hello, World!</p></div>
               <div className="hero-title-wrap"><h1 className="hero-title font-sans text-[120px] font-medium leading-[120px] tracking-[-4.8px] text-white">John <span className="text-accent">Samuel</span></h1></div>
-              <p className="hero-position mt-4 font-sans text-[40px] font-normal text-[rgba(255,255,255,0.6)]">&quot; Fullstack Developer &quot;</p>
+              <p className="hero-position mt-4 font-sans text-[40px] font-normal text-[rgba(255,255,255,0.6)]">&quot; Full-Stack Engineer &quot;</p>
             </div>
             <div className="hero-content-flex">
               <div className="hero-flex-left">
