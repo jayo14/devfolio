@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion, useMotionValueEvent, useScroll } from "framer-motion";
+import { AnimatePresence, motion } from "framer-motion";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi2";
 import PlusCorner from "./PlusCorner.jsx";
 import { Container } from "./Container.jsx";
@@ -32,17 +32,6 @@ function TestimonialThumb({ testimonial, isActive, onClick, index }) {
 
 const Testimonial = () => {
   const [active, setActive] = useState(0);
-  const { scrollYProgress } = useScroll();
-
-  useMotionValueEvent(scrollYProgress, "change", (latest) => {
-    if (window.innerWidth <= 991) return;
-    const section = document.getElementById("testimonial");
-    if (!section) return;
-    const rect = section.getBoundingClientRect();
-    const viewportProgress = Math.min(1, Math.max(0, (window.innerHeight - rect.top) / Math.max(section.offsetHeight, 1)));
-    const next = Math.min(testimonials.length - 1, Math.floor(viewportProgress * testimonials.length));
-    if (latest > 0 && next !== active) setActive(next);
-  });
 
   useEffect(() => {
     const onKeyDown = (event) => {
@@ -54,11 +43,11 @@ const Testimonial = () => {
   }, []);
 
   const activeTestimonial = testimonials[active];
-  const selectPrevious = () => setActive((current) => Math.max(0, current - 1));
-  const selectNext = () => setActive((current) => Math.min(testimonials.length - 1, current + 1));
+  const selectPrevious = () => setActive((current) => (current - 1 + testimonials.length) % testimonials.length);
+  const selectNext = () => setActive((current) => (current + 1) % testimonials.length);
 
   return (
-    <section id="testimonial" className="original-testimonial bg-black text-white">
+    <section id="testimonial" className="original-testimonial bg-black text-white" aria-label="Client Testimonials">
       <Container>
         <div className="section-heading centered"><p className="eyebrow">// Testimonial</p><h2>Client feedback <span>matters</span></h2></div>
         <div className="testimonial-vh-wrap">
@@ -72,14 +61,32 @@ const Testimonial = () => {
               <div className="testimonial-slider">
                 <div className="testimonial-stage" aria-live="polite" aria-atomic="true">
                   <AnimatePresence mode="wait">
-                    <motion.article key={active} initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: 0.2 }} className="testimonial-card">
+                    <motion.article
+                      key={active}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -8 }}
+                      transition={{ duration: 0.22, ease: "easeOut" }}
+                      drag="x"
+                      dragConstraints={{ left: 0, right: 0 }}
+                      dragElastic={0.2}
+                      onDragEnd={(_, info) => {
+                        if (info.offset.x > 50 || info.velocity.x > 400) {
+                          selectPrevious();
+                        } else if (info.offset.x < -50 || info.velocity.x < -400) {
+                          selectNext();
+                        }
+                      }}
+                      style={{ touchAction: "pan-y" }}
+                      className="testimonial-card cursor-grab active:cursor-grabbing"
+                    >
                       <PlusCorner corner="top-left" color="accent" /><PlusCorner corner="top-right" color="accent" /><PlusCorner corner="bottom-right" color="accent" /><PlusCorner corner="bottom-left" color="accent" />
                       <p className="testimonial-quote">{activeTestimonial.quote.split("\n").map((line, index) => <span key={`${line}-${index}`}>{line}{index === 0 && active === 0 ? <br /> : null}</span>)}</p>
                       <div className="testimonial-client"><img src={activeTestimonial.avatar} alt={activeTestimonial.name} className="testimonial-client-image" /><div><p className="testimonial-client-name">{activeTestimonial.name}</p><p className="testimonial-client-role">{activeTestimonial.role}</p></div></div>
                     </motion.article>
                   </AnimatePresence>
-                  <button type="button" className="testimonial-arrow testimonial-arrow-left" aria-label="Previous testimonial" disabled={active === 0} onClick={selectPrevious}><HiChevronLeft aria-hidden="true" /></button>
-                  <button type="button" className="testimonial-arrow testimonial-arrow-right" aria-label="Next testimonial" disabled={active === testimonials.length - 1} onClick={selectNext}><HiChevronRight aria-hidden="true" /></button>
+                  <button type="button" className="testimonial-arrow testimonial-arrow-left" aria-label="Previous testimonial" onClick={selectPrevious}><HiChevronLeft aria-hidden="true" /></button>
+                  <button type="button" className="testimonial-arrow testimonial-arrow-right" aria-label="Next testimonial" onClick={selectNext}><HiChevronRight aria-hidden="true" /></button>
                 </div>
               </div>
             </div>

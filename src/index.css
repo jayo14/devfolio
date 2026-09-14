@@ -85,10 +85,10 @@ button, a { -webkit-tap-highlight-color: transparent; }
 .original-work-arrow-right { right: 0; border-left: 1px solid var(--border); }
 .original-work-counter { position: absolute; bottom: 18px; left: 50%; z-index: 3; transform: translateX(-50%); font-family: "Inconsolata", monospace; font-size: 14px; color: var(--gray-06); }
 
-.original-testimonial { margin-top: 0; padding-top: 324px; padding-bottom: 80px; overflow: clip; }
+.original-testimonial { margin-top: 0; padding-top: 240px; padding-bottom: 120px; overflow: clip; }
 .original-testimonial .section-heading { margin-bottom: 0; }
-.testimonial-vh-wrap { height: 400vh; }
-.testimonial-sticky-wrap { position: sticky; top: 200px; }
+.testimonial-vh-wrap { height: auto; }
+.testimonial-sticky-wrap { position: relative; }
 .testimonial-content-wrap { margin-top: 80px; }
 .testimonial-thumbs-wrap { max-width: 648px; margin: 0 auto 112px; }
 .testimonial-thumbs-grid { display: grid; grid-template-columns: repeat(6, 1fr); }
