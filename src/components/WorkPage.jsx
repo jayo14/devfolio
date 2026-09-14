@@ -3,14 +3,10 @@ import { Container } from "./Container.jsx";
 import SelectedWork from "./SelectedWork.jsx";
 import Contact from "./Contact.jsx";
 import Footer from "./Footer.jsx";
-import { originalAssets } from "../lib/siteData.js";
 import { useAdminStore } from "../lib/adminStore.js";
 import { resolveImageUrl } from "../lib/imageUrl.js";
 import TechStackList from "./TechStackList.jsx";
 import { extractProjectTechnologies } from "../lib/techLogos.js";
-
-const staticCards = originalAssets.workImages.map((image, index) => ({ image, key: `myth-${index}` }));
-const mythFans = "https://stephaniebruce.co/?ref=lapaninja#myth-fans";
 
 function formatDate(d) {
   if (!d) return "";
@@ -60,29 +56,10 @@ export default function WorkPage() {
                 </article>
               );
             })}
-            {/* Original static cards */}
-            {staticCards.map(({ image, key }) => (
-              <article className="work-card" key={key}>
-                <a href={mythFans} target="_blank" rel="noreferrer" className="work-card-image-wrap"><img src={image} alt="MYTH FANS" loading="lazy" /></a>
-                <div className="work-card-details">
-                  <a href={mythFans} target="_blank" rel="noreferrer"><h2>MYTH FANS</h2></a>
-                  <div className="work-meta-grid"><p><span>Client</span>MYTH FANS</p><p><span>Field</span>NFT</p><p><span>Role</span>Design &amp; Framer Development</p><p><span>Completed</span>July 6, 2024</p></div>
-                  <div className="work-card-tech-section mt-5 pt-4 border-t border-neutral-800/80">
-                    <span className="block font-mono text-[11px] uppercase tracking-wider text-neutral-400 mb-2">
-                      Technologies
-                    </span>
-                    <TechStackList
-                      technologies={["Framer Motion", "React", "JavaScript", "HTML", "CSS"]}
-                      showLabel
-                      size="sm"
-                    />
-                  </div>
-                </div>
-              </article>
-            ))}
           </div>
         </Container>
       </section>
+
       <SelectedWork />
       <Contact />
       <Footer />
