@@ -38,21 +38,15 @@ const Hero = ({ showCounters = true }) => {
       force3D: true,
     });
 
-    // Define interpolators using gsap.utils.interpolate() for full 3-axis rotation (X, Y, Z) and translation
-    const interpRotX = gsap.utils.interpolate(28, -28); // Pitch: tilts up when mouse is above, down when below
-    const interpRotY = gsap.utils.interpolate(-36, 36); // Yaw: turns left when mouse is left, right when mouse is right
-    const interpRotZ = gsap.utils.interpolate(-14, 14); // Roll: dynamic 3D banking along Z axis
-    const interpTransX = gsap.utils.interpolate(-28, 28); // Parallax translation X
-    const interpTransY = gsap.utils.interpolate(-20, 20); // Parallax translation Y
-    const interpTransZ = gsap.utils.interpolate(0, 42); // Parallax depth Z
+    // Define interpolators using gsap.utils.interpolate() for full 3-axis rotation (X, Y, Z)
+    const interpRotX = gsap.utils.interpolate(28, -28); // Pitch: tilts upward when cursor is above, downward when below
+    const interpRotY = gsap.utils.interpolate(-36, 36); // Yaw: turns keyboard left/right to face cursor
+    const interpRotZ = gsap.utils.interpolate(-14, 14); // Roll: dynamic 3D banking and torsional roll
 
-    // High-performance GSAP quickTo() setters for smooth, cursor-driven 3D perspective tilt
+    // High-performance GSAP quickTo() setters for pure rotational perspective tilt (no positional translation)
     const rotateXTo = gsap.quickTo(scene, "rotationX", { duration: 0.6, ease: "power2.out" });
     const rotateYTo = gsap.quickTo(scene, "rotationY", { duration: 0.6, ease: "power2.out" });
     const rotateZTo = gsap.quickTo(scene, "rotationZ", { duration: 0.7, ease: "power2.out" });
-    const xTo = gsap.quickTo(scene, "x", { duration: 0.6, ease: "power2.out" });
-    const yTo = gsap.quickTo(scene, "y", { duration: 0.6, ease: "power2.out" });
-    const zTo = gsap.quickTo(scene, "z", { duration: 0.6, ease: "power2.out" });
 
     const updateScroll = () => {
       const progress = Math.min(window.scrollY / 900, 1);
@@ -76,32 +70,22 @@ const Hero = ({ showCounters = true }) => {
       const progressX = (normX + 1.2) / 2.4;
       const progressY = (normY + 1.2) / 2.4;
       const progressRoll = gsap.utils.clamp(0, 1, ((normX * -normY) + 1) / 2);
-      const progressDist = gsap.utils.clamp(0, 1, (Math.abs(normX) + Math.abs(normY)) / 1.8);
 
-      // Interpolate values across X, Y, and Z axes
+      // Interpolate rotation angles across X, Y, and Z axes
       const targetRotX = interpRotX(progressY);
       const targetRotY = interpRotY(progressX);
       const targetRotZ = interpRotZ(progressRoll) + normX * -5;
-      const targetX = interpTransX(progressX);
-      const targetY = interpTransY(progressY);
-      const targetZ = interpTransZ(progressDist);
 
-      // Pipe to quickTo() setters
+      // Pipe to quickTo() rotation setters
       rotateXTo(targetRotX);
       rotateYTo(targetRotY);
       rotateZTo(targetRotZ);
-      xTo(targetX);
-      yTo(targetY);
-      zTo(targetZ);
     };
 
     const resetPointer = () => {
       rotateXTo(0);
       rotateYTo(0);
       rotateZTo(0);
-      xTo(0);
-      yTo(0);
-      zTo(0);
     };
 
     window.addEventListener("scroll", updateScroll, { passive: true });
