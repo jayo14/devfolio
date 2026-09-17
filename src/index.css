@@ -434,8 +434,29 @@ body.cursor-arrow-active .cursor-arrow-follower { opacity: 1; visibility: visibl
   50% { opacity: 0.8; transform: scale(1.04); }
 }
 
+@keyframes sliderIndeterminate {
+  0% { transform: translateX(-100%); }
+  50% { transform: translateX(100%); }
+  100% { transform: translateX(300%); }
+}
+
+.animate-slider-indeterminate {
+  animation: sliderIndeterminate 2.2s cubic-bezier(0.65, 0, 0.35, 1) infinite;
+}
+
+@keyframes sliderScanline {
+  0% { transform: translateY(-100%); }
+  100% { transform: translateY(600%); }
+}
+
+.animate-slider-scanline {
+  animation: sliderScanline 4s linear infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .admin-magic-glow { animation: none; }
+  .admin-magic-glow,
+  .animate-slider-indeterminate,
+  .animate-slider-scanline { animation: none; }
 }
 
 .admin-icon-btn { display: inline-flex; align-items: center; justify-content: center; width: 36px; height: 36px; border: 1px solid var(--border); background: transparent; color: var(--white); cursor: pointer; transition: background-color .2s ease, color .2s ease, border-color .2s ease; }

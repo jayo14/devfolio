@@ -129,16 +129,21 @@ export const useAdminStore = create((set, get) => ({
   blogLinks: [],
   loading: false,
   error: null,
+  projectsLoading: false,
+  projectsLoaded: false,
+  projectsError: null,
 
   // ── Projects ──────────────────────────────────────────────
 
   fetchProjects: async () => {
-    set({ loading: true, error: null });
+    set({ loading: true, projectsLoading: true, error: null, projectsError: null });
     try {
       const projects = await api("/api/projects/");
-      set({ projects, loading: false });
+      set({ projects, loading: false, projectsLoading: false, projectsLoaded: true });
+      return projects;
     } catch (err) {
-      set({ error: err.message, loading: false });
+      set({ error: err.message, projectsError: err.message, loading: false, projectsLoading: false, projectsLoaded: true });
+      return null;
     }
   },
 

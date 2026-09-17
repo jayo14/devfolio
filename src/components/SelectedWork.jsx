@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import useEmblaCarousel from "embla-carousel-react";
 import Autoplay from "embla-carousel-autoplay";
 import { HiChevronLeft, HiChevronRight } from "react-icons/hi2";
@@ -6,10 +6,17 @@ import { Container } from "./Container.jsx";
 import { originalAssets } from "../lib/siteData.js";
 import { useAdminStore } from "../lib/adminStore.js";
 import { resolveImageUrl } from "../lib/imageUrl.js";
+import SelectedWorkLoading from "./SelectedWorkLoading.jsx";
 
 const SelectedWork = () => {
   const projects = useAdminStore((s) => s.projects);
+  const projectsLoading = useAdminStore((s) => s.projectsLoading);
+  const projectsLoaded = useAdminStore((s) => s.projectsLoaded);
+  const projectsError = useAdminStore((s) => s.projectsError);
   const fetchProjects = useAdminStore((s) => s.fetchProjects);
+
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [isRetrying, setIsRetrying] = useState(false);
 
   useEffect(() => {
     if (projects.length === 0) fetchProjects();
@@ -25,6 +32,32 @@ const SelectedWork = () => {
         href: `/work/${p.slug}`,
       }));
   }, [projects]);
+
+  // Track elapsed time while server boots / loads projects
+  useEffect(() => {
+    if (slides.length > 0) return;
+    const timer = setInterval(() => {
+      setElapsedSeconds((s) => s + 1);
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [slides.length]);
+
+  // Auto-retry fetch if error occurred during cold start spin up
+  useEffect(() => {
+    if (slides.length > 0) return;
+    if (projectsError) {
+      const retryTimer = setTimeout(() => {
+        fetchProjects();
+      }, 4000);
+      return () => clearTimeout(retryTimer);
+    }
+  }, [projectsError, slides.length, fetchProjects]);
+
+  const handleManualRetry = useCallback(async () => {
+    setIsRetrying(true);
+    await fetchProjects();
+    setIsRetrying(false);
+  }, [fetchProjects]);
 
   const canScroll = slides.length > 1;
   const autoplay = useMemo(
@@ -47,7 +80,37 @@ const SelectedWork = () => {
     };
   }, [emblaApi]);
 
-  if (slides.length === 0) return null;
+  // If projects finished loading and array is truly empty with no errors
+  if (projectsLoaded && !projectsLoading && projects.length === 0 && !projectsError) {
+    return (
+      <section id="selected-work" className="original-slider-work bg-black text-white" aria-label="Selected Projects">
+        <Container>
+          <div className="original-work-slider">
+            <div className="original-work-slide-top flex flex-col items-center justify-center min-h-[320px] text-center p-8">
+              <p className="font-mono text-sm md:text-base text-neutral-400">
+                No featured projects published yet.
+              </p>
+            </div>
+            <div className="original-work-slide-bottom">
+              <span className="font-inconsolata text-sm text-neutral-500">// End of list</span>
+            </div>
+          </div>
+        </Container>
+      </section>
+    );
+  }
+
+  // Loading state when projects haven't been loaded yet (server still booting)
+  if (slides.length === 0) {
+    return (
+      <SelectedWorkLoading
+        elapsedSeconds={elapsedSeconds}
+        projectsError={projectsError}
+        isRetrying={isRetrying}
+        onRetry={handleManualRetry}
+      />
+    );
+  }
 
   return (
     <section id="selected-work" className="original-slider-work bg-black text-white" aria-label="Selected Projects">
@@ -112,7 +175,6 @@ const SelectedWork = () => {
       </Container>
     </section>
   );
-
 };
 
 export default SelectedWork;
