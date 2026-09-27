@@ -15,8 +15,26 @@ function PartnerCard({ text, images }) {
   return (
     <article className="partner-card" onMouseEnter={() => setHovered(true)} onMouseLeave={() => setHovered(false)}>
       <div className="partner-image-wrap" aria-hidden="true">
-        <motion.img src={images[0]} alt="" className="partner-image" animate={{ y: hovered ? -62 : 0 }} transition={{ duration: 0.4 }} />
-        <motion.img src={images[1]} alt="" className="partner-image partner-image-hover" animate={{ y: hovered ? -62 : 0 }} transition={{ duration: 0.4 }} />
+        <motion.img
+          src={images[0]}
+          alt=""
+          width="160"
+          height="38"
+          loading="lazy"
+          className="partner-image"
+          animate={{ y: hovered ? -62 : 0 }}
+          transition={{ duration: 0.4 }}
+        />
+        <motion.img
+          src={images[1]}
+          alt=""
+          width="160"
+          height="38"
+          loading="lazy"
+          className="partner-image partner-image-hover"
+          animate={{ y: hovered ? -62 : 0 }}
+          transition={{ duration: 0.4 }}
+        />
       </div>
       <p>{text}</p>
     </article>
@@ -28,7 +46,9 @@ const Partner = () => (
     <Container>
       <div className="partner-intro eyebrow">PARTNER WITH +150 BRANDS</div>
       <div className="partner-grid">
-        {partners.map((partner) => <PartnerCard key={partner.text} {...partner} />)}
+        {partners.map((partner) => (
+          <PartnerCard key={partner.text} {...partner} />
+        ))}
       </div>
     </Container>
   </section>

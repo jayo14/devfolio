@@ -25,12 +25,12 @@ const platformColors = {
   other: "#4b5563",
 };
 
-export function detectPlatformInfo(url) {
+function detectPlatformInfo(url) {
   if (!url || typeof url !== "string") {
     return { id: "article", name: "Article", color: "#64748b", icon: "generic" };
   }
   const raw = url.trim().toLowerCase();
-  let hostname = "";
+  let hostname;
   try {
     const parsed = new URL(raw.startsWith("http") ? raw : `https://${raw}`);
     hostname = parsed.hostname;

@@ -70,6 +70,8 @@ function TestimonialThumb({ testimonial, isActive, onClick, index }) {
         <img
           src={testimonial.thumbAvatar}
           alt=""
+          width="48"
+          height="48"
           className="testimonial-thumb-image"
           loading="lazy"
         />
@@ -103,7 +105,6 @@ const Testimonial = () => {
 
   useEffect(() => {
     if (!emblaApi) return;
-    onSelect();
     emblaApi.on("select", onSelect);
     emblaApi.on("reInit", onSelect);
     return () => {
@@ -190,6 +191,8 @@ const Testimonial = () => {
                                 <img
                                   src={testimonial.avatar}
                                   alt={testimonial.name}
+                                  width="48"
+                                  height="48"
                                   className={`testimonial-client-image transition-all duration-300 ${
                                     isActive
                                       ? "grayscale-0 ring-1 ring-white/20"

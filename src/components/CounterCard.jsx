@@ -27,7 +27,7 @@ function SlotDigit({ target, delay = 0 }) {
 export function CounterCard({ label, targetNumber, suffix = "", hasBottomBorder }) {
   return (
     <div
-      className="w-[324px] border-t border-line py-8"
+      className="w-full max-w-[324px] border-t border-line py-8"
       style={{ borderBottom: hasBottomBorder ? "1px solid #262626" : "none" }}
     >
       <p className="mb-6 font-inconsolata text-[12px] leading-relaxed text-white">

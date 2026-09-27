@@ -7,7 +7,7 @@
   --color-bg: #000000;
   --color-card-bg: #080808;
   --color-line: #262626;
-  --color-muted: rgba(255, 255, 255, 0.6);
+  --color-muted: rgba(255, 255, 255, 0.75);
 }
 
 :root {
@@ -18,7 +18,7 @@
   --border: #ffffff26;
   --gray-01: #080808;
   --gray-03: #2e2e2e;
-  --gray-06: #808080;
+  --gray-06: #a3a3a3;
   --gray-09: #fff;
 }
 
@@ -251,14 +251,15 @@ footer { margin-top: 324px; }
   .primary-navigation.is-open li:last-child a { border-bottom: 0; }
   .mobile-menu-button { display: flex; }
   .section-heading h1, .section-heading h2 { font-size: 56px; }
-  .hero-3d-track { display: none; }
+  .hero-3d-track { display: none !important; }
   .hero-content-flex { min-height: auto; }
   .hero-flex-left { min-width: 0; margin-top: 0; }
   .toolbox-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-  .services-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: repeat(6, 324px); }
+  .services-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); grid-template-rows: auto; }
+  .service-empty-cell { display: none !important; }
   .original-work-slide-top { padding: 36px; }
   .original-work-image { height: auto; aspect-ratio: 16 / 10; }
-  .original-testimonial { padding-top: 240px; }
+  .original-testimonial { padding-top: 140px; }
   .partner-grid { grid-template-columns: repeat(2, 1fr); }
   .partner-card { padding: 48px; }
   .award-row { grid-template-columns: 1fr; gap: 32px; padding-top: 24px; padding-bottom: 24px; }
@@ -267,7 +268,7 @@ footer { margin-top: 324px; }
   .blog-info h3 { font-size: 28px; }
   .featured-blog-card { grid-template-columns: 1fr; }
   .work-card-details { grid-template-columns: 1fr; }
-  .original-contact-section { padding-top: 240px; }
+  .original-contact-section { padding-top: 140px; }
   .contact-card { padding-right: 48px; padding-left: 48px; }
 }
 
@@ -277,74 +278,79 @@ footer { margin-top: 324px; }
   .brand-logo-mark { width: 36px; height: 36px; flex-basis: 36px; }
   .brand-logo-mark img { width: 215px; height: 36px; }
 
-  .section-heading h1, .section-heading h2 { font-size: 40px; line-height: 1.15; }
+  .section-heading h1, .section-heading h2 { font-size: 36px; line-height: 1.15; }
   .hero-content-grid { grid-template-columns: 1fr; }
-  .hero-details-wrap { margin-bottom: 32px; }
-  .hero-button-wrap { margin-bottom: 48px; }
+  .hero-details-wrap { margin-bottom: 28px; }
+  .hero-button-wrap { margin-bottom: 40px; }
   .toolbox-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .services-grid { grid-template-columns: 1fr; grid-template-rows: repeat(12, 324px); }
+  .toolbox-cell { height: 110px; }
+  .toolbox-cell-empty { display: none !important; }
+  .services-grid { grid-template-columns: 1fr; grid-template-rows: auto; }
+  .service-empty-cell { display: none !important; }
   .section-heading .eyebrow, .eyebrow { margin-bottom: 10px; }
-  .original-slider-work, .original-award, .original-home-blog { margin-top: 160px; }
+  .original-slider-work, .original-award, .original-home-blog { margin-top: 80px; }
   .original-work-slide-top { padding: 20px; }
   .original-work-image { height: auto; aspect-ratio: 16 / 10; }
   .original-work-arrow { top: 40px; right: 45px; width: 80px; height: 80px; transform: scale(.96); }
   .original-work-slide-top:hover .original-work-arrow { transform: scale(1); }
-  .original-work-title { font-size: 24px; }
+  .original-work-title { font-size: 22px; }
   .original-work-counter { font-size: 12px; }
-  .original-testimonial { margin-top: 0; padding-top: 160px; }
+  .original-testimonial { margin-top: 0; padding-top: 80px; }
   .original-testimonial .section-heading { margin-bottom: 0; }
   .testimonial-vh-wrap { height: auto; }
   .testimonial-sticky-wrap { position: static; }
-  .testimonial-content-wrap { margin-top: 40px; }
+  .testimonial-content-wrap { margin-top: 32px; }
   .testimonial-thumbs-wrap { display: none; }
   .testimonial-stage { max-width: none; margin: 0 auto; }
-  .testimonial-card { min-height: 320px; padding: 28px 20px 24px; }
-  .testimonial-quote { font-size: 18px; }
-  .original-partner { margin-top: 80px; }
-  .partner-intro { margin-bottom: 60px; }
-  .partner-card { height: 260px; padding: 24px; }
-  .partner-image-wrap { margin-bottom: 24px; }
-  .original-award .section-heading, .original-home-blog .section-heading { margin-bottom: 60px; }
-  .award-row h3 { font-size: 28px; }
-  .award-meta strong { font-size: 56px; }
-  .blog-grid { grid-template-columns: 1fr; gap: 48px; }
-  .blog-overlay-arrow { top: 40px; right: 45px; width: 80px; height: 80px; }
-  .blog-info h3 { font-size: 28px; }
-  .contact-heading h2 { font-size: 32px; }
+  .testimonial-card { min-height: 280px; padding: 24px 16px 20px; }
+  .testimonial-quote { font-size: 17px; }
+  .original-partner { margin-top: 60px; }
+  .partner-intro { margin-bottom: 40px; }
+  .partner-card { height: 220px; padding: 24px; }
+  .partner-image-wrap { margin-bottom: 20px; }
+  .original-award .section-heading, .original-home-blog .section-heading { margin-bottom: 40px; }
+  .award-row h3 { font-size: 24px; }
+  .award-meta strong { font-size: 44px; }
+  .blog-grid { grid-template-columns: 1fr; gap: 36px; }
+  .blog-overlay-arrow { top: 30px; right: 35px; width: 64px; height: 64px; }
+  .blog-info h3 { font-size: 24px; }
+  .contact-heading h2 { font-size: 28px; }
   .desktop-break { display: none; }
-  .original-contact-section { margin-top: 160px; padding-top: 240px; }
+  .original-contact-section { margin-top: 80px; padding-top: 80px; }
   .original-contact-page { padding-top: 40px; }
-  .inner-banner, .blog-banner { padding-top: 160px; padding-bottom: 40px; }
-  .contact-card { padding: 48px; }
-  .contact-fields-grid { grid-template-columns: 1fr; gap: 48px; }
-  .featured-blog-card { margin-top: 40px; padding-top: 32px; }
-  .blog-detail { padding-top: 160px; }
-  .blog-detail-heading h1 { font-size: 40px; }
-  .blog-detail-image { margin-top: 48px; }
-  .blog-detail-copy { margin-top: 48px; }
-  .license-page { padding-top: 192px; }
-  .license-copy { margin-top: 48px; }
-  .license-images { grid-template-columns: repeat(2, 1fr); }
-  .featured-blog-copy h2 { font-size: 40px; }
+  .inner-banner, .blog-banner { padding-top: 140px; padding-bottom: 32px; }
+  .contact-card { padding: 32px 24px; }
+  .contact-fields-grid { grid-template-columns: 1fr; gap: 32px; }
+  .featured-blog-card { margin-top: 32px; padding-top: 24px; }
+  .blog-detail { padding-top: 140px; }
+  .blog-detail-heading h1 { font-size: 36px; }
+  .blog-detail-image { margin-top: 36px; }
+  .blog-detail-copy { margin-top: 36px; }
+  .license-page { padding-top: 160px; }
+  .license-copy { margin-top: 36px; }
   .license-images { grid-template-columns: 1fr; }
-  .work-card { margin-bottom: 80px; }
-  .work-card-details h2 { font-size: 40px; }
-  .not-found { padding-top: 240px; padding-bottom: 0; }
-  .not-found-code { font-size: 80px; }
-  footer { margin-top: 160px; }
-  .footer-copyright { align-items: flex-start; flex-direction: column; font-size: 14px; }
+  .featured-blog-copy h2 { font-size: 36px; }
+  .work-card { margin-bottom: 60px; }
+  .work-card-details h2 { font-size: 32px; }
+  .not-found { padding-top: 180px; padding-bottom: 0; }
+  .not-found-code { font-size: 72px; }
+  footer { margin-top: 80px; }
+  .footer-copyright { align-items: flex-start; flex-direction: column; gap: 12px; font-size: 13px; }
   .footer-copyright p { max-width: 320px; }
 }
 
 @media (max-width: 480px) {
-  .section-heading h1, .section-heading h2 { font-size: 32px; }
-  .original-work-slide-top { padding: 14px; }
+  .section-heading h1, .section-heading h2 { font-size: 30px; }
+  .original-work-slide-top { padding: 12px; }
   .original-work-image { height: auto; aspect-ratio: 16 / 10; }
-  .original-work-title { max-width: 70%; font-size: 18px; }
+  .original-work-title { max-width: 80%; font-size: 18px; }
   .partner-grid { grid-template-columns: 1fr; }
-  .partner-card { height: 240px; }
-  .contact-card { padding: 32px; }
-  .contact-heading { padding-top: 32px; padding-bottom: 48px; }
+  .partner-card { height: 200px; padding: 20px; }
+  .contact-card { padding: 24px 16px; }
+  .contact-heading { padding-top: 24px; padding-bottom: 36px; }
+  .original-slider-work, .original-award, .original-home-blog { margin-top: 56px; }
+  .original-testimonial { padding-top: 56px; }
+  .original-contact-section { margin-top: 56px; padding-top: 56px; }
 }
 
 .cursor-arrow-follower { position: fixed; top: 0; left: 0; z-index: 3000; display: flex; align-items: center; justify-content: center; width: 72px; height: 72px; margin: -36px 0 0 -36px; border: 1px solid #ffffff66; border-radius: 999px; background: #70707099; color: var(--white); opacity: 0; visibility: hidden; pointer-events: none; transform: scale(.86); backdrop-filter: blur(12px); }

@@ -23,11 +23,11 @@ function SocialCell({ filled, link = null, plusTopLeft = false, plusTopRight = f
   const [hovered, setHovered] = useState(false);
 
   if (!filled) {
-    return <div className="w-[80px] h-[80px] bg-black" />;
+    return <div className="w-full h-full min-w-0 aspect-square bg-black" />;
   }
 
   if (!link) {
-    return <div className="w-[80px] h-[80px] bg-[#151515]" />;
+    return <div className="w-full h-full min-w-0 aspect-square bg-[#151515]" />;
   }
 
   const Icon = link.icon;
@@ -40,7 +40,7 @@ function SocialCell({ filled, link = null, plusTopLeft = false, plusTopRight = f
       title={link.label}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
-      className="relative flex items-center justify-center w-[80px] h-[80px] bg-[#151515] overflow-hidden text-white no-underline select-none"
+      className="relative flex items-center justify-center w-full h-full min-w-0 aspect-square bg-[#151515] overflow-hidden text-white no-underline select-none"
     >
       {plusTopLeft && <PlusCorner corner="top-left" color="white" />}
       {plusTopRight && <PlusCorner corner="top-right" color="white" />}
@@ -87,7 +87,7 @@ const socialCells = [
 
 const Footer = () => {
   return (
-    <footer id="footer" className="mt-[240px] md:mt-[324px] bg-black text-white">
+    <footer id="footer" className="mt-20 sm:mt-32 md:mt-[324px] bg-black text-white">
       <Container>
         {/* ── ROW 1: Logo | MORE | Links ── */}
         <div className="border-t border-b border-[#222222] min-h-[190px] md:min-h-[204px] py-8 md:py-9">
@@ -165,15 +165,15 @@ const Footer = () => {
                 </p>
               </div>
 
-              <h2 className="text-[54px] sm:text-[76px] md:text-[96px] lg:text-[116px] xl:text-[132px] font-medium font-poppins text-white leading-none tracking-[-0.035em] m-0 mt-6 md:mt-4">
+              <h2 className="text-[36px] min-[380px]:text-[44px] sm:text-[68px] md:text-[96px] lg:text-[116px] xl:text-[132px] font-medium font-poppins text-white leading-none tracking-[-0.035em] m-0 mt-6 md:mt-4">
                 John <span className="text-accent">Samuel</span>
               </h2>
             </div>
 
-            {/* Right Area: 4×3 Social Grid (324px × 243px) */}
-            <div className="flex justify-start md:justify-end">
+            {/* Right Area: 4×3 Social Grid (max 324px × 243px) */}
+            <div className="flex justify-start md:justify-end pb-8 md:pb-0">
               <div
-                className="grid grid-cols-4 grid-rows-3 w-[324px] h-[243px] bg-[#222222] md:border-l border-[#222222]"
+                className="grid grid-cols-4 grid-rows-3 w-full max-w-[324px] aspect-[4/3] bg-[#222222] md:border-l border-[#222222]"
                 style={{ gap: "1px" }}
               >
                 {socialCells.map((cell, i) => (

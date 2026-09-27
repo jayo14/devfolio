@@ -1,5 +1,5 @@
 import { useState, useRef } from "react";
-import { UploadCloud, Loader2, X, ExternalLink, Image as ImageIcon } from "lucide-react";
+import { UploadCloud, Loader2, X, ExternalLink } from "lucide-react";
 import { useAdminStore } from "../lib/adminStore.js";
 
 export default function ImageUploadField({

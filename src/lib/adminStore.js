@@ -106,7 +106,9 @@ export const useAdminStore = create((set, get) => ({
     try {
       localStorage.removeItem(TOKEN_KEY);
       localStorage.removeItem(USER_KEY);
-    } catch {}
+    } catch {
+      // ignore storage errors
+    }
     set({ token: null, user: null, authError: null });
   },
 

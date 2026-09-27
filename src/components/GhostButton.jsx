@@ -12,7 +12,7 @@ export function GhostButton({ children, href = "#", className = "" }) {
       onHoverStart={() => setHovered(true)}
       onHoverEnd={() => setHovered(false)}
       whileTap={{ scale: 0.97 }}
-      className={`relative inline-flex h-[58px] w-[324px] items-center gap-3 overflow-hidden border border-line px-8 font-sans text-base text-white ${className}`}
+      className={`relative inline-flex h-[58px] w-full max-w-[324px] items-center gap-3 overflow-hidden border border-line px-8 font-sans text-base text-white ${className}`}
     >
       <span className="relative z-10 transition-colors duration-300">{children}</span>
 

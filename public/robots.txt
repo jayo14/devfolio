@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://samueljohn.vercel.app/sitemap.xml
+Agentmap: https://samueljohn.vercel.app/ai-catalog.json

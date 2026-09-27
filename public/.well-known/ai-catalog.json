@@ -1,0 +1,26 @@
+{
+  "$schema": "https://json.schemastore.org/ai-catalog.json",
+  "specVersion": "1.0",
+  "name": "CodeGallantX Portfolio",
+  "description": "Full-Stack Engineer & Product Designer Portfolio of John Samuel",
+  "entries": [
+    {
+      "id": "urn:codegallantx:about",
+      "name": "About John Samuel",
+      "type": "text/markdown",
+      "url": "https://samueljohn.vercel.app/llms.txt"
+    },
+    {
+      "id": "urn:codegallantx:work",
+      "name": "Selected Work Showcase",
+      "type": "text/html",
+      "url": "https://samueljohn.vercel.app/work"
+    },
+    {
+      "id": "urn:codegallantx:contact",
+      "name": "Contact Inquiry",
+      "type": "text/html",
+      "url": "https://samueljohn.vercel.app/contact"
+    }
+  ]
+}

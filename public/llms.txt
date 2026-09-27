@@ -1,0 +1,15 @@
+# CodeGallantX - John Samuel Portfolio
+
+> Full-Stack Engineer and Product Designer portfolio showcasing selected web applications, frontend architecture, backend systems, testimonials, and contact details.
+
+## Navigation & Work
+- [Home Page](https://samueljohn.vercel.app/): Main interactive portfolio showcase with engineering tech stack, core services, and client testimonials.
+- [Selected Work](https://samueljohn.vercel.app/work): Production web applications, digital products, and case studies.
+- [About](https://samueljohn.vercel.app/about-us): Profile, technical competencies, tools, and background.
+- [Blog](https://samueljohn.vercel.app/blog): Engineering insights, modern web development, and design patterns.
+- [Contact](https://samueljohn.vercel.app/contact): Project inquiries, freelance contracts, and engineering collaborations.
+
+## Technical Capabilities
+- Frontend: React 19, Vite, Tailwind CSS, TypeScript, Next.js, Framer Motion, GSAP
+- Backend: Python, FastAPI, Django, Node.js, REST APIs, SQL databases
+- Core Focus: Web Performance, Responsive Architecture, Accessibility (WCAG AA), Core Web Vitals

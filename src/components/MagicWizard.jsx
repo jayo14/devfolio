@@ -16,7 +16,7 @@ import { resolveImageUrl } from "../lib/imageUrl.js";
 import TechStackList from "./TechStackList.jsx";
 import { injectTechnologiesIntoDescription } from "../lib/techLogos.js";
 
-export function normalizeWebsiteUrl(val) {
+function normalizeWebsiteUrl(val) {
   if (!val) return "";
   let clean = val.trim();
   if (clean && !clean.startsWith("http://") && !clean.startsWith("https://")) {
@@ -25,7 +25,7 @@ export function normalizeWebsiteUrl(val) {
   return clean;
 }
 
-export function isValidUrl(val) {
+function isValidUrl(val) {
   if (!val) return false;
   try {
     const clean = normalizeWebsiteUrl(val);
@@ -36,7 +36,7 @@ export function isValidUrl(val) {
   }
 }
 
-export function extractGithubRepo(val) {
+function extractGithubRepo(val) {
   if (!val) return "";
   let clean = val.trim();
   // Strip git@ or http/https protocol
@@ -47,19 +47,19 @@ export function extractGithubRepo(val) {
   return clean;
 }
 
-export function isValidGithubRepo(val) {
+function isValidGithubRepo(val) {
   const repo = extractGithubRepo(val);
-  const pattern = /^[a-zA-Z0-9_\-\.]+\/[a-zA-Z0-9_\-\.]+$/;
+  const pattern = /^[a-zA-Z0-9_.-]+\/[a-zA-Z0-9_.-]+$/;
   return pattern.test(repo);
 }
 
-export function toFullGithubUrl(val) {
+function toFullGithubUrl(val) {
   const repo = extractGithubRepo(val);
   return repo ? `https://github.com/${repo}` : "";
 }
 
 export default function MagicWizard({ isOpen, onClose, onProjectCreated }) {
-  const { startMagicJob, fetchMagicJob, publishMagicJob, magicLoading, magicError } = useAdminStore();
+  const { startMagicJob, fetchMagicJob, publishMagicJob, magicLoading } = useAdminStore();
 
   // Wizard state: 'welcome' | 'sources' | 'pipeline' | 'review' | 'completed'
   const [phase, setPhase] = useState("welcome");
@@ -91,17 +91,12 @@ export default function MagicWizard({ isOpen, onClose, onProjectCreated }) {
   const [publishedProject, setPublishedProject] = useState(null);
   const pollTimerRef = useRef(null);
 
-  // Reset when opening
+  // Clean up poll timer on unmount
   useEffect(() => {
-    if (isOpen) {
-      setPhase("welcome");
-      setJobId(null);
-      setJob(null);
-      setPollError(null);
-    } else {
+    return () => {
       if (pollTimerRef.current) clearInterval(pollTimerRef.current);
-    }
-  }, [isOpen]);
+    };
+  }, []);
 
   // Polling mechanism during pipeline phase
   useEffect(() => {

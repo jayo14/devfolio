@@ -132,11 +132,30 @@ const SelectedWork = () => {
                   aria-label={`Project ${index + 1} of ${slides.length}: ${slide.title}`}
                 >
                   <div className="original-work-slide-top">
-                    <a data-cursor-arrow className="original-work-image-link" href={slide.href}>
-                      <img src={slide.image} alt={slide.title} className="original-work-image" />
+                    <a
+                      data-cursor-arrow
+                      className="original-work-image-link"
+                      href={slide.href}
+                      tabIndex={-1}
+                      aria-hidden="true"
+                    >
+                      <img
+                        src={slide.image}
+                        alt=""
+                        width="1200"
+                        height="750"
+                        loading={index === 0 ? "eager" : "lazy"}
+                        decoding="async"
+                        className="original-work-image"
+                      />
                     </a>
-                    <a className="original-work-arrow" href={slide.href} aria-label={`Open details for ${slide.title}`}>
-                      <img src={originalAssets.arrow} alt="" />
+                    <a
+                      className="original-work-arrow"
+                      href={slide.href}
+                      tabIndex={-1}
+                      aria-hidden="true"
+                    >
+                      <img src={originalAssets.arrow} alt="" width="24" height="24" aria-hidden="true" />
                     </a>
                   </div>
                   <div className="original-work-slide-bottom">
