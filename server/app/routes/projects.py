@@ -1,4 +1,5 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
+from sqlalchemy import or_
 from sqlalchemy.orm import Session
 
 from app.database import get_db
@@ -10,8 +11,20 @@ router = APIRouter(prefix="/api/projects", tags=["projects"])
 
 
 @router.get("/", response_model=list[ProjectOut])
-def list_projects(db: Session = Depends(get_db)):
-    rows = db.query(Project).order_by(Project.created_at.desc()).all()
+def list_projects(
+    q: str | None = Query(None, description="Search query for project name or field"),
+    db: Session = Depends(get_db),
+):
+    query = db.query(Project)
+    if q and q.strip():
+        search = f"%{q.strip()}%"
+        query = query.filter(
+            or_(
+                Project.title.ilike(search),
+                Project.field.ilike(search),
+            )
+        )
+    rows = query.order_by(Project.created_at.desc()).all()
     return [ProjectOut.from_orm_model(r) for r in rows]
 
 

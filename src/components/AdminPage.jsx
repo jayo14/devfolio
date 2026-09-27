@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import { Container } from "./Container.jsx";
 import { useAdminStore } from "../lib/adminStore.js";
-import { Pencil, Trash2, Plus, ExternalLink, X, Lock, LogOut, User as UserIcon, Eye, EyeOff } from "lucide-react";
+import { Pencil, Trash2, Plus, ExternalLink, X, Lock, LogOut, User as UserIcon, Eye, EyeOff, Search } from "lucide-react";
 import MagicButton from "./MagicButton.jsx";
 import MagicWizard from "./MagicWizard.jsx";
 import ImageUploadField from "./ImageUploadField.jsx";
@@ -517,6 +517,17 @@ export default function AdminPage() {
   const [blogModal, setBlogModal] = useState(null);
   const [tab, setTab] = useState("projects"); // "projects" | "blogs"
   const [magicOpen, setMagicOpen] = useState(false);
+  const [projectSearch, setProjectSearch] = useState("");
+
+  const filteredProjects = projects.filter((p) => {
+    if (!projectSearch.trim()) return true;
+    const query = projectSearch.trim().toLowerCase();
+    const name = (p.title || p.name || "").toLowerCase();
+    const field = (p.field || "").toLowerCase();
+    const combined = `${name} ${field}`;
+    const terms = query.split(/\s+/).filter(Boolean);
+    return terms.every((term) => combined.includes(term));
+  });
 
   useEffect(() => {
     if (token) {
@@ -630,10 +641,18 @@ export default function AdminPage() {
 
             {/* Tab bar */}
             <div className="admin-tabs">
-              <button type="button" className={`admin-tab ${tab === "projects" ? "is-active" : ""}`} onClick={() => setTab("projects")}>
-                Projects ({projects.length})
+              <button
+                type="button"
+                className={`admin-tab ${tab === "projects" ? "is-active" : ""}`}
+                onClick={() => setTab("projects")}
+              >
+                Projects ({projectSearch.trim() ? `${filteredProjects.length}/${projects.length}` : projects.length})
               </button>
-              <button type="button" className={`admin-tab ${tab === "blogs" ? "is-active" : ""}`} onClick={() => setTab("blogs")}>
+              <button
+                type="button"
+                className={`admin-tab ${tab === "blogs" ? "is-active" : ""}`}
+                onClick={() => setTab("blogs")}
+              >
                 Blog Links ({blogLinks.length})
               </button>
             </div>
@@ -642,8 +661,40 @@ export default function AdminPage() {
             {tab === "projects" && (
               <div className="admin-panel">
                 <div className="admin-panel-header">
-                  <h2>Your Projects</h2>
-                  <div className="flex items-center gap-3">
+                  <div>
+                    <h2>Your Projects</h2>
+                    {projectSearch.trim() && (
+                      <p className="admin-search-status">
+                        Showing {filteredProjects.length} of {projects.length} {filteredProjects.length === 1 ? "project" : "projects"}
+                      </p>
+                    )}
+                  </div>
+                  <div className="admin-panel-actions">
+                    <div className="admin-search-wrapper">
+                      <Search size={16} className="admin-search-icon" />
+                      <input
+                        type="text"
+                        value={projectSearch}
+                        onChange={(e) => setProjectSearch(e.target.value)}
+                        onKeyDown={(e) => {
+                          if (e.key === "Escape") setProjectSearch("");
+                        }}
+                        placeholder="Search projects (name, field)…"
+                        className="admin-search-input"
+                        aria-label="Search projects by name or field"
+                      />
+                      {projectSearch && (
+                        <button
+                          type="button"
+                          onClick={() => setProjectSearch("")}
+                          className="admin-search-clear-btn"
+                          title="Clear search"
+                          aria-label="Clear search"
+                        >
+                          <X size={14} />
+                        </button>
+                      )}
+                    </div>
                     <button type="button" className="admin-primary-btn" onClick={() => setProjectModal("new")}>
                       <Plus size={16} /> Add Project
                     </button>
@@ -654,6 +705,19 @@ export default function AdminPage() {
                 {projects.length === 0 ? (
                   <div className="admin-empty">
                     <p>No projects yet. Add your first project to get started.</p>
+                  </div>
+                ) : filteredProjects.length === 0 ? (
+                  <div className="admin-empty admin-search-empty">
+                    <Search size={32} className="admin-search-empty-icon" />
+                    <p>No projects found matching &ldquo;<strong>{projectSearch}</strong>&rdquo;</p>
+                    <span className="admin-search-empty-hint">Try searching with a different name or field</span>
+                    <button
+                      type="button"
+                      onClick={() => setProjectSearch("")}
+                      className="admin-search-reset-btn"
+                    >
+                      Clear search
+                    </button>
                   </div>
                 ) : (
                   <div className="admin-table-wrap">
@@ -668,7 +732,7 @@ export default function AdminPage() {
                         </tr>
                       </thead>
                       <tbody>
-                        {projects.map((p) => (
+                        {filteredProjects.map((p) => (
                           <tr key={p.id}>
                             <td>
                               <div className="admin-project-cell">
