@@ -1,4 +1,4 @@
-# CodeGallantX - John Samuel Portfolio
+# CodeGallantX - Samuel John Portfolio
 
 > Full-Stack Engineer and Product Designer portfolio showcasing selected web applications, frontend architecture, backend systems, testimonials, and contact details.
 

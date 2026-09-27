@@ -166,7 +166,7 @@ const Footer = () => {
               </div>
 
               <h2 className="text-[36px] min-[380px]:text-[44px] sm:text-[68px] md:text-[96px] lg:text-[116px] xl:text-[132px] font-medium font-poppins text-white leading-none tracking-[-0.035em] m-0 mt-6 md:mt-4">
-                John <span className="text-accent">Samuel</span>
+                Samuel <span className="text-accent">John</span>
               </h2>
             </div>
 

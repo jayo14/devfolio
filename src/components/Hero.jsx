@@ -122,7 +122,7 @@ const Hero = ({ showCounters = true }) => {
               <div className="hero-sub-title-wrap"><p className="hero-sub-title mb-4 sm:mb-6 font-inconsolata text-sm sm:text-base text-white">// Hello, World!</p></div>
               <div className="hero-title-wrap">
                 <h1 className="hero-title font-sans text-[48px] sm:text-[72px] md:text-[96px] lg:text-[120px] font-medium leading-[1.05] sm:leading-[1.05] lg:leading-[120px] tracking-[-2px] sm:tracking-[-3px] lg:tracking-[-4.8px] text-white">
-                  John <span className="text-accent">Samuel</span>
+                  Samuel <span className="text-accent">John</span>
                 </h1>
               </div>
               <p className="hero-position mt-3 sm:mt-4 font-sans text-[20px] sm:text-[28px] md:text-[34px] lg:text-[40px] font-normal text-white/75">

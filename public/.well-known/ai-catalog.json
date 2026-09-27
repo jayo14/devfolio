@@ -2,11 +2,11 @@
   "$schema": "https://json.schemastore.org/ai-catalog.json",
   "specVersion": "1.0",
   "name": "CodeGallantX Portfolio",
-  "description": "Full-Stack Engineer & Product Designer Portfolio of John Samuel",
+  "description": "Full-Stack Engineer & Product Designer Portfolio of Samuel John",
   "entries": [
     {
       "id": "urn:codegallantx:about",
-      "name": "About John Samuel",
+      "name": "About Samuel John",
       "type": "text/markdown",
       "url": "https://samueljohn.vercel.app/llms.txt"
     },
